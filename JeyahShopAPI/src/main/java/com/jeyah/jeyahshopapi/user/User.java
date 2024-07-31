@@ -1,5 +1,6 @@
 package com.jeyah.jeyahshopapi.user;
 
+import com.jeyah.jeyahshopapi.product.Product;
 import com.jeyah.jeyahshopapi.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,10 +28,10 @@ public class User {
     private String email;
     private String password;
     private String phone;
+    @OneToOne(mappedBy = "user")
+    private Address address;
     private boolean accountLocked;
     private boolean enabled;
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<Role> roles;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -38,6 +39,12 @@ public class User {
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Role> roles;
+
+    @OneToMany(mappedBy = "user")
+    private List<Product> products;
 
 
     public String Username(){
