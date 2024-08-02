@@ -6,10 +6,8 @@ import com.jeyah.jeyahshopapi.rating.Rating;
 import com.jeyah.jeyahshopapi.tag.Tag;
 import com.jeyah.jeyahshopapi.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -24,6 +22,7 @@ import java.util.prefs.BackingStoreException;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Product extends BaseEntity {
