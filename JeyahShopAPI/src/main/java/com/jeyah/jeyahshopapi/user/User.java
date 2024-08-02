@@ -1,6 +1,7 @@
 package com.jeyah.jeyahshopapi.user;
 
 import com.jeyah.jeyahshopapi.product.Product;
+import com.jeyah.jeyahshopapi.rating.Rating;
 import com.jeyah.jeyahshopapi.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,6 +46,10 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Product> products;
+
+    @OneToMany(mappedBy = "user")
+    private List<Rating> ratings;
+
 
 
     public String Username(){
