@@ -1,5 +1,7 @@
 package com.jeyah.jeyahshopapi.product;
 
+import com.jeyah.jeyahshopapi.cart.CartItem;
+import com.jeyah.jeyahshopapi.common.BaseEntity;
 import com.jeyah.jeyahshopapi.rating.Rating;
 import com.jeyah.jeyahshopapi.tag.Tag;
 import com.jeyah.jeyahshopapi.user.User;
@@ -16,6 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.prefs.BackingStoreException;
 
 @Getter
 @Setter
@@ -23,27 +26,15 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Product {
+public class Product extends BaseEntity {
 
-    @Id
-    private Integer id;
+
     private String name;
     private  Integer price;
     private String description;
     private String category;
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime creationDate;
-    @LastModifiedDate
-    @Column(insertable = false)
-    private LocalDateTime lastModifiedDate;
     private Integer stockQuantity;
-    @CreatedBy
-    @Column(nullable = false, updatable = false)
-    private Integer postedBy;
-    @LastModifiedBy
-    @Column(insertable = false)
-    private Integer lastModifiedBy;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -57,4 +48,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<Rating> ratings;
+
+    @OneToMany(mappedBy = "product")
+    private List<CartItem> cartItems;
 }

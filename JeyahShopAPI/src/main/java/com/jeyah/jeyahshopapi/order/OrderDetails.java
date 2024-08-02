@@ -1,6 +1,5 @@
-package com.jeyah.jeyahshopapi.rating;
+package com.jeyah.jeyahshopapi.order;
 
-import com.jeyah.jeyahshopapi.common.BaseEntity;
 import com.jeyah.jeyahshopapi.product.Product;
 import com.jeyah.jeyahshopapi.user.User;
 import jakarta.persistence.*;
@@ -8,26 +7,26 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Rating extends BaseEntity {
+public class OrderDetails {
+    @Id
+    @GeneratedValue
+    private Integer id;
+    private Integer quantity;
+    private Integer price;
 
-    private Integer rating;
-
-
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
 }

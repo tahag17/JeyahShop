@@ -1,5 +1,6 @@
 package com.jeyah.jeyahshopapi.user;
 
+import com.jeyah.jeyahshopapi.cart.Cart;
 import com.jeyah.jeyahshopapi.product.Product;
 import com.jeyah.jeyahshopapi.rating.Rating;
 import com.jeyah.jeyahshopapi.role.Role;
@@ -49,6 +50,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Rating> ratings;
+
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
 
 
 
