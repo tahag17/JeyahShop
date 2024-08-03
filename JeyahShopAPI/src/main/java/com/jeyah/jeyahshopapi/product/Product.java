@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 
 @Getter
@@ -29,7 +30,7 @@ public class Product extends BaseEntity {
 
 
     private String name;
-    private  Integer price;
+    private Integer price;
     private String description;
     private String category;
     private Integer stockQuantity;
@@ -45,8 +46,28 @@ public class Product extends BaseEntity {
     @OneToMany
     private List<ProductImage> productImages;
 
+    @Transient
+    public Optional<String> getFirstImageUrl() {
+        return productImages != null && !productImages.isEmpty()
+                ? Optional.of(productImages.get(0).getUrl())
+                : Optional.empty();
+    }
+
     @OneToMany(mappedBy = "product")
     private List<Rating> ratings;
+
+    @Transient
+    public double getRate() {
+        if (ratings == null || ratings.isEmpty()) {
+            return 0.0;
+        }
+        double rate = this.ratings.stream()
+                .mapToDouble(Rating::getRating)
+                .average()
+                .orElse(0.0);
+        double roundedRate = Math.round(rate * 10.0) / 10.0;
+        return roundedRate;
+    }
 
     @OneToMany(mappedBy = "product")
     private List<CartItem> cartItems;
