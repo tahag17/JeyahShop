@@ -51,4 +51,21 @@ public class ProductService {
         );
     }
 
+    public PageResponse<SimpleProductResponse> findProductsByKeyword(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Page<Product> products = productRepository.findProductsByKeyword(keyword, pageable);
+        List<SimpleProductResponse> simpleProductResponse = products.stream()
+                .map(ProductMapper::toSimpleProductResponse)
+                .collect(Collectors.toList());
+        return new PageResponse<>(
+                simpleProductResponse,
+                products.getNumber(),
+                products.getSize(),
+                products.getTotalElements(),
+                products.getTotalPages(),
+                products.isFirst(),
+                products.isLast()
+        );
+    }
+
 }
