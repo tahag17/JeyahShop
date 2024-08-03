@@ -41,4 +41,13 @@ public class ProductController {
     ) {
     return ResponseEntity.ok(productService.findAllProducts(page, size));
     }
+
+    @GetMapping("products/{keyword}")
+    public ResponseEntity<PageResponse<SimpleProductResponse>> findProductByKeyword(
+        @PathVariable String keyword,
+        @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+        @RequestParam(name = "size", defaultValue = "10", required = false) int size
+    ){
+        return ResponseEntity.ok(productService.findProductsByKeyword(keyword, page, size));
+    }
 }
