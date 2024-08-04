@@ -8,9 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +68,38 @@ public class ProductService {
                 products.isFirst(),
                 products.isLast()
         );
+    }
+
+    public PageResponse<SimpleProductResponse> searchProductsWithAllFilters(
+            String keyword,
+            Integer minPrice,
+            Integer maxPrice,
+            List<String> tags,
+            int page,
+            int size
+    ) {
+            Specification<Product> spec = new ProductSpecification(keyword,minPrice,maxPrice,tags);
+            Pageable pageable  = PageRequest.of(page, size);
+            Page<Product> productPage = productRepository.findAll(spec, pageable);
+
+            //sorting products based on rating
+            List<Product> sortedProducts = productPage.getContent().stream()
+                    .sorted(Comparator.comparingDouble(Product::getRate).reversed())
+                    .collect(Collectors.toList());
+
+            List<SimpleProductResponse> simpleProductResponses = sortedProducts.stream()
+                    .map(ProductMapper::toSimpleProductResponse)
+                    .collect(Collectors.toList());
+
+            return new PageResponse<>(
+                    simpleProductResponses,
+                    productPage.getNumber(),
+                    productPage.getSize(),
+                    productPage.getTotalElements(),
+                    productPage.getTotalPages(),
+                    productPage.isFirst(),
+                    productPage.isLast()
+            );
     }
 
 }

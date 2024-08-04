@@ -24,14 +24,14 @@ public class ProductController {
             @Valid @RequestBody ProductRequest request,
             Authentication connectedUser
     ) {
-    return ResponseEntity.ok(productService.addProduct(request, connectedUser));
+        return ResponseEntity.ok(productService.addProduct(request, connectedUser));
     }
 
     @GetMapping("{product-id}")
     public ResponseEntity<ProductResponse> findProductById(
             @PathVariable("product-id") Integer productId
     ) {
-           return ResponseEntity.ok(productService.findProductById(productId));
+        return ResponseEntity.ok(productService.findProductById(productId));
     }
 
     @GetMapping("products")
@@ -39,15 +39,27 @@ public class ProductController {
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size
     ) {
-    return ResponseEntity.ok(productService.findAllProducts(page, size));
+        return ResponseEntity.ok(productService.findAllProducts(page, size));
     }
 
     @GetMapping("products/{keyword}")
     public ResponseEntity<PageResponse<SimpleProductResponse>> findProductByKeyword(
-        @PathVariable String keyword,
-        @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-        @RequestParam(name = "size", defaultValue = "10", required = false) int size
-    ){
+            @PathVariable String keyword,
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "size", defaultValue = "10", required = false) int size
+    ) {
         return ResponseEntity.ok(productService.findProductsByKeyword(keyword, page, size));
+    }
+
+    @GetMapping("products/search")
+    public ResponseEntity<PageResponse<SimpleProductResponse>> findProductsWithAllFilters(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) List<String> tags,
+            @RequestParam(required = false) Integer minPrice,
+            @RequestParam(required = false) Integer maxPrice,
+            @RequestParam(required = false, name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10", required = false) int size
+    ) {
+        return ResponseEntity.ok(productService.searchProductsWithAllFilters(keyword, minPrice, maxPrice, tags, page, size));
     }
 }
