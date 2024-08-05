@@ -53,13 +53,15 @@ public class ProductController {
 
     @GetMapping("products/search")
     public ResponseEntity<PageResponse<SimpleProductResponse>> findProductsWithAllFilters(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) List<String> tags,
+            @RequestParam(required = false, defaultValue = "usb") String keyword,
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice,
+            @RequestParam(required = false) List<String> tags,
+            @RequestParam(required = false, name = "sortBy", defaultValue = "rate") String sortBy,
+            @RequestParam(required = false, name = "sortDirection", defaultValue = "desc") String sortDirection,
             @RequestParam(required = false, name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size
     ) {
-        return ResponseEntity.ok(productService.searchProductsWithAllFilters(keyword, minPrice, maxPrice, tags, page, size));
+        return ResponseEntity.ok(productService.searchProductsWithAllFilters(keyword, minPrice, maxPrice, tags, sortBy, sortDirection, page, size));
     }
 }

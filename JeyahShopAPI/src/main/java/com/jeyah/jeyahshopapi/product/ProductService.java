@@ -33,7 +33,7 @@ public class ProductService {
     public ProductResponse findProductById(Integer productId) {
         return productRepository.findById(productId)
                 .map(productMapper::toProductResponse)
-                .orElseThrow(() -> new EntityNotFoundException("No product with ID '"+productId+"' found."));
+                .orElseThrow(() -> new EntityNotFoundException("No product with ID '" + productId + "' found."));
     }
 
     public PageResponse<SimpleProductResponse> findAllProducts(int page, int size) {
@@ -75,31 +75,34 @@ public class ProductService {
             Integer minPrice,
             Integer maxPrice,
             List<String> tags,
+            String sortBy,
+            String sortDirection,
             int page,
             int size
     ) {
-            Specification<Product> spec = new ProductSpecification(keyword,minPrice,maxPrice,tags);
-            Pageable pageable  = PageRequest.of(page, size);
-            Page<Product> productPage = productRepository.findAll(spec, pageable);
+        Sort.Direction direction = "asc".equals(sortDirection) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Specification<Product> spec = new ProductSpecification(keyword, minPrice, maxPrice, tags);
+        Page<Product> productPage = productRepository.findAll(spec, pageable);
 
-            //sorting products based on rating
-            List<Product> sortedProducts = productPage.getContent().stream()
-                    .sorted(Comparator.comparingDouble(Product::getRate).reversed())
-                    .collect(Collectors.toList());
+        //sorting products based on rating
+        List<Product> sortedProducts = productPage.getContent().stream()
+                .sorted(Comparator.comparingDouble(Product::getRate).reversed())
+                .collect(Collectors.toList());
 
-            List<SimpleProductResponse> simpleProductResponses = sortedProducts.stream()
-                    .map(ProductMapper::toSimpleProductResponse)
-                    .collect(Collectors.toList());
+        List<SimpleProductResponse> simpleProductResponses = sortedProducts.stream()
+                .map(ProductMapper::toSimpleProductResponse)
+                .collect(Collectors.toList());
 
-            return new PageResponse<>(
-                    simpleProductResponses,
-                    productPage.getNumber(),
-                    productPage.getSize(),
-                    productPage.getTotalElements(),
-                    productPage.getTotalPages(),
-                    productPage.isFirst(),
-                    productPage.isLast()
-            );
+        return new PageResponse<>(
+                simpleProductResponses,
+                productPage.getNumber(),
+                productPage.getSize(),
+                productPage.getTotalElements(),
+                productPage.getTotalPages(),
+                productPage.isFirst(),
+                productPage.isLast()
+        );
     }
 
 }
