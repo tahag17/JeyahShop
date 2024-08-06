@@ -22,9 +22,9 @@ public class Order extends BaseEntity {
 
 private OrderStatus status;
 
-@ManyToOne
-@JoinColumn(name = "user_id", nullable = false)
-private User user;
+//@ManyToOne
+//@JoinColumn(name = "user_id", nullable = false)
+//private User user;
 
 @OneToMany(mappedBy = "order")
 private List<OrderDetails> orderDetails;

@@ -5,5 +5,5 @@ import org.springframework.data.domain.AuditorAware;
 
 public class BeansConfig {
     @Bean
-    public AuditorAware<Integer> auditorAware(){return new ApplicationAuditAware();}
+    public AuditorAware<String> auditorAware(){return new ApplicationAuditAware();}
 }
