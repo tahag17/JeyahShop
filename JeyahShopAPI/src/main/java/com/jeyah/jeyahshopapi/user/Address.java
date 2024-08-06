@@ -15,6 +15,6 @@ public class Address {
     private Integer postalCode;
     private String city;
     private String street;
-    @OneToOne
-    private User user;
+//    @OneToOne
+//    private User user;
 }

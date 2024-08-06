@@ -23,10 +23,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
-    public Integer addProduct(ProductRequest request, Authentication connectedUser) {
-        User user = (User) connectedUser.getPrincipal();
+    public Integer addProduct(ProductRequest request) {
         Product product = productMapper.toProduct(request);
-        product.setUser(user);
         return productRepository.save(product).getId();
     }
 

@@ -36,9 +36,9 @@ public class Product extends BaseEntity {
     private Integer stockQuantity;
 
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+//    @ManyToOne
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;
 
     @ManyToMany
     private List<Tag> tags;
