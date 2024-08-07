@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("keycloak")
+@RequestMapping("public/keycloak")
 public class MainController {
 
     @GetMapping
@@ -22,13 +22,13 @@ public class MainController {
     }
 
     @GetMapping("/manager/hello")
-    @PreAuthorize("hasRole('JeyahShop_manager')")
+//    @PreAuthorize("hasRole('JeyahShop_manager')")
     public String helloManager(){
         return "Hello Manager";
     }
 
     @GetMapping("/admin")
-    @PreAuthorize("hasRole('JeyahShop_admin')")
+//    @PreAuthorize("hasRole('JeyahShop_admin')")
     public String helloAdmin(){
         return "Hello Admin";
     }
