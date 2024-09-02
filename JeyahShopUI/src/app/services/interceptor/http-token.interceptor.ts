@@ -16,6 +16,10 @@ export class HttpTokenInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+
+    const isPublicUrl = request.url.startsWith('/public');
+    if(isPublicUrl){return next.handle(request)}
+
     const token = this.keycloakService.keycloak?.token;
     if (token) {
       const authReq = request.clone({
