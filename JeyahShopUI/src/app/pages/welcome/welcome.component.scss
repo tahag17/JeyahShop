@@ -1,0 +1,43 @@
+.hero, .collections, .special-offers {
+  text-align: center;
+  padding: 2rem;
+  background: #f4f4f4; // Same background color for all sections
+  border-bottom: 1px solid #ccc; // Thin line between sections
+
+  &:last-of-type {
+    border-bottom: none; // Remove the line after the last section
+  }
+
+  h1, h2 {
+    color: #d9534f; // Reddish color
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+
+    li {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .cta-button {
+    background-color: #d9534f;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: #c9302c;
+    }
+  }
+}

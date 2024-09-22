@@ -31,12 +31,10 @@ export class KeycloakService {
 
   async init() {
     if (this.keycloak) {
-      console.log('Authenticating the user...');
       const authenticated = await this.keycloak.init({
-        onLoad: 'login-required',
+        onLoad: 'check-sso',
       });
       if (authenticated) {
-        console.log('Authenticated!');
         this._profile = (await this.keycloak.loadUserProfile()) as UserProfile;
         this._profile.token = this.keycloak.token;
       }
