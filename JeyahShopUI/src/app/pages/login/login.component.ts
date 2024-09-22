@@ -11,15 +11,14 @@ import {KeycloakService} from "../../services/keycloak/keycloak.service";
 export class LoginComponent implements OnInit{
 
   constructor(
-    private keycloakService: KeycloakService
+    // private keycloakService: KeycloakService
   ) {
   }
 
-  // authRequest: AuthenticationRequest
 
   async ngOnInit(): Promise<void> {
-    await this.keycloakService.init();
-    await this.keycloakService.login();
+    // await this.keycloakService.init();
+    // await this.keycloakService.login();
   }
 
 
