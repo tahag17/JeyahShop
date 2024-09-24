@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.lang.NonNull;
 
+import java.util.List;
+
 public record ProductRequest(
         // id == 0 -> we want to create a new book
         // id != 0 -> we want to update an existing book
@@ -29,11 +31,10 @@ public record ProductRequest(
 
         @NotNull(message = "104")
         @Min(value = 0, message = "104")
-        Integer stockQuantity
-//        ,
-//
-//        @NotNull(message = "105")
-//        Integer userId
+        Integer stockQuantity,
+
+        List<String> imageUrls
+
 ) {
 
 }

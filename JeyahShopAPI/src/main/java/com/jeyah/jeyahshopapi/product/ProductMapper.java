@@ -8,14 +8,24 @@ import java.util.stream.Collectors;
 @Service
 public class ProductMapper {
     public Product toProduct(ProductRequest request) {
-        return Product.builder()
+
+        List<ProductImage> productImages = request.imageUrls().stream()
+                .map(url -> new ProductImage(null, url, null))
+                .collect(Collectors.toList());
+
+        Product product = Product.builder()
                 .id(request.id())
                 .name(request.name())
                 .price(request.price())
                 .description(request.description())
                 .category(request.category())
                 .stockQuantity(request.stockQuantity())
+                .productImages(productImages)
                 .build();
+
+        productImages.forEach(image -> image.setProduct(product));
+
+        return product;
     }
 
     public ProductResponse toProductResponse(Product product) {

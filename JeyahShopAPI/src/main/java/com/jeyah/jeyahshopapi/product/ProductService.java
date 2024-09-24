@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,8 +24,10 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
-    public Integer addProduct(ProductRequest request) {
+    public Integer addProduct(ProductRequest request, Principal principal) {
         Product product = productMapper.toProduct(request);
+        String keycloakUserId = principal.getName();
+        product.setKeycloakUserId(keycloakUserId);
         return productRepository.save(product).getId();
     }
 

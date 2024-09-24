@@ -36,14 +36,13 @@ public class Product extends BaseEntity {
     private Integer stockQuantity;
 
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+
+    private String keycloakUserId;
 
     @ManyToMany
     private List<Tag> tags;
 
-    @OneToMany
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> productImages;
 
     @Transient

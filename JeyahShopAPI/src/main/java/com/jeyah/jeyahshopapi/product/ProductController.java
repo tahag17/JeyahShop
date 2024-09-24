@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 //import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -21,8 +22,9 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<Integer> addProduct(
-            @Valid @RequestBody ProductRequest request) {
-        return ResponseEntity.ok(productService.addProduct(request));
+            @Valid @RequestBody ProductRequest request,
+            Principal principal) {
+        return ResponseEntity.ok(productService.addProduct(request, principal));
     }
 
     @GetMapping("{product-id}")

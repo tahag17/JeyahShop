@@ -2,10 +2,7 @@ package com.jeyah.jeyahshopapi.order;
 
 import com.jeyah.jeyahshopapi.common.BaseEntity;
 import com.jeyah.jeyahshopapi.user.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "order_")
 public class Order extends BaseEntity {
 
 private OrderStatus status;
