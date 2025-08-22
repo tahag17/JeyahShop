@@ -9,7 +9,7 @@ import lombok.Setter;
 //import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-//import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,14 +18,14 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-//@Entity
-//@EntityListeners(AuditingEntityListener.class)
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Role {
     @Id
     @GeneratedValue
-    private String id;
-    @Column(unique = true)
-    private String name;
+    private Long id;
+    @Column(unique = true, nullable = false)
+    private String name; //ROLE_USER, ROLE_MANAGER, or ROLE_ADMIN for now
 
     @ManyToMany(mappedBy = "roles")
 //    @JsonIgnore

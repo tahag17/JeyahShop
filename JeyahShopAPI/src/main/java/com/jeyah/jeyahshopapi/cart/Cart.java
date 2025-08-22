@@ -20,9 +20,9 @@ import java.util.prefs.BackingStoreException;
 public class Cart extends BaseEntity {
 
     private Integer totalPrice;
-//    @OneToOne
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems;

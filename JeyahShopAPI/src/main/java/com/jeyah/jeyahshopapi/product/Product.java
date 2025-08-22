@@ -55,6 +55,9 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private List<Rating> ratings;
 
+    @ManyToOne
+    private User user;
+
     @Transient
     public double getRate() {
         if (ratings == null || ratings.isEmpty()) {

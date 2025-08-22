@@ -7,18 +7,20 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("products")
+@RequestMapping("/api/products")
 @RequiredArgsConstructor
 @Tag(name = "product")
 public class ProductController {
 
     private final ProductService productService;
+
 
     @PostMapping
     public ResponseEntity<Integer> addProduct(
