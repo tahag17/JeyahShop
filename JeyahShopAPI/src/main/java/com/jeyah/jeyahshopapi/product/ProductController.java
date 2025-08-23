@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 //import org.springframework.security.core.Authentication;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
@@ -22,12 +23,31 @@ public class ProductController {
     private final ProductService productService;
 
 
+/*
+
+Adding products to the db
+
+ */
     @PostMapping
     public ResponseEntity<Integer> addProduct(
             @Valid @RequestBody ProductRequest request,
             Principal principal) {
-        return ResponseEntity.ok(productService.addProduct(request, principal));
+        return ResponseEntity.ok(productService.addProduct(request));
     }
+
+    @PostMapping("/products")
+    public ResponseEntity<Integer> addProductWithImages(
+            @RequestPart("product") ProductRequest request,
+            @RequestPart(value = "images", required = false) MultipartFile[] files) throws Exception {
+        return ResponseEntity.ok(productService.addProductWithImages(request, files));
+    }
+
+
+/*
+
+Fetching products from the db
+
+ */
 
     @GetMapping("{product-id}")
     public ResponseEntity<ProductResponse> findProductById(

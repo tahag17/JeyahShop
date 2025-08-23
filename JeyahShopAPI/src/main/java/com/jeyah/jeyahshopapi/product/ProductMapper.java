@@ -28,6 +28,20 @@ public class ProductMapper {
         return product;
     }
 
+    public Product toProductWithoutImages(ProductRequest request) {
+
+        Product product = Product.builder()
+                .id(request.id())
+                .name(request.name())
+                .price(request.price())
+                .description(request.description())
+                .category(request.category())
+                .stockQuantity(request.stockQuantity())
+                .build();
+
+        return product;
+    }
+
     public ProductResponse toProductResponse(Product product) {
 
         List<String> imageUrls = product.getProductImages().stream()

@@ -37,8 +37,6 @@ public class Product extends BaseEntity {
 
 
 
-    private String keycloakUserId;
-
     @ManyToMany
     private List<Tag> tags;
 

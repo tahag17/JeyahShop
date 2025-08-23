@@ -38,17 +38,22 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**").permitAll()
-                        .requestMatchers("user/**").hasRole("USER")
-                        .requestMatchers("manager/**").hasRole("MANAGER")
-                        .requestMatchers("admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/public/**").permitAll()
+//                        .requestMatchers("user/**").hasRole("USER")
+//                        .requestMatchers("manager/**").hasRole("MANAGER")
+//                        .requestMatchers("admin/**").hasRole("ADMIN")
+//                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
-                .formLogin(Customizer.withDefaults())
-                .logout(Customizer.withDefaults())
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService)))
-                .sessionManagement(session -> session.maximumSessions(1));
+//                .formLogin(Customizer.withDefaults())
+//                .logout(Customizer.withDefaults())
+//                .oauth2Login(oauth2 -> oauth2
+//                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService)))
+//                .sessionManagement(session -> session.maximumSessions(1));
+                .formLogin(AbstractHttpConfigurer::disable)   // Disable login forms
+                .httpBasic(AbstractHttpConfigurer::disable)   // Disable HTTP Basic auth
+                .logout(AbstractHttpConfigurer::disable);     // Disable logout
+
 
         return http.build();
     }
