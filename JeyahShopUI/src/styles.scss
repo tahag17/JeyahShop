@@ -1,4 +1,33 @@
-/* You can add global styles to this file, and also import other style files */
-//global stying sheet
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #03256c;
+  --secondary: #2541b2;
+  --accent: #1768ac;
+  --info: #06bee1;
+
+  --background: #f9fafb;
+  --foreground: #111827;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #2541b2;
+
+  --radius: 0.625rem;
+}
+
+:root.dark {
+  --background: #111827;
+  --foreground: #f9fafb;
+  --card: #1f2937;
+  --muted: #d1d5db;
+  --border: #4b5563;
+  --input: #374151;
+  --ring: #2541b2;
+}

@@ -1,29 +1,58 @@
-<section class="hero">
-  <h1>Welcome to Jeyah Shop</h1>
-  <p>Your one-stop shop for amazing products!</p>
-  <a class="cta-button" routerLink="/public/services">Explore Our Services</a>
-</section>
+<!-- colors-display.component.html -->
+<div class="p-6 space-y-4 font-sans">
+  <!-- Dark/Light toggle -->
+  <app-dark-mode-toggle></app-dark-mode-toggle>
 
-<section class="collections">
-  <h2>Discover Our New Collections!</h2>
-  <p>We are excited to introduce our latest range of toys that are perfect for every occasion. From imaginative playsets to educational toys, our new collections are designed to inspire and entertain your little ones.</p>
-  <p>Our new arrivals include:</p>
-  <ul>
-    <li><strong>Adventure Sets:</strong> Ignite your child's imagination with our themed adventure playsets.</li>
-    <li><strong>Learning Toys:</strong> Fun and educational toys that make learning enjoyable.</li>
-    <li><strong>Art & Craft Kits:</strong> Encourage creativity with our easy-to-use art and craft kits.</li>
-  </ul>
-  <a class="cta-button" routerLink="/public/collections">Shop New Collections</a>
-</section>
+  <h1
+    class="text-5xl font-heading font-bold mb-4 text-textLight dark:text-textDark"
+  >
+    Tailwind Colors Display
+  </h1>
 
-<section class="special-offers">
-  <h2>Special Offers Just for You!</h2>
-  <p>Don’t miss out on our limited-time promotions and exclusive discounts! We're offering fantastic deals on a variety of our best-selling toys. Whether you're shopping for birthdays, holidays, or just because, you'll find amazing savings on your favorite items.</p>
-  <p>Check out our current offers:</p>
-  <ul>
-    <li><strong>Buy One, Get One 50% Off:</strong> Mix and match from selected toy ranges.</li>
-    <li><strong>Free Gift Wrap:</strong> Enjoy free gift wrapping on all orders over $50.</li>
-    <li><strong>Seasonal Sale:</strong> Up to 30% off on seasonal toys and games.</li>
-  </ul>
-  <a class="cta-button" routerLink="/public/offers">View All Offers</a>
-</section>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <!-- Primary Colors -->
+    <div class="p-4 rounded shadow bg-primaryTail dark:bg-primaryDarkTail">
+      <p class="font-bold text-white dark:text-textDark">This is primary</p>
+      <p class="text-white dark:text-textDark">#03256C / #3B6EDB</p>
+    </div>
+
+    <div class="p-4 rounded shadow bg-secondaryTail dark:bg-secondaryDarkTail">
+      <p class="font-bold text-white dark:text-textDark">This is secondary</p>
+      <p class="text-white dark:text-textDark">#2541B2 / #5A7FCF</p>
+    </div>
+
+    <div class="p-4 rounded shadow bg-accentTail dark:bg-accentDarkTail">
+      <p class="font-bold text-white dark:text-textDark">This is accent</p>
+      <p class="text-white dark:text-textDark">#1768AC / #4CA3E0</p>
+    </div>
+
+    <div class="p-4 rounded shadow bg-infoTail dark:bg-infoDarkTail">
+      <p class="font-bold text-white dark:text-textDark">This is info</p>
+      <p class="text-white dark:text-textDark">#06BEE1 / #33C1F0</p>
+    </div>
+
+    <!-- Light & Dark Mode backgrounds -->
+    <div class="p-4 rounded shadow bg-bgLight dark:bg-bgDark">
+      <p class="font-bold text-textLight dark:text-textDark">
+        This is background
+      </p>
+    </div>
+
+    <div class="p-4 rounded shadow bg-surfaceLight dark:bg-surfaceDark">
+      <p class="font-bold text-textLight dark:text-textDark">This is surface</p>
+    </div>
+
+    <!-- Status Colors -->
+    <div class="p-4 rounded shadow bg-successTail">
+      <p class="font-bold text-white">This is success</p>
+    </div>
+
+    <div class="p-4 rounded shadow bg-warningTail">
+      <p class="font-bold text-white">This is warning</p>
+    </div>
+
+    <div class="p-4 rounded shadow bg-dangerTail">
+      <p class="font-bold text-white">This is danger</p>
+    </div>
+  </div>
+</div>
