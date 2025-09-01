@@ -1,0 +1,107 @@
+<div
+  class="h-screen flex flex-col items-center justify-center gap-8 bg-bgLight dark:bg-bgDark"
+>
+  <!-- Dark mode toggle -->
+  <app-dark-mode-toggle class="absolute top-4 right-4"></app-dark-mode-toggle>
+
+  <!-- Heading  -->
+  <h1
+    class="font-heading font-bold text-4xl text-primaryTail dark:text-primaryDarkTail"
+  >
+    Jeyah
+  </h1>
+  <!-- icon test -->
+
+  <!-- Login box -->
+  <form
+    [formGroup]="loginForm"
+    (ngSubmit)="login()"
+    class="flex flex-col gap-4 w-full max-w-sm md:max-w-md lg:max-w-lg p-6 bg-surfaceLight dark:bg-surfaceDark rounded-2xl shadow-md text-textLight dark:text-textDark"
+  >
+    <h2
+      class="text-xl md:text-2xl lg:text-3xl font-semibold font-heading text-center text-primaryTail dark:text-primaryDarkTail mb-2"
+    >
+      Se Connecter
+    </h2>
+
+    <!-- Email -->
+    <div class="">
+      <label
+        class="block text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-medium mb-2"
+        >Email</label
+      >
+      <input
+        hlmInput
+        formControlName="email"
+        placeholder="Entrez votre email"
+        type="email"
+        class="w-full md:text-base md:w-[300px] lg:w-[400px]"
+      />
+      <div
+        *ngIf="
+          loginForm.get('email')?.invalid && loginForm.get('email')?.touched
+        "
+        class="text-dangerTail text-xs md:text-sm lg:text-base mt-1"
+      >
+        Email est requis
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="">
+      <label
+        class="block text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-medium mb-2"
+        >Mot de Passe</label
+      >
+      <input
+        hlmInput
+        formControlName="password"
+        placeholder="********"
+        type="password"
+        class="w-full md:text-base"
+      />
+      <div
+        *ngIf="
+          loginForm.get('password')?.invalid &&
+          loginForm.get('password')?.touched
+        "
+        class="text-dangerTail text-xs md:text-sm lg:text-base mt-1"
+      >
+        Mot de passe est requis
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      hlmBtn
+      type="submit"
+      class="w-full bg-accentTail text-white dark:bg-accentDarkTail dark:text-white hover:bg-accentTail/90 dark:hover:bg-accentDarkTail/90 transition-all rounded-md py-2.5 text-sm md:text-base lg:text-lg"
+    >
+      <ng-icon name="lucideAirplay" size="sm" class="mr-2"></ng-icon>
+      Se Connecter
+    </button>
+
+    <!-- Divider -->
+    <div class="flex items-center my-4">
+      <div class="flex-grow border-t border-gray-300"></div>
+      <span class="px-2 text-sm md:text-sm lg:text-base text-gray-500">ou</span>
+      <div class="flex-grow border-t border-gray-300"></div>
+    </div>
+
+    <!-- Google Login -->
+    <button
+      type="button"
+      (click)="loginWithGoogle()"
+      hlmBtn
+      variant="outline"
+      class="flex items-center justify-center w-full gap-2 border border-gray-300 dark:border-gray-600 rounded-md py-2.5 px-3 text-sm md:text-base lg:text-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-accentTail dark:hover:text-accentDarkTail transition-all"
+    >
+      <img
+        src="https://www.svgrepo.com/show/475656/google-color.svg"
+        alt="Google"
+        class="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 xl:w-10 xl:h-10"
+      />
+      Se Connecter Avec Google
+    </button>
+  </form>
+</div>

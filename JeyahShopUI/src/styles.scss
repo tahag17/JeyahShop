@@ -31,3 +31,16 @@
   --input: #374151;
   --ring: #2541b2;
 }
+
+/* Light mode */
+input[hlmInput]:focus {
+  outline: none;
+  border-color: theme("colors.accentTail") !important;
+  box-shadow: 0 0 0 1px theme("colors.accentTail") !important;
+}
+
+/* Dark mode */
+.dark input[hlmInput]:focus {
+  border-color: theme("colors.accentDarkTail") !important;
+  box-shadow: 0 0 0 1px theme("colors.accentDarkTail") !important;
+}

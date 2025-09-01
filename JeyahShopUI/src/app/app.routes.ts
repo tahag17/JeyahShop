@@ -1,24 +1,35 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component';
 import { AppComponent } from './app.component';
-import { WelcomeComponent } from './pages/welcome/welcome.component';
-import { AboutComponent } from './pages/about/about.component';
-import { ServicesComponent } from './pages/services/services.component';
-import { ContactComponent } from './pages/contact/contact.component';
+import { LoginComponent } from './features/login/login.component';
+import { StoreLayoutComponent } from './features/store-layout/store-layout.component';
+import { DashboardLayoutComponent } from './features/dashboard-layout/dashboard-layout.component';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
     // canActivate: [AuthGuardService]
+    // children:
   },
+
+  //for guests and users
   {
     path: '',
-    redirectTo: 'public/welcome',
-    pathMatch: 'full',
+    component: StoreLayoutComponent,
   },
-  { path: 'public/welcome', component: WelcomeComponent },
-  { path: 'public/about', component: AboutComponent },
-  { path: 'public/services', component: ServicesComponent },
-  { path: 'public/contact', component: ContactComponent },
+
+  //for managers
+  {
+    path: 'dashboard',
+    component: DashboardLayoutComponent,
+    // children: [
+    //   { path: '', component: DashboardHomeComponent },
+    //   { path: 'products', component: ManageProductsComponent },
+    //   { path: 'orders', component: ManageOrdersComponent },
+    //   { path: 'users', component: ManageUsersComponent }, // admin only
+    // ]
+    canActivate: [authGuard],
+    data: { roles: ['ROLE_MANAGER'] }, // <-- this is route.data['roles']
+  },
 ];

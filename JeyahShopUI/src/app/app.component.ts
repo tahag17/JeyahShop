@@ -1,19 +1,13 @@
 import { Component } from '@angular/core';
-import {RouterLink, RouterOutlet} from '@angular/router';
-import {MenuComponent} from "./pages/menu/menu.component";
-import {FooterComponent} from "./pages/footer/footer.component";
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { DarkModeToggleComponent } from './features/dark-mode-toggle/dark-mode-toggle.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    MenuComponent,
-    FooterComponent
-  ],
+  imports: [RouterOutlet, RouterLink, DarkModeToggleComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
   title = 'JeyahShopUI';

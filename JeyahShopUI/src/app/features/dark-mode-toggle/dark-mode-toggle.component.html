@@ -1,0 +1,7 @@
+<button
+  (click)="toggleDarkMode()"
+  class="p-2 w-8 rounded bg-primaryTail dark:bg-primaryDarkTail text-white dark:text-textDark hover:bg-secondary transition-colors flex items-center justify-center"
+>
+  <i *ngIf="isDarkMode" class="fa-regular fa-sun"></i>
+  <i *ngIf="!isDarkMode" class="fa-regular fa-moon"></i>
+</button>
