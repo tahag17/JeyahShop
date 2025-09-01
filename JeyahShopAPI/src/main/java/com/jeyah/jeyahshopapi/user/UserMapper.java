@@ -17,14 +17,14 @@ public class UserMapper {
                         .stream()
                         .map(role -> role.getName()) // Assuming Role has getName()
                         .collect(Collectors.toList()))
-//                .address(user.getAddress() != null
-//                        ? AddressResponse.builder()
-//                        .id(user.getAddress().getId())
-//                        .postalCode(user.getAddress().getPostalCode())
-//                        .city(user.getAddress().getCity())
-//                        .street(user.getAddress().getStreet())
-//                        .build()
-//                        : null)
+                .address(user.getAddress() != null
+                        ? AddressResponse.builder()
+                        .id(user.getAddress().getId())
+                        .postalCode(user.getAddress().getPostalCode())
+                        .city(user.getAddress().getCity())
+                        .street(user.getAddress().getStreet())
+                        .build()
+                        : null)
                 .creationDate(user.getCreationDate())
                 .lastModifiedDate(user.getLastModifiedDate())
                 .build();

@@ -3,12 +3,7 @@ package com.jeyah.jeyahshopapi.user;
 import lombok.Data;
 
 @Data
-public class UpdateUserRequest {
-    private String firstName;
-    private String lastName;
-    private String phone;
-
-    // Address fields
+public class UpdateAddressRequest {
     private String street;
     private String city;
     private Integer postalCode;

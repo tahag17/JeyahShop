@@ -17,7 +17,7 @@ public class UserResponse {
     private String phone;
     private boolean enabled;
     private List<String> roles;
-//    private AddressResponse address;
+    private AddressResponse address;
     private LocalDateTime creationDate;
     private LocalDateTime lastModifiedDate;
 }
