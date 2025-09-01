@@ -1,0 +1,119 @@
+<div
+  *ngIf="user$ | async as user"
+  class="max-w-6xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md space-y-4"
+>
+  <!-- Header -->
+  <div
+    class="flex gap-4 items-center justify-between text-primaryTail dark:text-primaryDarkTail"
+  >
+    <h2 class="text-3xl font-heading font-bold">
+      {{ user.fullName }}
+    </h2>
+    <i class="fa-solid fa-pen-to-square text-3xl hover:bg-accentTail"></i>
+  </div>
+
+  <!-- Infos utilisateur -->
+  <div class="space-y-3">
+    <!-- Email -->
+    <div class="flex justify-between items-center">
+      <span class="text-base text-textLight dark:text-textDark">
+        <span class="font-semibold">Email :</span> {{ user.email }}
+      </span>
+      <button
+        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+      >
+        Modifier
+      </button>
+    </div>
+
+    <!-- Téléphone -->
+    <div class="flex justify-between items-center">
+      <span class="text-base text-textLight dark:text-textDark">
+        <span class="font-semibold">Téléphone :</span>
+        {{ user.phone || "Non fourni" }}
+      </span>
+      <button
+        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+      >
+        Modifier
+      </button>
+    </div>
+
+    <!-- Rôles -->
+    <div class="flex justify-between items-center">
+      <span class="text-base text-textLight dark:text-textDark">
+        <span class="font-semibold">Rôles :</span> {{ user.roles.join(", ") }}
+      </span>
+      <button
+        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+      >
+        Modifier
+      </button>
+    </div>
+
+    <!-- Compte activé -->
+    <div class="flex justify-between items-center">
+      <span class="text-base text-textLight dark:text-textDark">
+        <span class="font-semibold">Compte activé :</span>
+        <span
+          [ngClass]="{
+            'text-successTail': user.enabled,
+            'text-dangerTail': !user.enabled
+          }"
+        >
+          {{ user.enabled ? "Oui" : "Non" }}
+        </span>
+      </span>
+      <button
+        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+      >
+        Modifier
+      </button>
+    </div>
+
+    <!-- Adresse -->
+    <div class="flex justify-between items-start">
+      <span class="text-base text-textLight dark:text-textDark">
+        <span class="font-semibold">Adresse :</span>
+        <div class="ml-2">
+          <p>{{ user.address.street }}</p>
+          <p>{{ user.address.city }}, {{ user.address.postalCode }}</p>
+        </div>
+      </span>
+      <button
+        class="px-2 py-1 mt-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+      >
+        Modifier
+      </button>
+    </div>
+
+    <!-- Dates -->
+    <div class="flex justify-between items-center">
+      <span class="text-base text-textLight dark:text-textDark">
+        <span class="font-semibold">Créé le :</span>
+        {{ user.creationDate | date : "medium" }}
+      </span>
+      <button
+        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+      >
+        Modifier
+      </button>
+    </div>
+
+    <div class="flex justify-between items-center">
+      <span class="text-base text-textLight dark:text-textDark">
+        <span class="font-semibold">Dernière modification :</span>
+        {{
+          user.lastModifiedDate
+            ? (user.lastModifiedDate | date : "medium")
+            : "Jamais"
+        }}
+      </span>
+      <button
+        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+      >
+        Modifier
+      </button>
+    </div>
+  </div>
+</div>

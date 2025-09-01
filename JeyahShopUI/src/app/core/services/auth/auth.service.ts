@@ -9,7 +9,12 @@ import { BehaviorSubject, map, tap } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  constructor() {}
+  constructor() {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      this.currentUserSubject.next(JSON.parse(storedUser));
+    }
+  }
   private http = inject(HttpClient);
   private loginUrl = `${environment.apiBaseUrl}public/api/auth/login`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -23,23 +28,20 @@ export class AuthService {
     return this.currentUserSubject.asObservable();
   }
 
-  login(credentials: { email: string; password: string }): Observable<User> {
+  login(credentials: { email: string; password: string }) {
     return this.http
       .post<User>(this.loginUrl, credentials, { withCredentials: true })
       .pipe(
-        map((user) => ({
-          ...user,
-          creationDate: new Date(user.creationDate).toISOString(),
-          lastModifiedDate: user.lastModifiedDate
-            ? new Date(user.lastModifiedDate).toISOString()
-            : null,
-        })),
-        tap((user) => this.currentUserSubject.next(user))
+        map((user) => ({ ...user })),
+        tap((user) => {
+          this.currentUserSubject.next(user);
+          localStorage.setItem('currentUser', JSON.stringify(user));
+        })
       );
   }
 
   logout() {
     this.currentUserSubject.next(null);
-    // Optionally clear session/cookies here
+    localStorage.removeItem('currentUser');
   }
 }

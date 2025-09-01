@@ -1,14 +1,7 @@
-<div
-  class="h-screen flex items-center justify-center bg-bgLight dark:bg-bgDark"
->
-  <!-- Dark mode toggle -->
+<div class="h-screen flex items-start justify-center bg-bgLight dark:bg-bgDark">
   <app-dark-mode-toggle class="absolute top-4 right-4"></app-dark-mode-toggle>
 
-  <!-- Main box -->
-  <div
-    class="w-full max-w-[1500px] h-full flex items-center justify-center rounded-2xl shadow-md p-6"
-  >
-    <!-- Routed content -->
+  <div class="w-full max-w-[1500px] h-full flex flex-col">
     <router-outlet></router-outlet>
   </div>
 </div>
