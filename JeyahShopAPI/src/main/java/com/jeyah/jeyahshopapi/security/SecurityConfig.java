@@ -46,9 +46,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/public/**").permitAll()
-                                .requestMatchers("user/**").hasRole("USER")
-                                .requestMatchers("manager/**").hasRole("MANAGER")
-                                .requestMatchers("admin/**").hasRole("ADMIN")
+                                .requestMatchers("/user/**").hasRole("USER")
+                                .requestMatchers("/manager/**").hasRole("MANAGER")
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
 //                                .anyRequest().permitAll()
                 )
@@ -56,7 +56,9 @@ public class SecurityConfig {
                         .maximumSessions(1)
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService)));
+                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService)))
+        ;
+
 
 
         return http.build();
@@ -67,7 +69,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:4200")); // Angular dev server
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 

@@ -63,4 +63,49 @@ public class JeyahShopApiApplication {
 //
 //        };
 //    }
+
+//        @Bean
+    public CommandLineRunner addRoles(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        return args -> {
+//                Role user = new Role();
+//                user.setName("ROLE_USER");
+//                roleRepository.save(user);
+//
+//                Role manager = new Role();
+//                manager.setName("ROLE_MANAGER");
+//                roleRepository.save(manager);
+//
+//                Role admin = new Role();
+//                admin.setName("ROLE_ADMIN");
+//                roleRepository.save(admin);
+
+                // Manager user
+// Create manager user
+            User TahaUser = userRepository.findByEmail("manager@example.com").orElseThrow(() -> new RuntimeException("User not found"));
+
+// Fetch the ROLE_MANAGER from the DB
+            Role managerRole = roleRepository.findByName("ROLE_USER")
+                    .orElseThrow(() -> new RuntimeException("ROLE_MANAGER not found"));
+
+// Add role to user
+            TahaUser.getRoles().add(managerRole);
+
+// Save user
+            userRepository.save(TahaUser);
+
+                // Admin user
+//                User adminUser = new User();
+//                adminUser.setFirstName("Admin");
+//                adminUser.setLastName("User");
+//                adminUser.setEmail("admin@example.com");
+//                adminUser.setPassword(passwordEncoder.encode("admin123"));
+//                adminUser.setEnabled(true);
+//                adminUser.setRoles(new ArrayList<>());
+//                adminUser.getRoles().add(admin);
+//                userRepository.save(adminUser);
+//
+
+        };
+    }
+
 }

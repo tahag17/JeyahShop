@@ -2,6 +2,7 @@ package com.jeyah.jeyahshopapi.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +21,7 @@ public class UserController {
 
     // Update phone
     @PatchMapping("/{id}/phone")
+//    @PreAuthorize("#id == principal.id")
     public ResponseEntity<User> updatePhone(@PathVariable Integer id, @RequestBody UpdatePhoneRequest request) {
         User updatedUser = userService.updatePhone(id, request.getPhone());
         return ResponseEntity.ok(updatedUser);
