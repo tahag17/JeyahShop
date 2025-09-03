@@ -4,20 +4,33 @@ import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs/internal/Observable';
 import { User } from '../../../shared/models/user.model';
 import { BehaviorSubject, map, tap } from 'rxjs';
+import { convertDateArrayToDate } from '../../../utils/date.utils';
+import { BackendUser } from '../../../shared/models/backend-user.model';
+import { mapBackendUserToUser } from '../../../utils/map-user.utils';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   constructor() {
+    // const storedUser = localStorage.getItem('currentUser');
+    // if (storedUser) {
+    //   const backendUser = JSON.parse(storedUser); // stored in backend format
+    //   this.currentUserSubject.next(mapBackendUserToUser(backendUser));
+    // }
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
-      this.currentUserSubject.next(JSON.parse(storedUser));
+      const backendUser = JSON.parse(storedUser); // stored in backend format
+      const user = mapBackendUserToUser(backendUser);
+      this.currentUserSubject.next(user);
     }
   }
+
   private http = inject(HttpClient);
   private loginUrl = `${environment.apiBaseUrl}public/api/auth/login`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private router = inject(Router);
 
   get currentUser(): User | null {
     return this.currentUserSubject.value;
@@ -30,9 +43,9 @@ export class AuthService {
 
   login(credentials: { email: string; password: string }) {
     return this.http
-      .post<User>(this.loginUrl, credentials, { withCredentials: true })
+      .post<BackendUser>(this.loginUrl, credentials, { withCredentials: true })
       .pipe(
-        map((user) => ({ ...user })),
+        map((backendUser) => this.handleLoginSuccess(backendUser)), // <-- use mapper
         tap((user) => {
           this.currentUserSubject.next(user);
           localStorage.setItem('currentUser', JSON.stringify(user));
@@ -48,5 +61,38 @@ export class AuthService {
   setCurrentUser(user: User) {
     this.currentUserSubject.next(user);
     localStorage.setItem('currentUser', JSON.stringify(user));
+  }
+
+  private handleLoginSuccess(backendUser: BackendUser) {
+    const user = mapBackendUserToUser(backendUser);
+    // ✅ Add these logs here
+    // console.log('Mapped user:', user);
+    // console.log(
+    //   'creationDate:',
+    //   user.creationDate,
+    //   user.creationDate?.getTime()
+    // );
+    // console.log(
+    //   'lastModifiedDate:',
+    //   user.lastModifiedDate,
+    //   user.lastModifiedDate?.getTime()
+    // );
+
+    this.setCurrentUser(user);
+    return user;
+  }
+
+  processBackendUser(backendUser: BackendUser): User {
+    return this.handleLoginSuccess(backendUser);
+  }
+
+  navigateAfterLogin(user: User) {
+    if (user.roles.includes('ROLE_MANAGER')) {
+      this.router.navigate(['/dashboard/profile']);
+    } else if (user.roles.includes('ROLE_USER')) {
+      this.router.navigate(['/profile']);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }

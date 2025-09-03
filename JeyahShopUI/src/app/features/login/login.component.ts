@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component, inject, NgZone } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -21,6 +21,8 @@ import { lucideAirplay } from '@ng-icons/lucide';
 // import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmInputModule } from '@spartan-ng/ui-input-helm';
 import { DarkModeToggleComponent } from '../dark-mode-toggle/dark-mode-toggle.component';
+import { BackendUser } from '../../shared/models/backend-user.model';
+import { mapBackendUserToUser } from '../../utils/map-user.utils';
 
 @Component({
   selector: 'app-login',
@@ -42,6 +44,8 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private zone = inject(NgZone);
+
   constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -53,13 +57,7 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value).subscribe({
       next: (user: User) => {
         console.log('Logged in user:', user);
-        if (user.roles.includes('ROLE_MANAGER')) {
-          this.router.navigate(['/dashboard']); // manager dashboard
-        } else if (user.roles.includes('ROLE_USER')) {
-          this.router.navigate(['/store']); // store layout
-        } else {
-          this.router.navigate(['/']);
-        }
+        this.authService.navigateAfterLogin(user);
       },
       error: (err) => console.error('Login failed', err),
     });
@@ -110,18 +108,20 @@ export class LoginComponent {
     const listener = (event: MessageEvent) => {
       if (event.origin !== 'http://localhost:8080') return;
 
-      const user: User = event.data;
-      console.log('OAuth2 user received:', user);
+      const backendUser: BackendUser = event.data;
 
-      this.authService.setCurrentUser(user);
+      const user: User = this.authService.processBackendUser(backendUser);
+      console.log('Google login user:', user);
+      console.log(
+        'creationDate prototype:',
+        Object.getPrototypeOf(user.creationDate)
+      );
+      console.log(
+        'lastModifiedDate prototype:',
+        Object.getPrototypeOf(user.lastModifiedDate)
+      );
 
-      if (user.roles.includes('ROLE_MANAGER')) {
-        this.router.navigate(['/dashboard']);
-      } else if (user.roles.includes('ROLE_USER')) {
-        this.router.navigate(['/store']);
-      } else {
-        this.router.navigate(['/']);
-      }
+      this.authService.navigateAfterLogin(user);
 
       window.removeEventListener('message', listener);
     };

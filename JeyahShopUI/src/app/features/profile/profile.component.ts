@@ -5,6 +5,8 @@ import { CommonModule, DatePipe, NgIf } from '@angular/common';
 import { AsyncPipe } from '@angular/common';
 import UserService from '../../core/services/user/user.service';
 import { FormsModule } from '@angular/forms';
+import { convertDateArrayToDate } from '../../utils/date.utils';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -18,10 +20,27 @@ export class ProfileComponent {
   private userService = inject(UserService);
 
   // way 1: snapshot value
-  user: User | null = this.authService.currentUser;
 
   // way 2: observable (preferred if it can change dynamically)
-  user$ = this.authService.currentUser$;
+  user$ = this.authService.currentUser$.pipe(
+    tap((user) => {
+      if (user) {
+        console.log('ProfileComponent user$ emitted:', user);
+        console.log(
+          'creationDate instanceof Date?',
+          user.creationDate instanceof Date
+        );
+        console.log(
+          'lastModifiedDate instanceof Date?',
+          user.lastModifiedDate instanceof Date
+        );
+        console.log(
+          'creationDate prototype:',
+          Object.getPrototypeOf(user.creationDate)
+        );
+      }
+    })
+  );
 
   updatePhone(phone: string) {
     const user = this.authService.currentUser;

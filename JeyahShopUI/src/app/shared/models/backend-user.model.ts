@@ -1,6 +1,6 @@
 import { Address } from './address.model';
 
-export interface User {
+export interface BackendUser {
   id: number;
   firstName: string;
   lastName: string;
@@ -10,6 +10,6 @@ export interface User {
   enabled: boolean;
   roles: string[];
   address: Address;
-  creationDate: Date | null;
-  lastModifiedDate?: Date | null;
+  creationDate: number[] | null;
+  lastModifiedDate?: number[] | null;
 }
