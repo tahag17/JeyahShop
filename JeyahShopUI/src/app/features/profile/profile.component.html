@@ -1,77 +1,111 @@
 <div
   *ngIf="user$ | async as user"
-  class="max-w-6xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md space-y-4"
+  class="max-w-6xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md space-y-6"
 >
   <!-- Header -->
   <div
     class="flex gap-4 items-center justify-between text-primaryTail dark:text-primaryDarkTail"
   >
-    <h2 class="text-3xl font-heading font-bold">
-      {{ user.fullName }}
-    </h2>
-    <i class="fa-solid fa-pen-to-square text-3xl hover:bg-accentTail"></i>
+    <h2 class="text-3xl font-heading font-bold">{{ user.fullName }}</h2>
   </div>
 
-  <!-- Infos utilisateur -->
-  <div class="space-y-3">
-    <!-- Email -->
-    <div class="flex justify-between items-center">
-      <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Email :</span> {{ user.email }}
-      </span>
-      <button
-        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
-      >
-        Modifier
-      </button>
-    </div>
+  <!-- Infos principales (email + compte activé) -->
+  <div class="space-y-2">
+    <p class="text-base text-textLight dark:text-textDark">
+      <span class="font-semibold">Email :</span> {{ user.email }}
+    </p>
 
-    <!-- Téléphone -->
+    <p class="text-base text-textLight dark:text-textDark">
+      <span class="font-semibold">Compte activé :</span>
+      <span
+        [ngClass]="{
+          'text-successTail': user.enabled,
+          'text-dangerTail': !user.enabled
+        }"
+      >
+        {{ user.enabled ? "Oui" : "Non" }}
+      </span>
+    </p>
+  </div>
+
+  <!-- Infos modifiables -->
+  <div class="space-y-4">
+    <!-- Téléphone (inline editing) -->
     <div class="flex justify-between items-center">
       <span class="text-base text-textLight dark:text-textDark">
         <span class="font-semibold">Téléphone :</span>
-        {{ user.phone || "Non fourni" }}
+
+        <ng-container *ngIf="editingPhone; else phoneText">
+          <input
+            type="text"
+            [(ngModel)]="phoneValue"
+            class="border rounded px-2 py-1 text-sm"
+          />
+        </ng-container>
+
+        <ng-template #phoneText>
+          {{ user.phone || "Non fourni" }}
+        </ng-template>
       </span>
       <button
         class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+        (click)="editingPhone ? savePhone() : startEditPhone()"
       >
-        Modifier
+        {{ editingPhone ? "Sauvegarder" : "Modifier" }}
       </button>
     </div>
 
-    <!-- Rôles -->
+    <!-- First Name (inline editing) -->
     <div class="flex justify-between items-center">
       <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Rôles :</span> {{ user.roles.join(", ") }}
+        <span class="font-semibold">Prénom :</span>
+
+        <ng-container *ngIf="editingFirstName; else firstNameText">
+          <input
+            type="text"
+            [(ngModel)]="firstNameValue"
+            class="border rounded px-2 py-1 text-sm"
+          />
+        </ng-container>
+
+        <ng-template #firstNameText>
+          {{ user.firstName }}
+        </ng-template>
       </span>
       <button
         class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+        (click)="editingFirstName ? saveFirstName() : startEditFirstName()"
       >
-        Modifier
+        {{ editingFirstName ? "Sauvegarder" : "Modifier" }}
       </button>
     </div>
 
-    <!-- Compte activé -->
+    <!-- Last Name (inline editing) -->
     <div class="flex justify-between items-center">
       <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Compte activé :</span>
-        <span
-          [ngClass]="{
-            'text-successTail': user.enabled,
-            'text-dangerTail': !user.enabled
-          }"
-        >
-          {{ user.enabled ? "Oui" : "Non" }}
-        </span>
+        <span class="font-semibold">Nom :</span>
+
+        <ng-container *ngIf="editingLastName; else lastNameText">
+          <input
+            type="text"
+            [(ngModel)]="lastNameValue"
+            class="border rounded px-2 py-1 text-sm"
+          />
+        </ng-container>
+
+        <ng-template #lastNameText>
+          {{ user.lastName }}
+        </ng-template>
       </span>
       <button
         class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+        (click)="editingLastName ? saveLastName() : startEditLastName()"
       >
-        Modifier
+        {{ editingLastName ? "Sauvegarder" : "Modifier" }}
       </button>
     </div>
 
-    <!-- Adresse -->
+    <!-- Adresse (modal editing) -->
     <div class="flex justify-between items-start">
       <span class="text-base text-textLight dark:text-textDark">
         <span class="font-semibold">Adresse :</span>
@@ -82,38 +116,55 @@
       </span>
       <button
         class="px-2 py-1 mt-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+        (click)="openAddressModal()"
       >
         Modifier
       </button>
     </div>
 
-    <!-- Dates -->
+    <!-- Mot de passe (modal editing) -->
     <div class="flex justify-between items-center">
       <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Créé le :</span>
-        {{ user.creationDate | date : "medium" }}
+        <span class="font-semibold">Mot de passe :</span> ********
       </span>
       <button
         class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+        (click)="openPasswordModal()"
       >
         Modifier
       </button>
     </div>
 
-    <div class="flex justify-between items-center">
+    <!-- Rôles (seulement pour manager ou admin) -->
+    <div
+      *ngIf="
+        user &&
+        (user.roles.includes('ROLE_ADMIN') ||
+          user.roles.includes('ROLE_MANAGER'))
+      "
+      class="flex justify-between items-center"
+    >
       <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Dernière modification :</span>
-        {{
-          user.lastModifiedDate
-            ? (user.lastModifiedDate | date : "medium")
-            : "Jamais"
-        }}
+        <span class="font-semibold">Rôles :</span>
+        {{ user.roles.join(", ") }}
       </span>
-      <button
-        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
-      >
-        Modifier
-      </button>
     </div>
+  </div>
+
+  <!-- Dates -->
+  <div class="pt-4 space-y-2 border-t border-gray-300 dark:border-gray-600">
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      <span class="font-semibold">Créé le :</span>
+      {{ user.creationDate | date : "medium" }}
+    </p>
+
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      <span class="font-semibold">Dernière modification :</span>
+      {{
+        user.lastModifiedDate
+          ? (user.lastModifiedDate | date : "medium")
+          : "Jamais"
+      }}
+    </p>
   </div>
 </div>

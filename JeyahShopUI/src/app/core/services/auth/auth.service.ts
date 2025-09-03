@@ -44,4 +44,9 @@ export class AuthService {
     this.currentUserSubject.next(null);
     localStorage.removeItem('currentUser');
   }
+
+  setCurrentUser(user: User) {
+    this.currentUserSubject.next(user);
+    localStorage.setItem('currentUser', JSON.stringify(user));
+  }
 }

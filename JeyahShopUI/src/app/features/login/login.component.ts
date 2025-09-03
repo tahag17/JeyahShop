@@ -65,7 +65,75 @@ export class LoginComponent {
     });
   }
 
+  // loginWithGoogle() {
+  //   const width = 500;
+  //   const height = 600;
+  //   const left = window.innerWidth / 2 - width / 2;
+  //   const top = window.innerHeight / 2 - height / 2;
+
+  //   const popup = window.open(
+  //     'http://localhost:8080/oauth2/authorization/google',
+  //     'google-login',
+  //     `width=${width},height=${height},top=${top},left=${left}`
+  //   );
+
+  //   // Listen for messages from the popup
+  //   const listener = (event: MessageEvent) => {
+  //     if (event.origin !== 'http://localhost:8080') return; // security check
+
+  //     const user: User = event.data;
+  //     console.log('OAuth2 user:', user);
+
+  //     this.authService.setCurrentUser(user); // use the public method
+
+  //     if (user.roles.includes('ROLE_MANAGER')) {
+  //       this.router.navigate(['/dashboard']);
+  //     } else if (user.roles.includes('ROLE_USER')) {
+  //       this.router.navigate(['/store']);
+  //     } else {
+  //       this.router.navigate(['/']);
+  //     }
+
+  //     window.removeEventListener('message', listener); // cleanup
+  //   };
+
+  //   window.addEventListener('message', listener);
+  // }
+
   loginWithGoogle() {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    const width = 500;
+    const height = 600;
+    const left = window.innerWidth / 2 - width / 2;
+    const top = window.innerHeight / 2 - height / 2;
+
+    // Add listener BEFORE opening popup
+    const listener = (event: MessageEvent) => {
+      if (event.origin !== 'http://localhost:8080') return;
+
+      const user: User = event.data;
+      console.log('OAuth2 user received:', user);
+
+      this.authService.setCurrentUser(user);
+
+      if (user.roles.includes('ROLE_MANAGER')) {
+        this.router.navigate(['/dashboard']);
+      } else if (user.roles.includes('ROLE_USER')) {
+        this.router.navigate(['/store']);
+      } else {
+        this.router.navigate(['/']);
+      }
+
+      window.removeEventListener('message', listener);
+    };
+
+    window.addEventListener('message', listener);
+
+    const popup = window.open(
+      'http://localhost:8080/oauth2/authorization/google',
+      'google-login',
+      `width=${width},height=${height},top=${top},left=${left}`
+    );
+
+    if (!popup) console.error('Popup blocked by browser');
   }
 }
