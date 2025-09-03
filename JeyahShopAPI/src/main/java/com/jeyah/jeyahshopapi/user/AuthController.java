@@ -1,8 +1,10 @@
 package com.jeyah.jeyahshopapi.user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jeyah.jeyahshopapi.role.Role;
 import com.jeyah.jeyahshopapi.role.RoleRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,11 +17,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -135,6 +135,34 @@ public class AuthController {
         userRepository.save(user);
         return Collections.singletonMap("message", "User registered successfully");
     }
+
+    @GetMapping("/oauth2/popup-success")
+    public String oauth2PopupSuccess(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        SecurityContext context = (SecurityContext) request.getSession()
+                .getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+
+        if (context != null && context.getAuthentication() != null) {
+            CustomUserPrincipal principal = (CustomUserPrincipal) context.getAuthentication().getPrincipal();
+            User user = principal.getUser();
+            String userJson = new ObjectMapper().writeValueAsString(UserMapper.toResponse(user));
+
+            // Return HTML with a script that sends data to the opener
+            response.setContentType("text/html");
+            response.getWriter().write("""
+            <html>
+            <body>
+            <script>
+              window.opener.postMessage(%s, 'http://localhost:4200');
+              window.close();
+            </script>
+            </body>
+            </html>
+        """.formatted(userJson));
+            response.getWriter().flush();
+        }
+        return null;
+    }
+
 
 
 }

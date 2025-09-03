@@ -20,47 +20,46 @@ import java.io.IOException;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final ObjectMapper objectMapper;
-//    private final String frontendUrl ="http://localhost:4200";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
 
-        // The principal should be CustomUserPrincipal (from your CustomOidcUserService)
         CustomUserPrincipal principal;
         if (authentication.getPrincipal() instanceof CustomUserPrincipal) {
             principal = (CustomUserPrincipal) authentication.getPrincipal();
         } else if (authentication.getPrincipal() instanceof org.springframework.security.oauth2.core.oidc.user.OidcUser) {
-            // Extract the CustomUserPrincipal stored as an attribute
             principal = (CustomUserPrincipal) ((org.springframework.security.oauth2.core.oidc.user.OidcUser) authentication.getPrincipal())
                     .getAttribute("principal");
         } else {
             throw new IllegalStateException("Unknown principal type: " + authentication.getPrincipal().getClass());
         }
 
-        // Put authentication into the SecurityContext
+        // Put authentication into SecurityContext & session
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
+        request.getSession(true)
+                .setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 
-        // Persist context into HTTP session (cookie)
-        HttpSession session = request.getSession(true);
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
-
-        // Convert user to response DTO
+        // Convert user to response JSON
         User user = principal.getUser();
         String userJson = objectMapper.writeValueAsString(UserMapper.toResponse(user));
 
-        // Send JSON response to frontend
-        response.setContentType("application/json");
+        // Return HTML that posts message to opener and closes popup
+        response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(userJson);
+        response.getWriter().write("""
+            <html>
+            <body>
+              <script>
+                window.opener.postMessage(%s, 'http://localhost:4200');
+                window.close();
+              </script>
+            </body>
+            </html>
+        """.formatted(userJson));
         response.getWriter().flush();
 
-        // Optional: you can also redirect if needed
-        // getRedirectStrategy().sendRedirect(request, response, "/store");
-//        getRedirectStrategy().sendRedirect(request, response, frontendUrl + "/dashboard/profile");
-
+        // DO NOT call sendRedirect here — remove any redirect
     }
-
-
 }
