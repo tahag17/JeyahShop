@@ -1,6 +1,7 @@
 package com.jeyah.jeyahshopapi.security;
 
 import com.jeyah.jeyahshopapi.user.CustomUserDetailsService;
+import com.jeyah.jeyahshopapi.user.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +38,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   CustomOidcUserService customOidcUserService
+                                                   CustomOidcUserService customOidcUserService,
+                                                   OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler
     ) throws Exception {
 
 
@@ -56,7 +58,8 @@ public class SecurityConfig {
                         .maximumSessions(1)
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService)))
+                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
+                        .successHandler(oAuth2LoginSuccessHandler))
         ;
 
 
