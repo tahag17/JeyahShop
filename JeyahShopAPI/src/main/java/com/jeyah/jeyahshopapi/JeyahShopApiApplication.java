@@ -84,13 +84,14 @@ public class JeyahShopApiApplication {
             User TahaUser = userRepository.findByEmail("manager@example.com").orElseThrow(() -> new RuntimeException("User not found"));
 
 // Fetch the ROLE_MANAGER from the DB
-            Role managerRole = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RuntimeException("ROLE_MANAGER not found"));
-
-// Add role to user
-            TahaUser.getRoles().add(managerRole);
+//            Role managerRole = roleRepository.findByName("ROLE_USER")
+//                    .orElseThrow(() -> new RuntimeException("ROLE_MANAGER not found"));
+//
+//// Add role to user
+//            TahaUser.getRoles().add(managerRole);
 
 // Save user
+            TahaUser.setEnabled(true);
             userRepository.save(TahaUser);
 
                 // Admin user

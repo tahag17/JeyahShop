@@ -18,33 +18,33 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
-
-        List<GrantedAuthority> authorities = user.getRoles()
-                .stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                user.isEnabled(),
-                true,
-                true,
-                !user.isAccountLocked(),
-                authorities
-        );
-    }
-
 //    @Override
 //    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-//        System.out.println("Hello you just logged in");
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new UsernameNotFoundException(email));
-//        System.out.println(user);
-//        return new CustomUserPrincipal(user);
+//        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+//
+//        List<GrantedAuthority> authorities = user.getRoles()
+//                .stream()
+//                .map(role -> new SimpleGrantedAuthority(role.getName()))
+//                .collect(Collectors.toList());
+//        return new org.springframework.security.core.userdetails.User(
+//                user.getEmail(),
+//                user.getPassword(),
+//                user.isEnabled(),
+//                true,
+//                true,
+//                !user.isAccountLocked(),
+//                authorities
+//        );
 //    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        System.out.println("Hello you just logged in");
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(email));
+        System.out.println(user);
+        return new CustomUserPrincipal(user);
+    }
 
 
 }

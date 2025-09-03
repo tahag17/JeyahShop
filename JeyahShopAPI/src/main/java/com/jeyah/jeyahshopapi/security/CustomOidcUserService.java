@@ -2,6 +2,7 @@ package com.jeyah.jeyahshopapi.security;
 
 import com.jeyah.jeyahshopapi.role.Role;
 import com.jeyah.jeyahshopapi.role.RoleRepository;
+import com.jeyah.jeyahshopapi.user.CustomUserPrincipal;
 import com.jeyah.jeyahshopapi.user.User;
 import com.jeyah.jeyahshopapi.user.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,38 +29,13 @@ public class CustomOidcUserService extends OidcUserService {
         this.roleRepository = roleRepository;
     }
 
-    @Override
-    public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
-        System.out.println("CustomOidcUserService.loadUser called for: " +
-                userRequest.getClientRegistration().getClientName());
-
-        OidcUser oidcUser = super.loadUser(userRequest);
-
-        String email = oidcUser.getEmail();
-
-        User user = userRepository.findByEmail(email).orElseGet(() -> {
-            User newUser = new User();
-            newUser.setEmail(email);
-            newUser.setFirstName(oidcUser.getGivenName());
-            newUser.setLastName(oidcUser.getFamilyName());
-
-            Role userRole = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
-
-            newUser.setRoles(Collections.singletonList(userRole));
-            return userRepository.save(newUser);
-        });
-
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-
-        return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo(), "email");
-    }
-//
 //    @Override
 //    public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
+//        System.out.println("CustomOidcUserService.loadUser called for: " +
+//                userRequest.getClientRegistration().getClientName());
+//
 //        OidcUser oidcUser = super.loadUser(userRequest);
+//
 //        String email = oidcUser.getEmail();
 //
 //        User user = userRepository.findByEmail(email).orElseGet(() -> {
@@ -70,28 +46,53 @@ public class CustomOidcUserService extends OidcUserService {
 //
 //            Role userRole = roleRepository.findByName("ROLE_USER")
 //                    .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
+//
 //            newUser.setRoles(Collections.singletonList(userRole));
 //            return userRepository.save(newUser);
 //        });
 //
-//        CustomUserPrincipal principal = new CustomUserPrincipal(user);
-//
-//        // Attach CustomUserPrincipal to OidcUser as an attribute
-//        Map<String, Object> attributes = new HashMap<>(oidcUser.getAttributes());
-//        attributes.put("principal", principal);
-//
-//        List<GrantedAuthority> authorities = principal.getAuthorities()
-//                .stream()
-//                .map(a -> (GrantedAuthority) a)  // cast each element
+//        List<GrantedAuthority> authorities = user.getRoles().stream()
+//                .map(role -> new SimpleGrantedAuthority(role.getName()))
 //                .collect(Collectors.toList());
 //
-//        return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo(), "email") {
-//            @Override
-//            public Map<String, Object> getAttributes() {
-//                return attributes;
-//            }
-//        };
+//        return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo(), "email");
 //    }
+
+    @Override
+    public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
+        OidcUser oidcUser = super.loadUser(userRequest);
+        String email = oidcUser.getEmail();
+
+        User user = userRepository.findByEmail(email).orElseGet(() -> {
+            User newUser = new User();
+            newUser.setEmail(email);
+            newUser.setFirstName(oidcUser.getGivenName());
+            newUser.setLastName(oidcUser.getFamilyName());
+
+            Role userRole = roleRepository.findByName("ROLE_USER")
+                    .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
+            newUser.setRoles(Collections.singletonList(userRole));
+            return userRepository.save(newUser);
+        });
+
+        CustomUserPrincipal principal = new CustomUserPrincipal(user);
+
+        // Attach CustomUserPrincipal to OidcUser as an attribute
+        Map<String, Object> attributes = new HashMap<>(oidcUser.getAttributes());
+        attributes.put("principal", principal);
+
+        List<GrantedAuthority> authorities = principal.getAuthorities()
+                .stream()
+                .map(a -> (GrantedAuthority) a)  // cast each element
+                .collect(Collectors.toList());
+
+        return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo(), "email") {
+            @Override
+            public Map<String, Object> getAttributes() {
+                return attributes;
+            }
+        };
+    }
 
 
 

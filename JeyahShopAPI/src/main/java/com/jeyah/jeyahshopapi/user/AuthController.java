@@ -2,6 +2,8 @@ package com.jeyah.jeyahshopapi.user;
 
 import com.jeyah.jeyahshopapi.role.Role;
 import com.jeyah.jeyahshopapi.role.RoleRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +11,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,19 +32,80 @@ public class AuthController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+//        try {
+//            Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+//            );
+//
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//            var user = userRepository.findByEmail(request.getEmail())
+//                    .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//            var response = UserMapper.toResponse(user);
+//
+//            return ResponseEntity.ok(response);
+//
+//        } catch (BadCredentialsException e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                    .body(Map.of("error", "Invalid credentials"));
+//        }
+//    }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+//        try {
+//            Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+//            );
+//
+//            // Put authentication into context
+//            SecurityContext securityContext = SecurityContextHolder.getContext();
+//            securityContext.setAuthentication(authentication);
+//
+//            // 🔑 Persist context into HTTP session so cookie will be sent back
+//            HttpSession session = httpRequest.getSession(true);
+//            session.setAttribute(
+//                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+//                    securityContext
+//            );
+//
+//            var user = userRepository.findByEmail(request.getEmail())
+//                    .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//            var response = UserMapper.toResponse(user);
+//
+//            return ResponseEntity.ok(response);
+//
+//        } catch (BadCredentialsException e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                    .body(Map.of("error", "Invalid credentials"));
+//        }
+//    }
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Put authentication into context
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            securityContext.setAuthentication(authentication);
 
-            var user = userRepository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            // Persist context into HTTP session so cookie will be sent back
+            HttpSession session = httpRequest.getSession(true);
+            session.setAttribute(
+                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                    securityContext
+            );
 
-            var response = UserMapper.toResponse(user);
+            // Get user from principal instead of querying DB again
+            CustomUserPrincipal principal = (CustomUserPrincipal) authentication.getPrincipal();
+            var response = UserMapper.toResponse(principal.getUser());
 
             return ResponseEntity.ok(response);
 
@@ -49,6 +114,7 @@ public class AuthController {
                     .body(Map.of("error", "Invalid credentials"));
         }
     }
+
 
 
     @PostMapping("/register")
