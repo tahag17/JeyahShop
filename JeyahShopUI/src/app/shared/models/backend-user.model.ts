@@ -2,14 +2,14 @@ import { Address } from './address.model';
 
 export interface BackendUser {
   id: number;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  email: string;
-  phone?: string | null;
+  firstName: string | null; // backend can send null
+  lastName: string | null; // backend can send null
+  fullName: string | null; // backend can send null
+  email: string | null; // backend might send null if user registered with Google?
+  phone?: string | null; // optional and nullable
   enabled: boolean;
   roles: string[];
-  address: Address;
-  creationDate: number[] | null;
+  address: Address | null; // backend can send null if no address yet
+  creationDate: number[] | null; // array from LocalDateTime
   lastModifiedDate?: number[] | null;
 }

@@ -1,21 +1,33 @@
 <div
   *ngIf="user$ | async as user"
-  class="max-w-6xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md space-y-6"
+  class="max-w-6xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md space-y-2"
 >
   <!-- Header -->
   <div
     class="flex gap-4 items-center justify-between text-primaryTail dark:text-primaryDarkTail"
   >
-    <h2 class="text-3xl font-heading font-bold">{{ user.fullName }}</h2>
+    <h2 class="text-4xl font-heading font-bold">
+      {{
+        user.fullName ||
+          (user.firstName || user.lastName
+            ? (user.firstName || "") + " " + (user.lastName || "")
+            : "Non fourni")
+      }}
+    </h2>
   </div>
 
   <!-- Infos principales (email + compte activé) -->
   <div class="space-y-2">
-    <p class="text-base text-textLight dark:text-textDark">
-      <span class="font-semibold">Email :</span> {{ user.email }}
+    <p
+      class="text-base text-textLight dark:text-textDark hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
+    >
+      <span class="font-semibold">Email :</span>
+      {{ user.email || "Non fourni" }}
     </p>
 
-    <p class="text-base text-textLight dark:text-textDark">
+    <p
+      class="text-base text-textLight dark:text-textDark hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
+    >
       <span class="font-semibold">Compte activé :</span>
       <span
         [ngClass]="{
@@ -29,17 +41,19 @@
   </div>
 
   <!-- Infos modifiables -->
-  <div class="space-y-4">
+  <div class="space-y-2">
     <!-- Téléphone (inline editing) -->
-    <div class="flex justify-between items-center">
+    <div
+      class="flex justify-between items-center p-1 hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded"
+    >
       <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Téléphone :</span>
+        <span class="font-semibold mr-2">Téléphone :</span>
 
         <ng-container *ngIf="editingPhone; else phoneText">
           <input
             type="text"
             [(ngModel)]="phoneValue"
-            class="border rounded px-2 py-1 text-sm"
+            class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
           />
         </ng-container>
 
@@ -56,20 +70,22 @@
     </div>
 
     <!-- First Name (inline editing) -->
-    <div class="flex justify-between items-center">
+    <div
+      class="flex justify-between items-center p-1 hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded"
+    >
       <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Prénom :</span>
+        <span class="font-semibold mr-2">Prénom :</span>
 
         <ng-container *ngIf="editingFirstName; else firstNameText">
           <input
             type="text"
             [(ngModel)]="firstNameValue"
-            class="border rounded px-2 py-1 text-sm"
+            class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
           />
         </ng-container>
 
         <ng-template #firstNameText>
-          {{ user.firstName }}
+          {{ user.firstName || "Non fourni" }}
         </ng-template>
       </span>
       <button
@@ -81,20 +97,22 @@
     </div>
 
     <!-- Last Name (inline editing) -->
-    <div class="flex justify-between items-center">
+    <div
+      class="flex justify-between items-center hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
+    >
       <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Nom :</span>
+        <span class="font-semibold mr-2">Nom :</span>
 
         <ng-container *ngIf="editingLastName; else lastNameText">
           <input
             type="text"
             [(ngModel)]="lastNameValue"
-            class="border rounded px-2 py-1 text-sm"
+            class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
           />
         </ng-container>
 
         <ng-template #lastNameText>
-          {{ user.lastName }}
+          {{ user.lastName || "Non fourni" }}
         </ng-template>
       </span>
       <button
@@ -106,26 +124,41 @@
     </div>
 
     <!-- Adresse (modal editing) -->
-    <!-- <div class="flex justify-between items-start">
-      <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Adresse :</span>
-        <div class="ml-2">
-          <p>{{ user.address.street }}</p>
-          <p>{{ user.address.city }}, {{ user.address.postalCode }}</p>
+    <div
+      class="flex justify-between items-start hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
+    >
+      <div class="text-base text-textLight dark:text-textDark">
+        <p class="font-semibold mb-2">Adresse :</p>
+        <div class="ml-4 space-y-1">
+          <p>
+            <span class="font-medium mr-2">Rue :</span>
+            <span>{{ user.address?.street || "Non fourni" }}</span>
+          </p>
+          <p>
+            <span class="font-medium mr-2">Code postal :</span>
+            <span>{{ user.address?.postalCode || "Non fourni" }}</span>
+          </p>
+          <p>
+            <span class="font-medium mr-2">Ville :</span>
+            <span>{{ user.address?.city || "Non fourni" }}</span>
+          </p>
         </div>
-      </span>
+      </div>
+
       <button
         class="px-2 py-1 mt-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
         (click)="openAddressModal()"
       >
         Modifier
       </button>
-    </div> -->
+    </div>
 
     <!-- Mot de passe (modal editing) -->
-    <div class="flex justify-between items-center">
+    <div
+      class="flex justify-between items-center hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
+    >
       <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Mot de passe :</span> ********
+        <span class="font-semibold mr-2">Mot de passe :</span> ********
       </span>
       <button
         class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
@@ -142,10 +175,10 @@
         (user.roles.includes('ROLE_ADMIN') ||
           user.roles.includes('ROLE_MANAGER'))
       "
-      class="flex justify-between items-center"
+      class="flex justify-between items-center hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
     >
       <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold">Rôles :</span>
+        <span class="font-semibold mr-2">Rôles :</span>
         {{ user.roles.join(", ") }}
       </span>
     </div>
@@ -159,19 +192,6 @@
     </p>
 
     <p class="text-sm text-gray-500 dark:text-gray-400">
-      <span class="font-semibold">Dernière modification :</span>
-      {{
-        user.lastModifiedDate
-          ? (user.lastModifiedDate | date : "medium")
-          : "Jamais"
-      }}
-    </p>
-
-    <p class="text-sm">
-      <span class="font-semibold">Créé le :</span>
-      {{ user.creationDate | date : "medium" }}
-    </p>
-    <p class="text-sm">
       <span class="font-semibold">Dernière modification :</span>
       {{
         user.lastModifiedDate

@@ -93,6 +93,7 @@ export class ProfileComponent {
     if (user) {
       this.userService.updateAddress(user.id, address).subscribe((updated) => {
         console.log('Adresse mise à jour', updated);
+        this.authService.setCurrentUser(updated); // 🔥 update observable + localStorage
       });
     }
   }
@@ -112,12 +113,16 @@ export class ProfileComponent {
     this.editingPhone = true;
     this.phoneValue = this.authService.currentUser?.phone || '';
   }
+  cancel() {
+    this.editingPhone = false;
+  }
   savePhone() {
     if (!this.authService.currentUser) return;
     this.userService
       .updatePhone(this.authService.currentUser.id, this.phoneValue)
       .subscribe((updated) => {
         console.log('Téléphone mis à jour', updated);
+        this.authService.setCurrentUser(updated); // 🔥 update observable + localStorage
         this.editingPhone = false;
       });
   }
@@ -133,6 +138,7 @@ export class ProfileComponent {
       .updateFirstName(this.authService.currentUser.id, this.firstNameValue)
       .subscribe((updated) => {
         console.log('Prénom mis à jour', updated);
+        this.authService.setCurrentUser(updated); // 🔥 update observable + localStorage
         this.editingFirstName = false;
       });
   }
@@ -148,6 +154,7 @@ export class ProfileComponent {
       .updateLastName(this.authService.currentUser.id, this.lastNameValue)
       .subscribe((updated) => {
         console.log('Nom mis à jour', updated);
+        this.authService.setCurrentUser(updated); // 🔥 update observable + localStorage
         this.editingLastName = false;
       });
   }

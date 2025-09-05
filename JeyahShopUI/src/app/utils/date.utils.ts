@@ -19,3 +19,19 @@ export function toDate(value: any): Date | null {
   if (value instanceof Date) return value;
   return null;
 }
+
+export function convertToDate(input: any): Date | null {
+  if (!input) return null;
+
+  // If it's already a Date, just return it
+  if (input instanceof Date) return input;
+
+  // If it's an array from backend
+  if (Array.isArray(input)) return convertDateArrayToDate(input);
+
+  // If it's a string (like from localStorage), convert
+  if (typeof input === 'string') return new Date(input);
+
+  // fallback
+  return null;
+}

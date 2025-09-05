@@ -2,7 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { User } from '../../../shared/models/user.model';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { BackendUser } from '../../../shared/models/backend-user.model';
+import { mapBackendUserToUser } from '../../../utils/map-user.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -20,25 +22,35 @@ export default class UserService {
 
   // Update phone
   updatePhone(id: number, phone: string): Observable<User> {
-    return this.http.patch<User>(
-      `${this.apiUrl}/${id}/phone`,
-      { phone },
-      { withCredentials: true }
-    );
+    return this.http
+      .patch<BackendUser>(
+        `${this.apiUrl}/${id}/phone`,
+        { phone },
+        { withCredentials: true }
+      )
+      .pipe(map(mapBackendUserToUser)); // 🔥 always convert
   }
 
   // Update first name
   updateFirstName(id: number, firstName: string): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}/first-name`, {
-      firstName,
-    });
+    return this.http
+      .patch<BackendUser>(
+        `${this.apiUrl}/${id}/first-name`,
+        { firstName },
+        { withCredentials: true }
+      )
+      .pipe(map(mapBackendUserToUser));
   }
 
   // Update last name
   updateLastName(id: number, lastName: string): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}/last-name`, {
-      lastName,
-    });
+    return this.http
+      .patch<BackendUser>(
+        `${this.apiUrl}/${id}/last-name`,
+        { lastName },
+        { withCredentials: true }
+      )
+      .pipe(map(mapBackendUserToUser));
   }
 
   // Update address
@@ -46,7 +58,9 @@ export default class UserService {
     id: number,
     address: { street: string; city: string; postalCode: number }
   ): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}/address`, address);
+    return this.http.patch<User>(`${this.apiUrl}/${id}/address`, address, {
+      withCredentials: true,
+    });
   }
 
   // Update password

@@ -65,6 +65,8 @@ export class AuthService {
 
   private handleLoginSuccess(backendUser: BackendUser) {
     const user = mapBackendUserToUser(backendUser);
+    this.setCurrentUser(user);
+    return user;
     // ✅ Add these logs here
     // console.log('Mapped user:', user);
     // console.log(
@@ -77,9 +79,6 @@ export class AuthService {
     //   user.lastModifiedDate,
     //   user.lastModifiedDate?.getTime()
     // );
-
-    this.setCurrentUser(user);
-    return user;
   }
 
   processBackendUser(backendUser: BackendUser): User {
