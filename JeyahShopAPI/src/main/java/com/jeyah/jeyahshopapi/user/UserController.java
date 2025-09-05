@@ -22,22 +22,28 @@ public class UserController {
     // Update phone
     @PatchMapping("/{id}/phone")
 //    @PreAuthorize("#id == principal.id")
-    public ResponseEntity<User> updatePhone(@PathVariable Integer id, @RequestBody UpdatePhoneRequest request) {
+    public ResponseEntity<UserResponse> updatePhone(@PathVariable Integer id, @RequestBody UpdatePhoneRequest request) {
         User updatedUser = userService.updatePhone(id, request.getPhone());
-        return ResponseEntity.ok(updatedUser);
+        UserResponse response = UserMapper.toResponse(updatedUser);
+
+        return ResponseEntity.ok(response);
     }
 
     // Update name
     @PatchMapping("/{id}/first-name")
-    public ResponseEntity<User> updateFirstName(@PathVariable Integer id, @RequestBody UpdateFirstNameRequest request) {
+    public ResponseEntity<UserResponse> updateFirstName(@PathVariable Integer id, @RequestBody UpdateFirstNameRequest request) {
         User updatedUser = userService.updateFirstName(id, request.getFirstName());
-        return ResponseEntity.ok(updatedUser);
+        UserResponse response = UserMapper.toResponse(updatedUser);
+
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/last-name")
-    public ResponseEntity<User> updateName(@PathVariable Integer id, @RequestBody UpdateLastNameRequest request) {
+    public ResponseEntity<UserResponse> updateName(@PathVariable Integer id, @RequestBody UpdateLastNameRequest request) {
         User updatedUser = userService.updateLastName(id, request.getLastName());
-        return ResponseEntity.ok(updatedUser);
+        UserResponse response = UserMapper.toResponse(updatedUser);
+
+        return ResponseEntity.ok(response);
     }
 
 
