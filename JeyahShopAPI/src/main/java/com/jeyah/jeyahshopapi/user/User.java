@@ -1,5 +1,6 @@
 package com.jeyah.jeyahshopapi.user;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jeyah.jeyahshopapi.cart.Cart;
 import com.jeyah.jeyahshopapi.product.Product;
 import com.jeyah.jeyahshopapi.rating.Rating;
@@ -30,7 +31,9 @@ public class User {
     private String email;
     private String password;
     private String phone;
-    @OneToOne(mappedBy = "user")
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Address address;
     private boolean accountLocked;
     private boolean enabled;

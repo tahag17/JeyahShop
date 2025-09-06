@@ -74,21 +74,33 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
         Address address = user.getAddress();
+//        if (address == null) {
+//            Address newAddress = new Address();
+//            newAddress.setUser(user);
+//            newAddress.setStreet(request.getStreet());
+//            newAddress.setCity(request.getCity());
+//            newAddress.setPostalCode(request.getPostalCode());
+//            addressRepository.save(newAddress);
+//            user.setAddress(newAddress);
+//        } else {
+//            if (request.getStreet() != null) address.setStreet(request.getStreet());
+//            if (request.getCity() != null) address.setCity(request.getCity());
+//            if (request.getPostalCode() != null) address.setPostalCode(request.getPostalCode());
+//        }
+//
+//        return userRepository.save(user);
         if (address == null) {
-            Address newAddress = new Address();
-            newAddress.setUser(user);
-            newAddress.setStreet(request.getStreet());
-            newAddress.setCity(request.getCity());
-            newAddress.setPostalCode(request.getPostalCode());
-            addressRepository.save(newAddress);
-            user.setAddress(newAddress);
-        } else {
-            if (request.getStreet() != null) address.setStreet(request.getStreet());
-            if (request.getCity() != null) address.setCity(request.getCity());
-            if (request.getPostalCode() != null) address.setPostalCode(request.getPostalCode());
+            address = new Address();
+            address.setUser(user);
+            user.setAddress(address);
         }
 
-        return userRepository.save(user);
+        if (request.getStreet() != null) address.setStreet(request.getStreet());
+        if (request.getCity() != null) address.setCity(request.getCity());
+        if (request.getPostalCode() != null) address.setPostalCode(request.getPostalCode());
+
+        return userRepository.save(user); // cascade saves address
+
     }
 
     @Transactional
