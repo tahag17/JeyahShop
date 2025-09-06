@@ -108,6 +108,39 @@ export class ProfileComponent {
   editingLastName = false;
   lastNameValue = '';
 
+  editingAddress = false;
+  streetValue = '';
+  postalCodeValue = '';
+  cityValue = '';
+
+  startEditAddress() {
+    this.editingAddress = true;
+    this.streetValue = this.authService.currentUser?.address?.street || '';
+    this.postalCodeValue =
+      this.authService.currentUser?.address?.postalCode || '';
+    this.cityValue = this.authService.currentUser?.address?.city || '';
+  }
+  saveAddress() {
+    if (!this.authService.currentUser) return;
+
+    if (!/^[0-9]{4,6}$/.test(this.postalCodeValue)) {
+      return;
+    }
+
+    const updatedAddress = {
+      street: this.streetValue,
+      city: this.cityValue,
+      postalCode: Number(this.postalCodeValue), // ensure it's a number
+    };
+    this.userService
+      .updateAddress(this.authService.currentUser.id, updatedAddress)
+      .subscribe((updatedUser) => {
+        console.log('Adresse mise à jour', updatedUser);
+        this.authService.setCurrentUser(updatedUser);
+        this.editingAddress = false;
+      });
+  }
+
   // Phone
   startEditPhone() {
     this.editingPhone = true;
@@ -159,10 +192,6 @@ export class ProfileComponent {
       });
   }
 
-  // Modal placeholders
-  openAddressModal() {
-    console.log('Open address modal');
-  }
   openPasswordModal() {
     console.log('Open password modal');
   }

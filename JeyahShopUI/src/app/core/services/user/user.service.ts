@@ -58,9 +58,12 @@ export default class UserService {
     id: number,
     address: { street: string; city: string; postalCode: number }
   ): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}/address`, address, {
-      withCredentials: true,
-    });
+    console.log('you have reached the service');
+    return this.http
+      .patch<BackendUser>(`${this.apiUrl}/${id}/address`, address, {
+        withCredentials: true,
+      })
+      .pipe(map(mapBackendUserToUser));
   }
 
   // Update password
