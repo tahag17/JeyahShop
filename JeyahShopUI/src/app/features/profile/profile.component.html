@@ -4,7 +4,7 @@
 >
   <!-- Header -->
   <div
-    class="flex gap-4 items-center justify-between text-primaryTail dark:text-primaryDarkTail"
+    class="flex gap-4 items-center justify-start text-primaryTail dark:text-primaryDarkTail"
   >
     <h2 class="text-4xl font-heading font-bold">
       {{
@@ -14,6 +14,10 @@
             : "Non fourni")
       }}
     </h2>
+    <i
+      class="fa-solid fa-user-pen text-2xl hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded-md p-1"
+      (click)="openEditUserModal(user)"
+    ></i>
   </div>
 
   <!-- Infos principales (email + compte activé) -->
@@ -209,18 +213,24 @@
       </button>
     </div>
 
-    <!-- Mot de passe (modal editing) -->
+    <!-- Mot de passe -->
     <div
       class="flex justify-between items-center hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
     >
       <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold mr-2">Mot de passe :</span> ********
+        <span class="font-semibold mr-2">Mot de passe :</span>
+        <ng-container *ngIf="user.hasPassword; else noPassword">
+          ********
+        </ng-container>
+        <ng-template #noPassword>
+          <span class="italic text-gray-400">Non défini</span>
+        </ng-template>
       </span>
       <button
         class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
-        (click)="openPasswordModal()"
+        (click)="openPasswordModal(user)"
       >
-        Modifier
+        {{ user.hasPassword ? "Modifier" : "Définir" }}
       </button>
     </div>
 
@@ -255,5 +265,191 @@
           : "Jamais"
       }}
     </p>
+  </div>
+</div>
+
+<!-- Password Modal -->
+<div
+  *ngIf="isPasswordModalOpen"
+  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+>
+  <div
+    class="bg-surfaceLight dark:bg-surfaceDark rounded-lg p-6 w-96 shadow-lg"
+  >
+    <h3 class="text-xl font-bold mb-4 text-textLight dark:text-textDark">
+      {{
+        isSettingPassword
+          ? "Définir un mot de passe"
+          : "Modifier le mot de passe"
+      }}
+    </h3>
+
+    <form
+      (ngSubmit)="savePassword()"
+      class="space-y-3 text-textLight dark:text-textDark"
+    >
+      <!-- Old password (only if modifying) -->
+      <div *ngIf="!isSettingPassword">
+        <label class="block text-sm font-medium mb-1"
+          >Ancien mot de passe</label
+        >
+        <input
+          type="password"
+          [(ngModel)]="oldPassword"
+          name="oldPassword"
+          required
+          class="w-full border rounded px-2 py-1"
+        />
+      </div>
+
+      <!-- New password -->
+      <div>
+        <label class="block text-sm font-medium mb-1"
+          >Nouveau mot de passe</label
+        >
+        <input
+          type="password"
+          [(ngModel)]="newPassword"
+          name="newPassword"
+          required
+          class="w-full border rounded px-2 py-1"
+        />
+      </div>
+
+      <!-- Confirm password -->
+      <div>
+        <label class="block text-sm font-medium mb-1"
+          >Confirmer le mot de passe</label
+        >
+        <input
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          required
+          class="w-full border rounded px-2 py-1"
+        />
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-2 mt-4">
+        <button
+          type="button"
+          class="px-3 py-1 bg-dangerTail hover:bg-dangerTail/80 text-white rounded"
+          (click)="closePasswordModal()"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="px-3 py-1 bg-accentTail dark:bg-accentDarkTail hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-white rounded"
+        >
+          Sauvegarder
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div
+  *ngIf="isEditUserModalOpen"
+  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+>
+  <div
+    class="bg-surfaceLight dark:bg-surfaceDark rounded-lg p-6 w-96 shadow-lg"
+  >
+    <h3 class="text-xl font-bold mb-4 text-textLight dark:text-textDark">
+      Modifier l'utilisateur
+    </h3>
+
+    <form
+      (ngSubmit)="saveUserEdits()"
+      class="space-y-3 text-textLight dark:text-textDark"
+    >
+      <!-- First Name -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Prénom</label>
+        <input
+          type="text"
+          [(ngModel)]="editFirstName"
+          name="editFirstName"
+          required
+          class="w-full border rounded px-2 py-1 text-textLight"
+        />
+      </div>
+
+      <!-- Last Name -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Nom</label>
+        <input
+          type="text"
+          [(ngModel)]="editLastName"
+          name="editLastName"
+          required
+          class="w-full border rounded px-2 py-1 text-textLight"
+        />
+      </div>
+
+      <!-- Phone -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Téléphone</label>
+        <input
+          type="text"
+          [(ngModel)]="editPhone"
+          name="editPhone"
+          class="w-full border rounded px-2 py-1 text-textLight"
+        />
+      </div>
+
+      <!-- Street -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Rue</label>
+        <input
+          type="text"
+          [(ngModel)]="editStreet"
+          name="editStreet"
+          class="w-full border rounded px-2 py-1 text-textLight"
+        />
+      </div>
+
+      <!-- Postal Code -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Code postal</label>
+        <input
+          type="text"
+          [(ngModel)]="editPostalCode"
+          name="editPostalCode"
+          class="w-full border rounded px-2 py-1 text-textLight"
+        />
+      </div>
+
+      <!-- City -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Ville</label>
+        <input
+          type="text"
+          [(ngModel)]="editCity"
+          name="editCity"
+          class="w-full border rounded px-2 py-1 text-textLight"
+        />
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-2 mt-4">
+        <button
+          type="button"
+          class="px-3 py-1 bg-dangerTail hover:bg-dangerTail/80 text-white rounded"
+          (click)="closeEditUserModal()"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="px-3 py-1 bg-accentTail dark:bg-accentDarkTail hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-white rounded"
+        >
+          Sauvegarder
+        </button>
+      </div>
+    </form>
   </div>
 </div>

@@ -17,7 +17,9 @@ export default class UserService {
 
   // Generic update (with UpdateUserRequest)
   updateUser(id: number, payload: any): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}`, payload);
+    return this.http.patch<User>(`${this.apiUrl}/${id}`, payload, {
+      withCredentials: true,
+    });
   }
 
   // Update phone
@@ -69,10 +71,11 @@ export default class UserService {
   // Update password
   updatePassword(
     id: number,
-    payload: { oldPassword: string; newPassword: string }
+    payload: { oldPassword?: string; newPassword: string }
   ): Observable<string> {
     return this.http.patch(`${this.apiUrl}/${id}/password`, payload, {
-      responseType: 'text', // because controller returns String
+      responseType: 'text',
+      withCredentials: true,
     });
   }
 }

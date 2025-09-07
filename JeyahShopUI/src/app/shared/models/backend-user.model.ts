@@ -8,6 +8,7 @@ export interface BackendUser {
   email: string | null; // backend might send null if user registered with Google?
   phone?: string | null; // optional and nullable
   enabled: boolean;
+  hasPassword: boolean;
   roles: string[];
   address: Address | null; // backend can send null if no address yet
   creationDate: number[] | null; // array from LocalDateTime

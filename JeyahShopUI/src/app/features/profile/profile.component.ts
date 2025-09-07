@@ -192,7 +192,107 @@ export class ProfileComponent {
       });
   }
 
-  openPasswordModal() {
-    console.log('Open password modal');
+  // Modal state
+  isPasswordModalOpen = false;
+  isSettingPassword = false;
+
+  oldPassword = '';
+  newPassword = '';
+  confirmPassword = '';
+
+  openPasswordModal(user: User) {
+    this.isPasswordModalOpen = true;
+    this.isSettingPassword = !user.hasPassword; // true if first-time setup
+    this.oldPassword = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
+  }
+
+  closePasswordModal() {
+    this.isPasswordModalOpen = false;
+  }
+  savePassword() {
+    if (this.newPassword !== this.confirmPassword) {
+      console.error('Les mots de passe ne correspondent pas');
+      return;
+    }
+
+    const user = this.authService.currentUser;
+    if (!user) return;
+
+    const payload = this.isSettingPassword
+      ? { newPassword: this.newPassword } // oldPassword omitted
+      : { oldPassword: this.oldPassword, newPassword: this.newPassword };
+
+    this.userService.updatePassword(user.id, payload).subscribe({
+      next: (msg) => {
+        console.log(msg);
+        // 🔥 Update observable so the UI knows the user now has a password
+        if (this.isSettingPassword) {
+          this.authService.setCurrentUser({
+            ...user,
+            hasPassword: true, // mark that the password is now set
+          });
+        }
+        this.closePasswordModal();
+      },
+      error: (err) => console.error('Erreur :', err),
+    });
+  }
+
+  // Modal state
+  isEditUserModalOpen = false;
+
+  // Form values
+  editFirstName = '';
+  editLastName = '';
+  editPhone = '';
+  editStreet = '';
+  editCity = '';
+  editPostalCode = '';
+
+  openEditUserModal(user: User) {
+    this.isEditUserModalOpen = true;
+
+    // Pre-fill all fields
+    this.editFirstName = user.firstName || '';
+    this.editLastName = user.lastName || '';
+    this.editPhone = user.phone || '';
+    this.editStreet = user.address?.street || '';
+    this.editCity = user.address?.city || '';
+    this.editPostalCode = user.address?.postalCode?.toString() || '';
+  }
+
+  closeEditUserModal() {
+    this.isEditUserModalOpen = false;
+  }
+
+  saveUserEdits() {
+    const user = this.authService.currentUser;
+    if (!user) return;
+
+    // Validate postal code
+    if (!/^[0-9]{4,6}$/.test(this.editPostalCode)) {
+      console.error('Code postal invalide (4–6 chiffres)');
+      return;
+    }
+
+    const payload = {
+      firstName: this.editFirstName,
+      lastName: this.editLastName,
+      phone: this.editPhone,
+      street: this.editStreet,
+      city: this.editCity,
+      postalCode: Number(this.editPostalCode),
+    };
+
+    this.userService.updateUser(user.id, payload).subscribe({
+      next: (updatedUser) => {
+        console.log('Utilisateur mis à jour', updatedUser);
+        this.authService.setCurrentUser(updatedUser); // 🔥 update observable + UI
+        this.closeEditUserModal();
+      },
+      error: (err) => console.error('Erreur lors de la mise à jour', err),
+    });
   }
 }

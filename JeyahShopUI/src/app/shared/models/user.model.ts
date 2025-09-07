@@ -8,6 +8,7 @@ export interface User {
   email: string | null;
   phone?: string | null;
   enabled: boolean;
+  hasPassword: boolean;
   roles: string[];
   address: Address | null;
   creationDate: Date | null;
