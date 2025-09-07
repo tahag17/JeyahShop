@@ -13,6 +13,7 @@ public class UserMapper {
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .enabled(user.isEnabled())
+                .hasPassword(user.getPassword() != null)
                 .roles(user.getRoles()
                         .stream()
                         .map(role -> role.getName()) // Assuming Role has getName()

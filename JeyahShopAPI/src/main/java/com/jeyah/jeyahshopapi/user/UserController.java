@@ -50,7 +50,6 @@ public class UserController {
     // Update address
     @PatchMapping("/{id}/address")
     public ResponseEntity<UserResponse> updateAddress(@PathVariable Integer id, @RequestBody UpdateAddressRequest request) {
-        System.out.println("congratz you have reached the controller!");
         User updatedUser = userService.updateAddress(id, request);
         UserResponse response = UserMapper.toResponse(updatedUser);
         return ResponseEntity.ok(response);

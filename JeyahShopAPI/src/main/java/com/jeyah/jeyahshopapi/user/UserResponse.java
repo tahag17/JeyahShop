@@ -16,6 +16,7 @@ public class UserResponse {
     private String email;
     private String phone;
     private boolean enabled;
+    private boolean hasPassword;
     private List<String> roles;
     private AddressResponse address;
     private LocalDateTime creationDate;

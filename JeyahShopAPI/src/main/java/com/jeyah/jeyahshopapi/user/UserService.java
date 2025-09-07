@@ -1,6 +1,8 @@
 package com.jeyah.jeyahshopapi.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -104,19 +106,40 @@ public class UserService {
     }
 
     @Transactional
-    public User updatePassword(Integer userId, UpdatePasswordRequest request) {
+    public void updatePassword(Integer userId, UpdatePasswordRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
 
-        // If user already has a password, verify old password
-        if (user.getPassword() != null && !passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new RuntimeException("Ancien mot de passe incorrect");
+        // First-time password setup
+        if (user.getPassword() == null) {
+            if (request.getOldPassword() != null && !request.getOldPassword().isBlank()) {
+                throw new IllegalArgumentException("Ancien mot de passe ne doit pas être fourni pour la première configuration");
+            }
+            validateNewPassword(request.getNewPassword());
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            return;
         }
 
-        // Encode new password
+        // Updating existing password
+        if (request.getOldPassword() == null || request.getOldPassword().isBlank()) {
+            throw new IllegalArgumentException("Ancien mot de passe est requis");
+        }
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Ancien mot de passe incorrect");
+        }
+
+        validateNewPassword(request.getNewPassword());
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        return userRepository.save(user);
     }
+
+
+    private void validateNewPassword(String newPassword) {
+        if (newPassword == null || newPassword.length() < 8) {
+            throw new IllegalArgumentException("Le nouveau mot de passe doit contenir au moins 8 caractères");
+        }
+    }
+
 
 
 

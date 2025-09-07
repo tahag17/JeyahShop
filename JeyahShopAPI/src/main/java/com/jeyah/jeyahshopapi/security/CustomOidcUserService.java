@@ -68,6 +68,7 @@ public class CustomOidcUserService extends OidcUserService {
             newUser.setEmail(email);
             newUser.setFirstName(oidcUser.getGivenName());
             newUser.setLastName(oidcUser.getFamilyName());
+            newUser.setEnabled(true);
 
             Role userRole = roleRepository.findByName("ROLE_USER")
                     .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
