@@ -14,10 +14,13 @@
             : "Non fourni")
       }}
     </h2>
-    <i
-      class="fa-solid fa-user-pen text-2xl hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded-md p-1"
+    <div
+      class="text-2xl font-heading hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded-md p-1"
       (click)="openEditUserModal(user)"
-    ></i>
+    >
+      <i class="fa-solid fa-user-pen"></i>
+      modifier
+    </div>
   </div>
 
   <!-- Infos principales (email + compte activé) -->
@@ -57,6 +60,8 @@
           <input
             type="text"
             [(ngModel)]="phoneValue"
+            (keydown.enter)="savePhone()"
+            (keydown.escape)="cancelPhoneEdit()"
             class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
           />
         </ng-container>
@@ -65,12 +70,36 @@
           {{ user.phone || "Non fourni" }}
         </ng-template>
       </span>
-      <button
+      <!-- <button
         class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
         (click)="editingPhone ? savePhone() : startEditPhone()"
       >
         {{ editingPhone ? "Sauvegarder" : "Modifier" }}
-      </button>
+      </button> -->
+      <!-- Buttons -->
+      <div class="flex gap-2">
+        <button
+          *ngIf="editingPhone"
+          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition"
+          (click)="savePhone()"
+        >
+          Sauvegarder
+        </button>
+        <button
+          *ngIf="editingPhone"
+          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition"
+          (click)="cancelPhoneEdit()"
+        >
+          Annuler
+        </button>
+        <button
+          *ngIf="!editingPhone"
+          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+          (click)="startEditPhone()"
+        >
+          Modifier
+        </button>
+      </div>
     </div>
 
     <!-- First Name (inline editing) -->
@@ -84,6 +113,8 @@
           <input
             type="text"
             [(ngModel)]="firstNameValue"
+            (keydown.enter)="saveFirstName()"
+            (keydown.escape)="cancelFirstNameEdit()"
             class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
           />
         </ng-container>
@@ -92,12 +123,36 @@
           {{ user.firstName || "Non fourni" }}
         </ng-template>
       </span>
-      <button
+      <!-- <button
         class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
         (click)="editingFirstName ? saveFirstName() : startEditFirstName()"
       >
         {{ editingFirstName ? "Sauvegarder" : "Modifier" }}
-      </button>
+      </button> -->
+      <!-- Buttons -->
+      <div class="flex gap-2">
+        <button
+          *ngIf="editingFirstName"
+          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition"
+          (click)="saveFirstName()"
+        >
+          Sauvegarder
+        </button>
+        <button
+          *ngIf="editingFirstName"
+          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition"
+          (click)="cancelFirstNameEdit()"
+        >
+          Annuler
+        </button>
+        <button
+          *ngIf="!editingFirstName"
+          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+          (click)="startEditFirstName()"
+        >
+          Modifier
+        </button>
+      </div>
     </div>
 
     <!-- Last Name (inline editing) -->
@@ -111,6 +166,8 @@
           <input
             type="text"
             [(ngModel)]="lastNameValue"
+            (keydown.enter)="saveLastName()"
+            (keydown.escape)="cancelLastNameEdit()"
             class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
           />
         </ng-container>
@@ -119,12 +176,35 @@
           {{ user.lastName || "Non fourni" }}
         </ng-template>
       </span>
-      <button
+      <!-- <button
         class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
         (click)="editingLastName ? saveLastName() : startEditLastName()"
       >
         {{ editingLastName ? "Sauvegarder" : "Modifier" }}
-      </button>
+      </button> -->
+      <div class="flex gap-2">
+        <button
+          *ngIf="editingLastName"
+          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition"
+          (click)="saveLastName()"
+        >
+          Sauvegarder
+        </button>
+        <button
+          *ngIf="editingLastName"
+          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition"
+          (click)="cancelLastNameEdit()"
+        >
+          Annuler
+        </button>
+        <button
+          *ngIf="!editingLastName"
+          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+          (click)="startEditLastName()"
+        >
+          Modifier
+        </button>
+      </div>
     </div>
 
     <!-- Adresse (modal editing) -->
@@ -146,6 +226,8 @@
               <input
                 type="text"
                 [(ngModel)]="streetValue"
+                (keydown.enter)="saveAddress()"
+                (keydown.escape)="cancelEditAddress()"
                 class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
               />
             </ng-container>
@@ -168,6 +250,8 @@
                 [(ngModel)]="postalCodeValue"
                 pattern="^[0-9]{3,8}$"
                 #postalCodeCtrl="ngModel"
+                (keydown.enter)="saveAddress()"
+                (keydown.escape)="cancelEditAddress()"
                 class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
               />
               <div
@@ -194,6 +278,8 @@
               <input
                 type="text"
                 [(ngModel)]="cityValue"
+                (keydown.enter)="saveAddress()"
+                (keydown.escape)="cancelEditAddress()"
                 class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
               />
             </ng-container>
@@ -205,12 +291,35 @@
         </div>
       </div>
 
-      <button
+      <!-- <button
         class="px-2 py-1 mt-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
         (click)="editingAddress ? saveAddress() : startEditAddress()"
       >
         {{ editingAddress ? "Sauvegarder" : "Modifier" }}
-      </button>
+      </button> -->
+      <div class="flex gap-2">
+        <button
+          *ngIf="editingAddress"
+          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition"
+          (click)="saveAddress()"
+        >
+          Sauvegarder
+        </button>
+        <button
+          *ngIf="editingAddress"
+          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition"
+          (click)="cancelEditAddress()"
+        >
+          Annuler
+        </button>
+        <button
+          *ngIf="!editingAddress"
+          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+          (click)="startEditAddress()"
+        >
+          Modifier
+        </button>
+      </div>
     </div>
 
     <!-- Mot de passe -->

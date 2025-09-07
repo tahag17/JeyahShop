@@ -120,6 +120,9 @@ export class ProfileComponent {
       this.authService.currentUser?.address?.postalCode || '';
     this.cityValue = this.authService.currentUser?.address?.city || '';
   }
+  cancelEditAddress() {
+    this.editingAddress = false;
+  }
   saveAddress() {
     if (!this.authService.currentUser) return;
 
@@ -146,7 +149,7 @@ export class ProfileComponent {
     this.editingPhone = true;
     this.phoneValue = this.authService.currentUser?.phone || '';
   }
-  cancel() {
+  cancelPhoneEdit() {
     this.editingPhone = false;
   }
   savePhone() {
@@ -165,6 +168,9 @@ export class ProfileComponent {
     this.editingFirstName = true;
     this.firstNameValue = this.authService.currentUser?.firstName || '';
   }
+  cancelFirstNameEdit() {
+    this.editingFirstName = false;
+  }
   saveFirstName() {
     if (!this.authService.currentUser) return;
     this.userService
@@ -180,6 +186,9 @@ export class ProfileComponent {
   startEditLastName() {
     this.editingLastName = true;
     this.lastNameValue = this.authService.currentUser?.lastName || '';
+  }
+  cancelLastNameEdit() {
+    this.editingLastName = false;
   }
   saveLastName() {
     if (!this.authService.currentUser) return;

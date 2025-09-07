@@ -17,9 +17,11 @@ export default class UserService {
 
   // Generic update (with UpdateUserRequest)
   updateUser(id: number, payload: any): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}`, payload, {
-      withCredentials: true,
-    });
+    return this.http
+      .patch<BackendUser>(`${this.apiUrl}/${id}`, payload, {
+        withCredentials: true,
+      })
+      .pipe(map(mapBackendUserToUser));
   }
 
   // Update phone
