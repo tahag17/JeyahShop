@@ -14,6 +14,7 @@ public class UserController {
 
     // Update user by ID
     @PatchMapping("/{id}")
+    @PreAuthorize("#id == @securityUtil.getCurrentUserId()")
     public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody UpdateUserRequest request) {
         User updatedUser = userService.updateUser(id, request);
         return ResponseEntity.ok(updatedUser);
@@ -21,7 +22,7 @@ public class UserController {
 
     // Update phone
     @PatchMapping("/{id}/phone")
-//    @PreAuthorize("#id == principal.id")
+    @PreAuthorize("#id == @securityUtil.getCurrentUserId()")
     public ResponseEntity<UserResponse> updatePhone(@PathVariable Integer id, @RequestBody UpdatePhoneRequest request) {
         User updatedUser = userService.updatePhone(id, request.getPhone());
         UserResponse response = UserMapper.toResponse(updatedUser);
@@ -31,6 +32,7 @@ public class UserController {
 
     // Update name
     @PatchMapping("/{id}/first-name")
+    @PreAuthorize("#id == @securityUtil.getCurrentUserId()")
     public ResponseEntity<UserResponse> updateFirstName(@PathVariable Integer id, @RequestBody UpdateFirstNameRequest request) {
         User updatedUser = userService.updateFirstName(id, request.getFirstName());
         UserResponse response = UserMapper.toResponse(updatedUser);
@@ -39,6 +41,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/last-name")
+    @PreAuthorize("#id == @securityUtil.getCurrentUserId()")
     public ResponseEntity<UserResponse> updateName(@PathVariable Integer id, @RequestBody UpdateLastNameRequest request) {
         User updatedUser = userService.updateLastName(id, request.getLastName());
         UserResponse response = UserMapper.toResponse(updatedUser);
@@ -49,6 +52,8 @@ public class UserController {
 
     // Update address
     @PatchMapping("/{id}/address")
+    @PreAuthorize("#id == @securityUtil.getCurrentUserId()")
+
     public ResponseEntity<UserResponse> updateAddress(@PathVariable Integer id, @RequestBody UpdateAddressRequest request) {
         User updatedUser = userService.updateAddress(id, request);
         UserResponse response = UserMapper.toResponse(updatedUser);
@@ -56,6 +61,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/password")
+    @PreAuthorize("#id == @securityUtil.getCurrentUserId()")
     public ResponseEntity<String> updatePassword(
             @PathVariable Integer id,
             @RequestBody UpdatePasswordRequest request) {
