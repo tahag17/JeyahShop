@@ -4,7 +4,7 @@
 >
   <!-- Header -->
   <div
-    class="flex gap-4 items-center justify-start text-primaryTail dark:text-primaryDarkTail"
+    class="flex gap-4 items-center md:justify-start justify-between text-primaryTail dark:text-primaryDarkTail"
   >
     <h2 class="text-xl xl:text-4xl font-heading font-bold">
       {{
@@ -15,11 +15,19 @@
       }}
     </h2>
     <div
-      class="text-2xl font-heading hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded-md p-1"
+      class="hidden md:flex text-2xl font-heading hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded-md p-1"
       (click)="openEditUserModal(user)"
     >
       <i class="fa-solid fa-user-pen"></i>
       modifier
+    </div>
+
+    <!-- Small screen: show only icon -->
+    <div
+      class="flex md:hidden sm:text-lg text-xl font-heading hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded-md p-1 cursor-pointer"
+      (click)="openEditUserModal(user)"
+    >
+      <i class="fa-solid fa-user-pen"></i>
     </div>
   </div>
 
@@ -50,11 +58,19 @@
   <!-- Infos modifiables -->
   <div class="space-y-2">
     <!-- Téléphone (inline editing) -->
+
+    <!-- Phone -->
     <div
-      class="flex justify-between items-center p-1 hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded"
+      class="flex flex-col md:flex-row justify-between md:items-center hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1 gap-2"
     >
-      <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold mr-2">Téléphone :</span>
+      <!-- Label + input/text -->
+      <div
+        class="flex-1 flex flex-col md:flex-row md:items-center gap-2 w-full"
+      >
+        <span
+          class="font-semibold text-base text-textLight dark:text-textDark flex-shrink-0"
+          >Téléphone :</span
+        >
 
         <ng-container *ngIf="editingPhone; else phoneText">
           <input
@@ -62,39 +78,38 @@
             [(ngModel)]="phoneValue"
             (keydown.enter)="savePhone()"
             (keydown.escape)="cancelPhoneEdit()"
-            class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
+            class="border rounded px-2 py-1 text-sm text-textLight dark:text-textDark focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none w-full md:w-auto"
           />
         </ng-container>
 
         <ng-template #phoneText>
-          {{ user.phone || "Non fourni" }}
+          <span class="text-textLight dark:text-textDark">{{
+            user.phone || "Non fourni"
+          }}</span>
         </ng-template>
-      </span>
-      <!-- <button
-        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
-        (click)="editingPhone ? savePhone() : startEditPhone()"
-      >
-        {{ editingPhone ? "Sauvegarder" : "Modifier" }}
-      </button> -->
+      </div>
+
       <!-- Buttons -->
-      <div class="flex gap-2">
+      <div
+        class="flex flex-col md:flex-row md:items-center gap-2 md:mt-0 w-full md:w-auto"
+      >
         <button
           *ngIf="editingPhone"
-          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition"
+          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition w-full md:w-auto"
           (click)="savePhone()"
         >
           Sauvegarder
         </button>
         <button
           *ngIf="editingPhone"
-          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition"
+          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition w-full md:w-auto"
           (click)="cancelPhoneEdit()"
         >
           Annuler
         </button>
         <button
           *ngIf="!editingPhone"
-          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition w-full md:w-auto"
           (click)="startEditPhone()"
         >
           Modifier
@@ -104,9 +119,11 @@
 
     <!-- First Name (inline editing) -->
     <div
-      class="flex justify-between items-center p-1 hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded"
+      class="flex flex-col md:flex-row justify-between items-center md:items-center p-1 hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded"
     >
-      <span class="text-base text-textLight dark:text-textDark">
+      <span
+        class="text-base text-textLight dark:text-textDark w-full md:w-auto flex items-center"
+      >
         <span class="font-semibold mr-2">Prénom :</span>
 
         <ng-container *ngIf="editingFirstName; else firstNameText">
@@ -115,7 +132,7 @@
             [(ngModel)]="firstNameValue"
             (keydown.enter)="saveFirstName()"
             (keydown.escape)="cancelFirstNameEdit()"
-            class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
+            class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight w-full md:w-auto"
           />
         </ng-container>
 
@@ -123,44 +140,44 @@
           {{ user.firstName || "Non fourni" }}
         </ng-template>
       </span>
-      <!-- <button
-        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
-        (click)="editingFirstName ? saveFirstName() : startEditFirstName()"
-      >
-        {{ editingFirstName ? "Sauvegarder" : "Modifier" }}
-      </button> -->
+
       <!-- Buttons -->
-      <div class="flex gap-2">
-        <button
-          *ngIf="editingFirstName"
-          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition"
-          (click)="saveFirstName()"
-        >
-          Sauvegarder
-        </button>
-        <button
-          *ngIf="editingFirstName"
-          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition"
-          (click)="cancelFirstNameEdit()"
-        >
-          Annuler
-        </button>
+      <div class="flex flex-col md:flex-row gap-2 md:mt-0 w-full md:w-auto">
         <button
           *ngIf="!editingFirstName"
-          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+          class="w-full md:w-auto px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
           (click)="startEditFirstName()"
         >
           Modifier
         </button>
+
+        <ng-container *ngIf="editingFirstName">
+          <button
+            class="w-full md:w-auto px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition"
+            (click)="saveFirstName()"
+          >
+            Sauvegarder
+          </button>
+          <button
+            class="w-full md:w-auto px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition"
+            (click)="cancelFirstNameEdit()"
+          >
+            Annuler
+          </button>
+        </ng-container>
       </div>
     </div>
 
-    <!-- Last Name (inline editing) -->
+    <!-- Last Name -->
+
     <div
-      class="flex justify-between items-center hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
+      class="flex flex-col md:flex-row justify-between hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
     >
-      <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold mr-2">Nom :</span>
+      <!-- Left: label + input/text -->
+      <div class="flex-1 flex items-center gap-2">
+        <span class="font-semibold text-base text-textLight dark:text-textDark"
+          >Nom :</span
+        >
 
         <ng-container *ngIf="editingLastName; else lastNameText">
           <input
@@ -168,38 +185,38 @@
             [(ngModel)]="lastNameValue"
             (keydown.enter)="saveLastName()"
             (keydown.escape)="cancelLastNameEdit()"
-            class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
+            class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight w-full md:w-auto"
           />
         </ng-container>
 
         <ng-template #lastNameText>
-          {{ user.lastName || "Non fourni" }}
+          <span class="text-textLight dark:text-textDark w-full md:w-auto">
+            {{ user.lastName || "Non fourni" }}
+          </span>
         </ng-template>
-      </span>
-      <!-- <button
-        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
-        (click)="editingLastName ? saveLastName() : startEditLastName()"
+      </div>
+
+      <!-- Buttons -->
+      <div
+        class="flex flex-col md:flex-row gap-2 md:mt-0 md:items-center w-full md:w-auto"
       >
-        {{ editingLastName ? "Sauvegarder" : "Modifier" }}
-      </button> -->
-      <div class="flex gap-2">
         <button
           *ngIf="editingLastName"
-          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition"
+          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition w-full md:w-auto"
           (click)="saveLastName()"
         >
           Sauvegarder
         </button>
         <button
           *ngIf="editingLastName"
-          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition"
+          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition w-full md:w-auto"
           (click)="cancelLastNameEdit()"
         >
           Annuler
         </button>
         <button
           *ngIf="!editingLastName"
-          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition w-full md:w-auto"
           (click)="startEditLastName()"
         >
           Modifier
@@ -207,90 +224,107 @@
       </div>
     </div>
 
-    <!-- Adresse (modal editing) -->
+    <!-- adressw -->
     <div
-      class="flex justify-between items-start hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
+      class="flex flex-col md:flex-row justify-between md:items-center hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1 gap-2"
     >
-      <div class="text-base text-textLight dark:text-textDark">
-        <p class="font-semibold mb-2">Adresse :</p>
-        <div class="ml-4 space-y-1 flex flex-col">
-          <span class="text-base text-textLight dark:text-textDark">
-            <span class="font-semibold mr-2">Rue :</span>
+      <!-- Label -->
+      <p
+        class="font-semibold text-base text-textLight dark:text-textDark flex-shrink-0"
+      >
+        Adresse :
+      </p>
 
-            <ng-container *ngIf="editingAddress; else streetText">
-              <input
-                type="text"
-                [(ngModel)]="streetValue"
-                (keydown.enter)="saveAddress()"
-                (keydown.escape)="cancelEditAddress()"
-                class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
-              />
-            </ng-container>
+      <!-- Fields -->
+      <div class="flex flex-col md:flex-row md:items-center md:gap-4 w-full">
+        <!-- Rue -->
+        <div class="flex flex-col md:flex-row md:items-center gap-1">
+          <span class="font-semibold text-sm text-textLight dark:text-textDark"
+            >Rue :</span
+          >
+          <ng-container *ngIf="editingAddress; else streetText">
+            <input
+              type="text"
+              [(ngModel)]="streetValue"
+              (keydown.enter)="saveAddress()"
+              (keydown.escape)="cancelEditAddress()"
+              class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
+            />
+          </ng-container>
+          <ng-template #streetText>
+            <span class="text-base text-textLight dark:text-textDark">{{
+              user.address?.street || "Non fourni"
+            }}</span>
+          </ng-template>
+        </div>
 
-            <ng-template #streetText>
-              {{ user.address?.street || "Non fourni" }}
-            </ng-template>
-          </span>
+        <!-- Code postal -->
+        <div class="flex flex-col md:flex-row md:items-center gap-1">
+          <span class="font-semibold text-sm text-textLight dark:text-textDark"
+            >Code postal :</span
+          >
+          <ng-container *ngIf="editingAddress; else postalCodeText">
+            <input
+              type="text"
+              [(ngModel)]="postalCodeValue"
+              (keydown.enter)="saveAddress()"
+              (keydown.escape)="cancelEditAddress()"
+              class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
+            />
+          </ng-container>
+          <ng-template #postalCodeText>
+            <span class="text-base text-textLight dark:text-textDark">{{
+              user.address?.postalCode || "Non fourni"
+            }}</span>
+          </ng-template>
+          <div *ngIf="postalCodeError" class="text-dangerTail text-xs mt-1">
+            {{ postalCodeError }}
+          </div>
+        </div>
 
-          <span class="text-base text-textLight dark:text-textDark">
-            <span class="font-semibold mr-2">Code postal :</span>
-
-            <ng-container *ngIf="editingAddress; else postalCodeText">
-              <input
-                type="text"
-                [(ngModel)]="postalCodeValue"
-                (keydown.enter)="saveAddress()"
-                (keydown.escape)="cancelEditAddress()"
-                class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
-              />
-            </ng-container>
-
-            <ng-template #postalCodeText>
-              {{ user.address?.postalCode || "Non fourni" }}
-            </ng-template>
-            <div *ngIf="postalCodeError" class="text-dangerTail text-xs mt-1">
-              {{ postalCodeError }}
-            </div>
-          </span>
-
-          <span class="text-base text-textLight dark:text-textDark">
-            <span class="font-semibold mr-2">Ville :</span>
-
-            <ng-container *ngIf="editingAddress; else cityText">
-              <input
-                type="text"
-                [(ngModel)]="cityValue"
-                (keydown.enter)="saveAddress()"
-                (keydown.escape)="cancelEditAddress()"
-                class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
-              />
-            </ng-container>
-
-            <ng-template #cityText>
-              {{ user.address?.city || "Non fourni" }}
-            </ng-template>
-          </span>
+        <!-- Ville -->
+        <div class="flex flex-col md:flex-row md:items-center gap-1">
+          <span class="font-semibold text-sm text-textLight dark:text-textDark"
+            >Ville :</span
+          >
+          <ng-container *ngIf="editingAddress; else cityText">
+            <input
+              type="text"
+              [(ngModel)]="cityValue"
+              (keydown.enter)="saveAddress()"
+              (keydown.escape)="cancelEditAddress()"
+              class="border rounded px-2 py-1 text-sm focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail outline-none text-textLight"
+            />
+          </ng-container>
+          <ng-template #cityText>
+            <span class="text-base text-textLight dark:text-textDark">{{
+              user.address?.city || "Non fourni"
+            }}</span>
+          </ng-template>
         </div>
       </div>
 
-      <div class="flex gap-2">
+      <!-- Buttons -->
+      <div
+        class="flex flex-col md:flex-row md:items-center gap-2 md:mt-0 w-full md:w-auto"
+      >
         <button
           *ngIf="editingAddress"
-          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition"
+          class="px-2 py-1 bg-successTail text-white rounded hover:bg-successTail/80 text-sm transition w-full md:w-auto"
           (click)="saveAddress()"
         >
           Sauvegarder
         </button>
         <button
           *ngIf="editingAddress"
-          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition"
+          class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm transition w-full md:w-auto"
           (click)="cancelEditAddress()"
         >
           Annuler
         </button>
         <button
           *ngIf="!editingAddress"
-          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
+          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition w-full md:w-auto"
           (click)="startEditAddress()"
         >
           Modifier
@@ -298,25 +332,32 @@
       </div>
     </div>
 
-    <!-- Mot de passe -->
+    <!-- Password -->
     <div
-      class="flex justify-between items-center hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
+      class="flex flex-col md:flex-row justify-between hover:bg-accentTail/20 dark:hover:bg-accentDarkTail/20 rounded p-1"
     >
-      <span class="text-base text-textLight dark:text-textDark">
-        <span class="font-semibold mr-2">Mot de passe :</span>
-        <ng-container *ngIf="user.hasPassword; else noPassword">
-          ********
-        </ng-container>
+      <div class="flex-1 flex items-center gap-2">
+        <span class="font-semibold text-base text-textLight dark:text-textDark"
+          >Mot de passe :</span
+        >
+        <ng-container *ngIf="user.hasPassword; else noPassword"
+          >********</ng-container
+        >
         <ng-template #noPassword>
           <span class="italic text-gray-400">Non défini</span>
         </ng-template>
-      </span>
-      <button
-        class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition"
-        (click)="openPasswordModal(user)"
+      </div>
+
+      <div
+        class="flex flex-col md:flex-row gap-2 md:mt-0 md:items-center w-full md:w-auto"
       >
-        {{ user.hasPassword ? "Modifier" : "Définir" }}
-      </button>
+        <button
+          class="px-2 py-1 bg-accentTail dark:bg-accentDarkTail text-white rounded hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-sm transition w-full md:w-auto"
+          (click)="openPasswordModal(user)"
+        >
+          {{ user.hasPassword ? "Modifier" : "Définir" }}
+        </button>
+      </div>
     </div>
 
     <!-- Rôles (seulement pour manager ou admin) -->
