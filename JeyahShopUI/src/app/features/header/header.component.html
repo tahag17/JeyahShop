@@ -14,15 +14,15 @@
   <!-- Search bar (center) -->
   <div class="flex-1 flex justify-center mx-1 sm:mx-4">
     <div
-      class="flex w-full max-w-[480px] xs:max-w-[260px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[520px]"
+      class="flex w-full max-w-[480px] xs:max-w-[260px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[520px] border border-gray-300 dark:border-gray-600 rounded overflow-hidden transition-all duration-200 focus-within:ring-2 focus-within:ring-accentTail dark:focus-within:ring-accentDarkTail focus-within:border-accentTail dark:focus-within:border-accentDarkTail"
     >
       <input
         type="text"
         placeholder="Rechercher des produits..."
-        class="flex-1 border border-gray-300 dark:border-gray-600 rounded-l px-2 sm:px-3 py-1 text-textLight dark:text-textDark focus:outline-none focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail transition-all duration-200"
+        class="flex-1 px-2 sm:px-3 py-1 text-textLight dark:text-textDark focus:outline-none bg-transparent"
       />
       <button
-        class="bg-accentTail dark:bg-accentDarkTail text-white px-2 sm:px-3 py-1 rounded-r hover:bg-accentTail/80 dark:hover:bg-accentDarkTail/80 transition"
+        class="bg-accentTail dark:bg-accentDarkTail text-white px-2 sm:px-3 py-1 hover:bg-accentTail/80 dark:hover:bg-accentDarkTail/80 transition"
       >
         <i class="fa-solid fa-magnifying-glass"></i>
       </button>
@@ -106,8 +106,8 @@
 <style>
   @media (max-width: 320px) {
     header input {
-      max-width: 180px !important;
-      font-size: 0.8rem !important;
+      max-width: 150px !important;
+      font-size: 0.75rem !important;
     }
   }
 </style>
