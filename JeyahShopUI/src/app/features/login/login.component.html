@@ -81,6 +81,11 @@
       Se Connecter
     </button>
 
+    <!-- Backend error message -->
+    <div *ngIf="loginError" class="text-dangerTail text-sm md:text-base mb-2">
+      {{ loginError }}
+    </div>
+
     <!-- Divider -->
     <div class="flex items-center my-4">
       <div class="flex-grow border-t border-gray-300"></div>

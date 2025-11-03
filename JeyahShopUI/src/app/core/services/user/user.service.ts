@@ -60,7 +60,7 @@ export default class UserService {
   // Update address
   updateAddress(
     id: number,
-    address: { street: string; city: string; postalCode: number }
+    address: { street: string; city: string; postalCode: string }
   ): Observable<User> {
     console.log('you have reached the service');
     return this.http
@@ -74,9 +74,8 @@ export default class UserService {
   updatePassword(
     id: number,
     payload: { oldPassword?: string; newPassword: string }
-  ): Observable<string> {
+  ): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${id}/password`, payload, {
-      responseType: 'text',
       withCredentials: true,
     });
   }

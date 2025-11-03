@@ -88,7 +88,7 @@ export class ProfileComponent {
   }
 
   // ✅ Update address
-  updateAddress(address: { street: string; city: string; postalCode: number }) {
+  updateAddress(address: { street: string; city: string; postalCode: string }) {
     const user = this.authService.currentUser;
     if (user) {
       this.userService.updateAddress(user.id, address).subscribe((updated) => {
@@ -112,6 +112,7 @@ export class ProfileComponent {
   streetValue = '';
   postalCodeValue = '';
   cityValue = '';
+  postalCodeError: string | null = null;
 
   startEditAddress() {
     this.editingAddress = true;
@@ -122,25 +123,32 @@ export class ProfileComponent {
   }
   cancelEditAddress() {
     this.editingAddress = false;
+    this.postalCodeError = null;
   }
   saveAddress() {
     if (!this.authService.currentUser) return;
 
-    if (!/^[0-9]{4,6}$/.test(this.postalCodeValue)) {
-      return;
-    }
-
     const updatedAddress = {
       street: this.streetValue,
       city: this.cityValue,
-      postalCode: Number(this.postalCodeValue), // ensure it's a number
+      postalCode: this.postalCodeValue,
     };
     this.userService
       .updateAddress(this.authService.currentUser.id, updatedAddress)
-      .subscribe((updatedUser) => {
-        console.log('Adresse mise à jour', updatedUser);
-        this.authService.setCurrentUser(updatedUser);
-        this.editingAddress = false;
+      .subscribe({
+        next: (updatedUser) => {
+          console.log('Adresse mise à jour', updatedUser);
+          this.authService.setCurrentUser(updatedUser);
+          this.editingAddress = false;
+          this.postalCodeError = null; // clear error
+        },
+        error: (err) => {
+          if (err.status === 400 && err.error?.message) {
+            this.postalCodeError = err.error.message; // show backend error
+          } else {
+            this.postalCodeError = 'Erreur inconnue, veuillez réessayer';
+          }
+        },
       });
   }
 
@@ -208,6 +216,7 @@ export class ProfileComponent {
   oldPassword = '';
   newPassword = '';
   confirmPassword = '';
+  passwordError: string | null = null; // new property
 
   openPasswordModal(user: User) {
     this.isPasswordModalOpen = true;
@@ -245,7 +254,16 @@ export class ProfileComponent {
         }
         this.closePasswordModal();
       },
-      error: (err) => console.error('Erreur :', err),
+      error: (err) => {
+        // Check for BadCredentialsException (backend 400/401)
+        if (err.status === 401) {
+          this.passwordError = 'Ancien mot de passe incorrect';
+        } else if (err.status === 400 && err.error?.message) {
+          this.passwordError = err.error.message;
+        } else {
+          this.passwordError = 'Erreur inconnue, veuillez réessayer';
+        }
+      },
     });
   }
 
@@ -259,6 +277,7 @@ export class ProfileComponent {
   editStreet = '';
   editCity = '';
   editPostalCode = '';
+  postalCodeErrorUserUpdate: String | null = null;
 
   openEditUserModal(user: User) {
     this.isEditUserModalOpen = true;
@@ -274,17 +293,12 @@ export class ProfileComponent {
 
   closeEditUserModal() {
     this.isEditUserModalOpen = false;
+    this.postalCodeErrorUserUpdate = null;
   }
 
   saveUserEdits() {
     const user = this.authService.currentUser;
     if (!user) return;
-
-    // Validate postal code
-    if (!/^[0-9]{4,6}$/.test(this.editPostalCode)) {
-      console.error('Code postal invalide (4–6 chiffres)');
-      return;
-    }
 
     const payload = {
       firstName: this.editFirstName,
@@ -292,7 +306,7 @@ export class ProfileComponent {
       phone: this.editPhone,
       street: this.editStreet,
       city: this.editCity,
-      postalCode: Number(this.editPostalCode),
+      postalCode: this.editPostalCode,
     };
 
     this.userService.updateUser(user.id, payload).subscribe({
@@ -300,8 +314,17 @@ export class ProfileComponent {
         console.log('Utilisateur mis à jour', updatedUser);
         this.authService.setCurrentUser(updatedUser); // 🔥 update observable + UI
         this.closeEditUserModal();
+        this.postalCodeErrorUserUpdate = null;
       },
-      error: (err) => console.error('Erreur lors de la mise à jour', err),
+      error: (err) => {
+        if (err.status === 400 && err.error?.message) {
+          // 🚨 backend validation message (from IllegalArgumentException)
+          this.postalCodeErrorUserUpdate = err.error.message;
+        } else {
+          this.postalCodeErrorUserUpdate =
+            'Erreur inconnue, veuillez réessayer';
+        }
+      },
     });
   }
 }

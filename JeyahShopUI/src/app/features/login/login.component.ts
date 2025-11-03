@@ -41,6 +41,7 @@ import { mapBackendUserToUser } from '../../utils/map-user.utils';
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  loginError: string | null = null; // <-- Add this
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -54,12 +55,23 @@ export class LoginComponent {
   }
 
   login() {
+    // reset previous error
+    this.loginError = null;
+
+    if (this.loginForm.invalid) {
+      // touch all fields to show frontend validation
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
     this.authService.login(this.loginForm.value).subscribe({
       next: (user: User) => {
-        console.log('Logged in user:', user);
         this.authService.navigateAfterLogin(user);
       },
-      error: (err) => console.error('Login failed', err),
+      error: (err) => {
+        // Extract backend error message
+        this.loginError = err.message || 'Erreur inconnue, réessayez';
+      },
     });
   }
 

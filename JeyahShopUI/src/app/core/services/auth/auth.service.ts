@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs/internal/Observable';
 import { User } from '../../../shared/models/user.model';
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, tap, throwError } from 'rxjs';
 import { convertDateArrayToDate } from '../../../utils/date.utils';
 import { BackendUser } from '../../../shared/models/backend-user.model';
 import { mapBackendUserToUser } from '../../../utils/map-user.utils';
@@ -45,10 +45,19 @@ export class AuthService {
     return this.http
       .post<BackendUser>(this.loginUrl, credentials, { withCredentials: true })
       .pipe(
-        map((backendUser) => this.handleLoginSuccess(backendUser)), // <-- use mapper
+        map((backendUser) => this.handleLoginSuccess(backendUser)),
         tap((user) => {
           this.currentUserSubject.next(user);
           localStorage.setItem('currentUser', JSON.stringify(user));
+        }),
+        catchError((err) => {
+          // Extract backend message
+          const backendMessage =
+            err.error?.message ||
+            err.error?.error ||
+            'Erreur inconnue, veuillez réessayer';
+          console.error('Login error:', backendMessage);
+          return throwError(() => new Error(backendMessage)); // rethrow as observable error
         })
       );
   }
