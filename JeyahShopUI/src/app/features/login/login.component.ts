@@ -10,11 +10,7 @@ import {
 import { AuthService } from '../../core/services/auth/auth.service';
 import { User } from '../../shared/models/user.model';
 import { Router } from '@angular/router';
-import {
-  HlmIcon,
-  HlmIconModule,
-  provideHlmIconConfig,
-} from '@spartan-ng/helm/icon';
+import { HlmIconModule, provideHlmIconConfig } from '@spartan-ng/helm/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideAirplay } from '@ng-icons/lucide';
 

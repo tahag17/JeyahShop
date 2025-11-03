@@ -5,6 +5,7 @@ import { StoreLayoutComponent } from './features/store-layout/store-layout.compo
 import { DashboardLayoutComponent } from './features/dashboard-layout/dashboard-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { ProfileComponent } from './features/profile/profile.component';
+import { CartComponent } from './features/cart/cart.component';
 
 export const routes: Routes = [
   {
@@ -18,7 +19,10 @@ export const routes: Routes = [
   {
     path: '',
     component: StoreLayoutComponent,
-    children: [{ path: 'profile', component: ProfileComponent }],
+    children: [
+      { path: 'profile', component: ProfileComponent },
+      { path: 'cart', component: CartComponent }, // 🛒 cart route
+    ],
   },
 
   //for managers
