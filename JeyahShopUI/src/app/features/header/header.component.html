@@ -1,7 +1,8 @@
+<!-- Header -->
 <header
   class="w-full bg-surfaceLight dark:bg-surfaceDark shadow-md px-2 sm:px-6 py-3 flex items-center justify-between"
 >
-  <!-- Logo (left) -->
+  <!-- Logo -->
   <div class="flex items-center gap-2 hidden md:flex">
     <h1
       class="text-xl sm:text-2xl font-bold font-heading text-primaryTail dark:text-primaryDarkTail"
@@ -10,15 +11,15 @@
     </h1>
   </div>
 
-  <!-- Search (center) - constrained max width so it doesn't expand too much) -->
+  <!-- Search bar (center) -->
   <div class="flex-1 flex justify-center mx-1 sm:mx-4">
     <div
-      class="flex w-full max-w-[520px] xs:max-w-[260px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[520px]"
+      class="flex w-full max-w-[480px] xs:max-w-[260px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[520px]"
     >
       <input
         type="text"
         placeholder="Rechercher des produits..."
-        class="flex-1 border border-gray-300 dark:border-gray-600 rounded-l px-2 sm:px-3 py-1 text-textLight dark:text-textDark focus:outline-none focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail"
+        class="flex-1 border border-gray-300 dark:border-gray-600 rounded-l px-2 sm:px-3 py-1 text-textLight dark:text-textDark focus:outline-none focus:ring-2 focus:ring-accentTail dark:focus:ring-accentDarkTail transition-all duration-200"
       />
       <button
         class="bg-accentTail dark:bg-accentDarkTail text-white px-2 sm:px-3 py-1 rounded-r hover:bg-accentTail/80 dark:hover:bg-accentDarkTail/80 transition"
@@ -28,9 +29,9 @@
     </div>
   </div>
 
-  <!-- Right side (no justify-between here — header handles spacing) -->
-  <div class="flex items-center gap-x-1 sm:gap-x-2">
-    <!-- Profile (desktop only) -->
+  <!-- Right side -->
+  <div class="flex items-center gap-x-1 sm:gap-x-4 relative">
+    <!-- Profile -->
     <button
       class="hidden md:flex items-center gap-1 sm:gap-2 text-textLight dark:text-textDark hover:text-primaryTail dark:hover:text-primaryDarkTail transition"
       [routerLink]="'/profile'"
@@ -39,7 +40,7 @@
       <span class="hidden sm:inline">Profile</span>
     </button>
 
-    <!-- Cart icon (desktop only) -->
+    <!-- Cart -->
     <button
       class="relative p-1 sm:p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition hidden md:block"
       [routerLink]="'/cart'"
@@ -49,21 +50,64 @@
       ></i>
       <span
         class="absolute -top-1 -right-1 bg-dangerTail text-white text-[10px] sm:text-xs rounded-full px-[3px]"
-        >{{ cartCount }}</span
       >
+        {{ cartCount }}
+      </span>
     </button>
 
-    <!-- Dark mode toggle: also keep a responsive ml as an extra guard -->
+    <!-- Dark mode toggle -->
     <app-dark-mode-toggle
       class="ml-1 sm:ml-2 md:ml-4 lg:ml-6 xl:ml-8"
     ></app-dark-mode-toggle>
 
-    <!-- Mobile hamburger -->
+    <!-- Hamburger -->
     <button
       class="md:hidden p-1 sm:p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition"
       (click)="toggleMenu()"
     >
       <i class="fa-solid fa-bars text-textLight dark:text-textDark"></i>
     </button>
+
+    <!-- Mobile dropdown -->
+    <div
+      *ngIf="menuOpen"
+      class="absolute right-0 top-full mt-2 w-40 sm:w-48 bg-surfaceLight dark:bg-surfaceDark border border-gray-200 dark:border-gray-700 text-textLight dark:text-textDark shadow-lg rounded z-50 flex flex-col divide-y divide-gray-200 dark:divide-gray-700 transition-colors duration-200"
+    >
+      <button
+        class="w-full text-left px-3 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+        [routerLink]="'/profile'"
+        (click)="menuOpen = false"
+      >
+        <i class="fa-solid fa-user"></i>
+        Profile
+      </button>
+
+      <button
+        class="w-full text-left px-3 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+        [routerLink]="'/cart'"
+        (click)="menuOpen = false"
+      >
+        <i class="fa-solid fa-cart-shopping"></i>
+        Cart ({{ cartCount }})
+      </button>
+
+      <button
+        class="w-full text-left px-3 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500 transition"
+        (click)="logout()"
+      >
+        <i class="fa-solid fa-power-off"></i>
+        Logout
+      </button>
+    </div>
   </div>
 </header>
+
+<!-- Custom style for screens < 320px -->
+<style>
+  @media (max-width: 320px) {
+    header input {
+      max-width: 180px !important;
+      font-size: 0.8rem !important;
+    }
+  }
+</style>
