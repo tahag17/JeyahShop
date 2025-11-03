@@ -87,6 +87,15 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new IllegalArgumentException("Le login est requis");
+        }
+
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Le mot de passe est requis");
+        }
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
@@ -96,24 +105,24 @@ public class AuthController {
             SecurityContext securityContext = SecurityContextHolder.getContext();
             securityContext.setAuthentication(authentication);
 
-            // Persist context into HTTP session so cookie will be sent back
+            // Persist context into HTTP session
             HttpSession session = httpRequest.getSession(true);
             session.setAttribute(
                     HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                     securityContext
             );
 
-            // Get user from principal instead of querying DB again
+            // Get user from principal
             CustomUserPrincipal principal = (CustomUserPrincipal) authentication.getPrincipal();
             var response = UserMapper.toResponse(principal.getUser());
 
             return ResponseEntity.ok(response);
 
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Invalid credentials"));
+            throw new BadCredentialsException("Login ou mot de passe incorrect"); // let GlobalExceptionHandler handle it
         }
     }
+
 
 
 

@@ -11,5 +11,5 @@ public class UpdateUserRequest {
     // Address fields
     private String street;
     private String city;
-    private Integer postalCode;
+    private String postalCode;
 }

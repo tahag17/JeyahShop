@@ -24,19 +24,31 @@ public class UserService {
         if(request.getLastName() != null) user.setLastName(request.getLastName());
         if(request.getPhone() != null) user.setPhone(request.getPhone());
 
+
+        // Validate postal code if present
+        if (request.getPostalCode() != null) {
+            String postalCodeStr = request.getPostalCode().toString();
+            if (!postalCodeStr.matches("\\d+")) { // only digits allowed
+                throw new IllegalArgumentException("Code postal invalide : seuls les chiffres sont autorisés");
+            }
+        }
         // Update address
         Address address = user.getAddress();
         if(address != null) {
             if(request.getStreet() != null) address.setStreet(request.getStreet());
             if(request.getCity() != null) address.setCity(request.getCity());
-            if(request.getPostalCode() != null) address.setPostalCode(request.getPostalCode());
+            if(request.getPostalCode() != null) address.setPostalCode(Integer.valueOf(request.getPostalCode()));
         } else {
             // Create address if null
             Address newAddress = new Address();
             newAddress.setUser(user);
-            newAddress.setStreet(request.getStreet());
-            newAddress.setCity(request.getCity());
-            newAddress.setPostalCode(request.getPostalCode());
+
+            if (request.getStreet() != null) newAddress.setStreet(request.getStreet());
+            if (request.getCity() != null) newAddress.setCity(request.getCity());
+            if (request.getPostalCode() != null) {
+                newAddress.setPostalCode(Integer.valueOf(request.getPostalCode()));
+            }
+
             addressRepository.save(newAddress);
             user.setAddress(newAddress);
         }
@@ -75,30 +87,24 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
         Address address = user.getAddress();
-//        if (address == null) {
-//            Address newAddress = new Address();
-//            newAddress.setUser(user);
-//            newAddress.setStreet(request.getStreet());
-//            newAddress.setCity(request.getCity());
-//            newAddress.setPostalCode(request.getPostalCode());
-//            addressRepository.save(newAddress);
-//            user.setAddress(newAddress);
-//        } else {
-//            if (request.getStreet() != null) address.setStreet(request.getStreet());
-//            if (request.getCity() != null) address.setCity(request.getCity());
-//            if (request.getPostalCode() != null) address.setPostalCode(request.getPostalCode());
-//        }
-//
-//        return userRepository.save(user);
         if (address == null) {
             address = new Address();
             address.setUser(user);
             user.setAddress(address);
         }
 
+//        postal code validation
+        if (request.getPostalCode() != null) {
+            String postalCodeStr = request.getPostalCode().toString();
+            if (!postalCodeStr.matches("\\d+")) { // only digits allowed
+                throw new IllegalArgumentException("Code postal invalide : seuls les chiffres sont autorisés");
+            }
+            address.setPostalCode(Integer.valueOf(postalCodeStr));
+        }
+
+
         if (request.getStreet() != null) address.setStreet(request.getStreet());
         if (request.getCity() != null) address.setCity(request.getCity());
-        if (request.getPostalCode() != null) address.setPostalCode(request.getPostalCode());
 
         return userRepository.save(user); // cascade saves address
 

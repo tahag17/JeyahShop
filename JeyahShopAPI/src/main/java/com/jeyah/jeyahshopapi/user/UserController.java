@@ -1,6 +1,8 @@
 package com.jeyah.jeyahshopapi.user;
 
+import com.jeyah.jeyahshopapi.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,17 @@ public class UserController {
     // Update user by ID
     @PatchMapping("/{id}")
     @PreAuthorize("#id == @securityUtil.getCurrentUserId()")
-    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody UpdateUserRequest request) {
-        User updatedUser = userService.updateUser(id, request);
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody UpdateUserRequest request) {
+        try {
+            User updatedUser = userService.updateUser(id, request);
+            UserResponse response = UserMapper.toResponse(updatedUser);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Erreur interne, veuillez réessayer"));
+        }
     }
 
     // Update phone
@@ -54,10 +64,18 @@ public class UserController {
     @PatchMapping("/{id}/address")
     @PreAuthorize("#id == @securityUtil.getCurrentUserId()")
 
-    public ResponseEntity<UserResponse> updateAddress(@PathVariable Integer id, @RequestBody UpdateAddressRequest request) {
-        User updatedUser = userService.updateAddress(id, request);
-        UserResponse response = UserMapper.toResponse(updatedUser);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> updateAddress(@PathVariable Integer id, @RequestBody UpdateAddressRequest request) {
+        try {
+            User updatedUser = userService.updateAddress(id, request);
+            UserResponse response = UserMapper.toResponse(updatedUser);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest()
+                    .body(UserMapper.toErrorResponse(ex.getMessage())); // you can create a simple error response DTO
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(UserMapper.toErrorResponse("Erreur interne, veuillez réessayer"));
+        }
     }
 
     @PatchMapping("/{id}/password")

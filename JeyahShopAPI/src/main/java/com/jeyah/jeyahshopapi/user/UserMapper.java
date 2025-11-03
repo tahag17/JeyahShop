@@ -1,5 +1,7 @@
 package com.jeyah.jeyahshopapi.user;
 
+import com.jeyah.jeyahshopapi.exception.ErrorResponse;
+
 import java.util.stream.Collectors;
 
 public class UserMapper {
@@ -31,5 +33,9 @@ public class UserMapper {
                 .build();
     }
 
+    // ✅ New method for mapping error messages
+    public static ErrorResponse toErrorResponse(String message) {
+        return new ErrorResponse(message);
+    }
 
 }

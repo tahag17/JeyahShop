@@ -6,5 +6,5 @@ import lombok.Data;
 public class UpdateAddressRequest {
     private String street;
     private String city;
-    private Integer postalCode;
+    private String postalCode;
 }
