@@ -79,4 +79,24 @@ export default class UserService {
       withCredentials: true,
     });
   }
+
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${environment.apiBaseUrl}`, {
+      withCredentials: true,
+    });
+  }
+
+  setUserEnabled(id: number, enabled: boolean): Observable<User> {
+    return this.http.patch<User>(
+      `${environment.apiBaseUrl}api/users/${id}/status`,
+      { enabled },
+      { withCredentials: true }
+    );
+  }
+
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiBaseUrl}api/users/${id}`, {
+      withCredentials: true,
+    });
+  }
 }

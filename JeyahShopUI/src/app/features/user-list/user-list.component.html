@@ -1,0 +1,82 @@
+<div
+  class="max-w-6xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md"
+>
+  <h2
+    class="text-3xl font-heading font-bold text-primaryTail dark:text-primaryDarkTail mb-6"
+  >
+    Liste des utilisateurs
+  </h2>
+
+  <div *ngIf="loading" class="text-center text-textLight dark:text-textDark">
+    Chargement...
+  </div>
+  <div *ngIf="error" class="text-center text-dangerTail">{{ error }}</div>
+
+  <table
+    *ngIf="!loading && users.length"
+    class="w-full text-sm md:text-base border-collapse"
+  >
+    <thead>
+      <tr class="bg-accentTail/10 dark:bg-accentDarkTail/10 text-left">
+        <th class="p-2">Nom</th>
+        <th class="p-2">Email</th>
+        <th class="p-2">Rôles</th>
+        <th class="p-2">Activé</th>
+        <th class="p-2 text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let user of users"
+        class="hover:bg-accentTail/10 dark:hover:bg-accentDarkTail/10 transition"
+      >
+        <td class="p-2">
+          {{
+            user.fullName ||
+              user.firstName + " " + user.lastName ||
+              "Non fourni"
+          }}
+        </td>
+        <td class="p-2">{{ user.email }}</td>
+        <td class="p-2">{{ user.roles.join(", ") }}</td>
+        <td class="p-2">
+          <span
+            class="font-semibold"
+            [ngClass]="{
+              'text-successTail': user.enabled,
+              'text-dangerTail': !user.enabled
+            }"
+          >
+            {{ user.enabled ? "Oui" : "Non" }}
+          </span>
+        </td>
+        <td class="p-2 flex justify-center gap-2">
+          <button
+            class="px-2 py-1 text-white rounded text-sm"
+            [ngClass]="
+              user.enabled
+                ? 'bg-dangerTail hover:bg-dangerTail/80'
+                : 'bg-successTail hover:bg-successTail/80'
+            "
+            (click)="toggleUserStatus(user)"
+          >
+            {{ user.enabled ? "Désactiver" : "Activer" }}
+          </button>
+          <button
+            class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm"
+            (click)="deleteUser(user.id)"
+          >
+            Supprimer
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div
+    *ngIf="!loading && !users.length"
+    class="text-center text-textLight dark:text-textDark"
+  >
+    Aucun utilisateur trouvé.
+  </div>
+</div>

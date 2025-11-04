@@ -6,6 +6,7 @@ import { DashboardLayoutComponent } from './features/dashboard-layout/dashboard-
 import { authGuard } from './core/guards/auth.guard';
 import { ProfileComponent } from './features/profile/profile.component';
 import { CartComponent } from './features/cart/cart.component';
+import { UserListComponent } from './features/user-list/user-list.component';
 
 export const routes: Routes = [
   {
@@ -33,7 +34,7 @@ export const routes: Routes = [
       //   { path: '', component: DashboardHomeComponent },
       //   { path: 'products', component: ManageProductsComponent },
       //   { path: 'orders', component: ManageOrdersComponent },
-      //   { path: 'users', component: ManageUsersComponent }, // admin only
+      { path: 'users', component: UserListComponent }, // admin only
       { path: 'profile', component: ProfileComponent },
     ],
     canActivate: [authGuard],
