@@ -13,21 +13,27 @@ import { CommonModule, NgIf } from '@angular/common';
 })
 export class UserListComponent implements OnInit {
   private userService = inject(UserService);
-  private authService = inject(AuthService);
+  authService = inject(AuthService);
 
   users: User[] = [];
   loading = true;
   error: string | null = null;
 
+  totalPages = 0;
+  currentPage = 0;
+  pageSize = 10;
+
   ngOnInit(): void {
     this.fetchUsers();
   }
 
-  fetchUsers() {
+  fetchUsers(page = 0) {
     this.loading = true;
-    this.userService.getAllUsers().subscribe({
+    this.userService.getAllUsers(page).subscribe({
       next: (data) => {
-        this.users = data;
+        this.users = data.users;
+        this.totalPages = data.totalPages;
+        this.currentPage = data.currentPage;
         this.loading = false;
       },
       error: (err) => {

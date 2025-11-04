@@ -1,17 +1,24 @@
 <div
   class="max-w-6xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md"
 >
+  <!-- Heading -->
   <h2
     class="text-3xl font-heading font-bold text-primaryTail dark:text-primaryDarkTail mb-6"
   >
     Liste des utilisateurs
   </h2>
 
+  <!-- Loading State -->
   <div *ngIf="loading" class="text-center text-textLight dark:text-textDark">
     Chargement...
   </div>
-  <div *ngIf="error" class="text-center text-dangerTail">{{ error }}</div>
 
+  <!-- Error State -->
+  <div *ngIf="error" class="text-center text-dangerTail mb-4">
+    {{ error }}
+  </div>
+
+  <!-- Users Table -->
   <table
     *ngIf="!loading && users.length"
     class="w-full text-sm md:text-base border-collapse"
@@ -51,6 +58,7 @@
           </span>
         </td>
         <td class="p-2 flex justify-center gap-2">
+          <!-- Toggle Enabled Status -->
           <button
             class="px-2 py-1 text-white rounded text-sm"
             [ngClass]="
@@ -62,7 +70,10 @@
           >
             {{ user.enabled ? "Désactiver" : "Activer" }}
           </button>
+
+          <!-- Delete User (role-based) -->
           <button
+            *ngIf="authService.hasRole('ROLE_ADMIN')"
             class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm"
             (click)="deleteUser(user.id)"
           >
@@ -73,10 +84,35 @@
     </tbody>
   </table>
 
+  <!-- No Users Found -->
   <div
     *ngIf="!loading && !users.length"
     class="text-center text-textLight dark:text-textDark"
   >
     Aucun utilisateur trouvé.
+  </div>
+
+  <!-- Pagination Controls -->
+  <div
+    *ngIf="!loading && totalPages > 1"
+    class="flex justify-center gap-4 mt-4 items-center"
+  >
+    <button
+      class="px-3 py-1 bg-accentTail/20 rounded hover:bg-accentTail/40"
+      [disabled]="currentPage === 0"
+      (click)="fetchUsers(currentPage - 1)"
+    >
+      Précédent
+    </button>
+
+    <span> Page {{ currentPage + 1 }} / {{ totalPages }} </span>
+
+    <button
+      class="px-3 py-1 bg-accentTail/20 rounded hover:bg-accentTail/40"
+      [disabled]="currentPage + 1 === totalPages"
+      (click)="fetchUsers(currentPage + 1)"
+    >
+      Suivant
+    </button>
   </div>
 </div>

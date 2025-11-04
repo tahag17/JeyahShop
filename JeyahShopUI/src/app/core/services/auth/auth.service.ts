@@ -103,4 +103,10 @@ export class AuthService {
       this.router.navigate(['/']);
     }
   }
+
+  hasRole(role: string): boolean {
+    const user = this.currentUser;
+    if (!user || !user.roles) return false;
+    return user.roles.includes(role);
+  }
 }

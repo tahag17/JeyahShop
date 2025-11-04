@@ -5,6 +5,7 @@ import { User } from '../../../shared/models/user.model';
 import { map, Observable } from 'rxjs';
 import { BackendUser } from '../../../shared/models/backend-user.model';
 import { mapBackendUserToUser } from '../../../utils/map-user.utils';
+import { PaginatedUsers } from '../../../shared/models/paginated-users';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,7 @@ import { mapBackendUserToUser } from '../../../utils/map-user.utils';
 export default class UserService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiBaseUrl}user/api/users`;
+  private managerApiUrl = `${environment.apiBaseUrl}manager/api/users`;
 
   constructor() {}
 
@@ -80,10 +82,11 @@ export default class UserService {
     });
   }
 
-  getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${environment.apiBaseUrl}`, {
-      withCredentials: true,
-    });
+  getAllUsers(page = 0, size = 10): Observable<PaginatedUsers> {
+    return this.http.get<PaginatedUsers>(
+      `${this.managerApiUrl}?page=${page}&size=${size}`,
+      { withCredentials: true }
+    );
   }
 
   setUserEnabled(id: number, enabled: boolean): Observable<User> {
