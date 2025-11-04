@@ -82,6 +82,8 @@ export default class UserService {
     });
   }
 
+  //Manager+ Methods
+
   getAllUsers(page = 0, size = 10): Observable<PaginatedUsers> {
     return this.http.get<PaginatedUsers>(
       `${this.managerApiUrl}?page=${page}&size=${size}`,
@@ -89,16 +91,27 @@ export default class UserService {
     );
   }
 
-  setUserEnabled(id: number, enabled: boolean): Observable<User> {
-    return this.http.patch<User>(
-      `${environment.apiBaseUrl}api/users/${id}/status`,
-      { enabled },
-      { withCredentials: true }
-    );
+  // --- TOGGLE USER ENABLED ---
+  toggleUserEnabled(id: number): Observable<User> {
+    return this.http
+      .patch<BackendUser>(
+        `${this.managerApiUrl}/${id}/toggle`,
+        {},
+        { withCredentials: true }
+      )
+      .pipe(map(mapBackendUserToUser));
   }
 
+  // --- DELETE USER ---
   deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiBaseUrl}api/users/${id}`, {
+    return this.http.delete<void>(`${this.managerApiUrl}/${id}`, {
+      withCredentials: true,
+    });
+  }
+
+  // --- GENERIC UPDATE USER ---
+  updateUserAsManager(userId: number, payload: any): Observable<User> {
+    return this.http.patch<User>(`${this.managerApiUrl}/${userId}`, payload, {
       withCredentials: true,
     });
   }

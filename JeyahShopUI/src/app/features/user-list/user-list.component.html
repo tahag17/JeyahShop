@@ -1,22 +1,17 @@
 <div
   class="max-w-6xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md"
 >
-  <!-- Heading -->
   <h2
     class="text-3xl font-heading font-bold text-primaryTail dark:text-primaryDarkTail mb-6"
   >
     Liste des utilisateurs
   </h2>
 
-  <!-- Loading State -->
+  <!-- Loading & Error -->
   <div *ngIf="loading" class="text-center text-textLight dark:text-textDark">
     Chargement...
   </div>
-
-  <!-- Error State -->
-  <div *ngIf="error" class="text-center text-dangerTail mb-4">
-    {{ error }}
-  </div>
+  <div *ngIf="error" class="text-center text-dangerTail mb-4">{{ error }}</div>
 
   <!-- Users Table -->
   <table
@@ -29,6 +24,7 @@
         <th class="p-2">Email</th>
         <th class="p-2">Rôles</th>
         <th class="p-2">Activé</th>
+        <th class="p-2">Adresse</th>
         <th class="p-2 text-center">Actions</th>
       </tr>
     </thead>
@@ -57,25 +53,37 @@
             {{ user.enabled ? "Oui" : "Non" }}
           </span>
         </td>
-        <td class="p-2 flex justify-center gap-2">
-          <!-- Toggle Enabled Status -->
+        <td class="p-2">
+          <span *ngIf="user.address"
+            >{{ user.address.street }}, {{ user.address.city }} -
+            {{ user.address.postalCode }}</span
+          >
+          <span *ngIf="!user.address">Non fourni</span>
+        </td>
+        <td
+          class="p-2 flex flex-col md:flex-row justify-center gap-2 items-center"
+        >
           <button
+            (click)="openEditUserModal(user)"
+            class="px-2 py-1 bg-accentTail text-white rounded hover:bg-accentTail/80 text-sm"
+          >
+            Éditer
+          </button>
+          <button
+            (click)="toggleUserStatus(user)"
             class="px-2 py-1 text-white rounded text-sm"
             [ngClass]="
               user.enabled
                 ? 'bg-dangerTail hover:bg-dangerTail/80'
                 : 'bg-successTail hover:bg-successTail/80'
             "
-            (click)="toggleUserStatus(user)"
           >
             {{ user.enabled ? "Désactiver" : "Activer" }}
           </button>
-
-          <!-- Delete User (role-based) -->
           <button
             *ngIf="authService.hasRole('ROLE_ADMIN')"
-            class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm"
             (click)="deleteUser(user.id)"
+            class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm"
           >
             Supprimer
           </button>
@@ -84,7 +92,7 @@
     </tbody>
   </table>
 
-  <!-- No Users Found -->
+  <!-- No Users -->
   <div
     *ngIf="!loading && !users.length"
     class="text-center text-textLight dark:text-textDark"
@@ -92,7 +100,7 @@
     Aucun utilisateur trouvé.
   </div>
 
-  <!-- Pagination Controls -->
+  <!-- Pagination -->
   <div
     *ngIf="!loading && totalPages > 1"
     class="flex justify-center gap-4 mt-4 items-center"
@@ -104,9 +112,7 @@
     >
       Précédent
     </button>
-
     <span> Page {{ currentPage + 1 }} / {{ totalPages }} </span>
-
     <button
       class="px-3 py-1 bg-accentTail/20 rounded hover:bg-accentTail/40"
       [disabled]="currentPage + 1 === totalPages"
@@ -114,5 +120,122 @@
     >
       Suivant
     </button>
+  </div>
+</div>
+
+<!-- --- Edit Modal --- -->
+<!-- --- Edit Modal --- -->
+<div
+  *ngIf="isEditUserModalOpen"
+  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+>
+  <div
+    class="bg-surfaceLight dark:bg-surfaceDark rounded-lg p-6 w-96 shadow-lg"
+  >
+    <h3 class="text-xl font-bold mb-4 text-textLight dark:text-textDark">
+      Modifier l'utilisateur
+    </h3>
+
+    <form
+      (ngSubmit)="saveUserEdits()"
+      class="space-y-3 text-textLight dark:text-textDark"
+    >
+      <!-- First Name -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Prénom:</label>
+        <input
+          type="text"
+          [(ngModel)]="editFirstName"
+          name="editFirstName"
+          placeholder="Prénom"
+          class="w-full border rounded px-2 py-1"
+          required
+        />
+      </div>
+
+      <!-- Last Name -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Nom:</label>
+        <input
+          type="text"
+          [(ngModel)]="editLastName"
+          name="editLastName"
+          placeholder="Nom"
+          class="w-full border rounded px-2 py-1"
+          required
+        />
+      </div>
+
+      <!-- Phone -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Téléphone:</label>
+        <input
+          type="text"
+          [(ngModel)]="editPhone"
+          name="editPhone"
+          placeholder="Téléphone"
+          class="w-full border rounded px-2 py-1"
+        />
+      </div>
+
+      <!-- Street -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Rue:</label>
+        <input
+          type="text"
+          [(ngModel)]="editStreet"
+          name="editStreet"
+          placeholder="Rue"
+          class="w-full border rounded px-2 py-1"
+        />
+      </div>
+
+      <!-- City -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Ville:</label>
+        <input
+          type="text"
+          [(ngModel)]="editCity"
+          name="editCity"
+          placeholder="Ville"
+          class="w-full border rounded px-2 py-1"
+        />
+      </div>
+
+      <!-- Postal Code -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Code postal:</label>
+        <input
+          type="text"
+          [(ngModel)]="editPostalCode"
+          name="editPostalCode"
+          placeholder="Code postal"
+          class="w-full border rounded px-2 py-1"
+        />
+        <div
+          *ngIf="postalCodeErrorUserUpdate"
+          class="text-dangerTail text-xs mt-1"
+        >
+          {{ postalCodeErrorUserUpdate }}
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-2 mt-4">
+        <button
+          type="button"
+          (click)="closeEditUserModal()"
+          class="px-3 py-1 bg-dangerTail hover:bg-dangerTail/80 text-white rounded"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="px-3 py-1 bg-accentTail dark:bg-accentDarkTail hover:bg-secondaryTail dark:hover:bg-secondaryDarkTail text-white rounded"
+        >
+          Sauvegarder
+        </button>
+      </div>
+    </form>
   </div>
 </div>
