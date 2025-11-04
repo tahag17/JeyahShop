@@ -24,7 +24,7 @@ public class JeyahShopApiApplication {
         SpringApplication.run(JeyahShopApiApplication.class, args);
     }
 
-    @Bean
+//    @Bean
     public CommandLineRunner addRoles(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
 
