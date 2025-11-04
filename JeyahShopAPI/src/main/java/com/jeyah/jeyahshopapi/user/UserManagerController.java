@@ -1,6 +1,8 @@
 package com.jeyah.jeyahshopapi.user;
 
 import com.jeyah.jeyahshopapi.exception.ErrorResponse;
+import com.jeyah.jeyahshopapi.role.Role;
+import com.jeyah.jeyahshopapi.role.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ public class UserManagerController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @GetMapping
     public ResponseEntity<?> getAllUsers(
@@ -131,6 +134,35 @@ public class UserManagerController {
                     .body(new ErrorResponse("Erreur interne, veuillez réessayer"));
         }
     }
+
+
+
+    @PatchMapping("/{id}/role/manager")
+    @PreAuthorize("hasRole('ADMIN')") // Only admins can assign/remove manager role
+    public ResponseEntity<?> toggleManagerRole(
+            @PathVariable Integer id,
+            @RequestBody UpdateUserRoleRequest request) {
+
+        User targetUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        boolean hasManagerRole = targetUser.getRoles().stream()
+                .anyMatch(r -> r.getName().equals("ROLE_MANAGER"));
+
+        if (request.isManager() && !hasManagerRole) {
+            // Add manager role
+            Role managerRole = roleRepository.findByName("ROLE_MANAGER")
+                    .orElseThrow(() -> new RuntimeException("Manager role not found"));
+            targetUser.getRoles().add(managerRole);
+        } else if (!request.isManager() && hasManagerRole) {
+            // Remove manager role
+            targetUser.getRoles().removeIf(r -> r.getName().equals("ROLE_MANAGER"));
+        }
+
+        userRepository.save(targetUser);
+        return ResponseEntity.ok(UserMapper.toResponse(targetUser));
+    }
+
 
 
 
