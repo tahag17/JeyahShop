@@ -93,39 +93,6 @@ public class UserController {
     }
 
 
-    // List all users (paginated)
-    @GetMapping
-    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
-    public ResponseEntity<?> getAllUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
-
-        try {
-            Page<User> usersPage = userService.getAllUsers(page, size, sortBy, direction);
-
-            // Map users to responses
-            List<UserResponse> userResponses = usersPage.getContent()
-                    .stream()
-                    .map(UserMapper::toResponse)
-                    .toList();
-
-            // Build a pagination response
-            Map<String, Object> response = new HashMap<>();
-            response.put("users", userResponses);
-            response.put("currentPage", usersPage.getNumber());
-            response.put("totalItems", usersPage.getTotalElements());
-            response.put("totalPages", usersPage.getTotalPages());
-            response.put("pageSize", usersPage.getSize());
-
-            return ResponseEntity.ok(response);
-
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Erreur interne, veuillez réessayer"));
-        }
-    }
 
 
 
