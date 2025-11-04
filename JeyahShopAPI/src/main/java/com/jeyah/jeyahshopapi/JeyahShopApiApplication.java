@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
@@ -64,47 +65,40 @@ public class JeyahShopApiApplication {
 //        };
 //    }
 
-//        @Bean
+        @Bean
     public CommandLineRunner addRoles(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-//                Role user = new Role();
-//                user.setName("ROLE_USER");
-//                roleRepository.save(user);
-//
-//                Role manager = new Role();
-//                manager.setName("ROLE_MANAGER");
-//                roleRepository.save(manager);
-//
-//                Role admin = new Role();
-//                admin.setName("ROLE_ADMIN");
-//                roleRepository.save(admin);
 
-                // Manager user
-// Create manager user
-            User TahaUser = userRepository.findByEmail("manager@example.com").orElseThrow(() -> new RuntimeException("User not found"));
+            // 1️⃣ Create roles if missing
+            Role roleUser = roleRepository.findByName("ROLE_USER").orElseGet(null);
+            Role roleManager = roleRepository.findByName("ROLE_MANAGER").orElseGet(null);
+            Role roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElseGet(null);
 
-// Fetch the ROLE_MANAGER from the DB
-//            Role managerRole = roleRepository.findByName("ROLE_USER")
-//                    .orElseThrow(() -> new RuntimeException("ROLE_MANAGER not found"));
-//
-//// Add role to user
-//            TahaUser.getRoles().add(managerRole);
+            userRepository.findByEmail("manager@example.com").orElseGet(() -> {
+                User manager = new User();
+                manager.setFirstName("Manager");
+                manager.setLastName("User");
+                manager.setEmail("manager@example.com");
+                manager.setPassword(passwordEncoder.encode("manager123"));
+                manager.setEnabled(true);
+                manager.setAccountLocked(false);
+                manager.setRoles(new ArrayList<>(List.of(roleManager)));
+                return userRepository.save(manager);
+            });
 
-// Save user
-            TahaUser.setEnabled(true);
-            userRepository.save(TahaUser);
+            // 3️⃣ Create Admin if missing
+            userRepository.findByEmail("admin@example.com").orElseGet(() -> {
+                User admin = new User();
+                admin.setFirstName("Admin");
+                admin.setLastName("User");
+                admin.setEmail("admin@example.com");
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setEnabled(true);
+                admin.setAccountLocked(false);
+                admin.setRoles(new ArrayList<>(List.of(roleAdmin)));
+                return userRepository.save(admin);
+            });
 
-                // Admin user
-//                User adminUser = new User();
-//                adminUser.setFirstName("Admin");
-//                adminUser.setLastName("User");
-//                adminUser.setEmail("admin@example.com");
-//                adminUser.setPassword(passwordEncoder.encode("admin123"));
-//                adminUser.setEnabled(true);
-//                adminUser.setRoles(new ArrayList<>());
-//                adminUser.getRoles().add(admin);
-//                userRepository.save(adminUser);
-//
 
         };
     }

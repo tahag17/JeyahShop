@@ -2,10 +2,15 @@ package com.jeyah.jeyahshopapi.user;
 
 import com.jeyah.jeyahshopapi.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user/api/users")
@@ -86,6 +91,42 @@ public class UserController {
         userService.updatePassword(id, request);
         return ResponseEntity.ok("Mot de passe mis à jour avec succès");
     }
+
+
+    // List all users (paginated)
+    @GetMapping
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    public ResponseEntity<?> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        try {
+            Page<User> usersPage = userService.getAllUsers(page, size, sortBy, direction);
+
+            // Map users to responses
+            List<UserResponse> userResponses = usersPage.getContent()
+                    .stream()
+                    .map(UserMapper::toResponse)
+                    .toList();
+
+            // Build a pagination response
+            Map<String, Object> response = new HashMap<>();
+            response.put("users", userResponses);
+            response.put("currentPage", usersPage.getNumber());
+            response.put("totalItems", usersPage.getTotalElements());
+            response.put("totalPages", usersPage.getTotalPages());
+            response.put("pageSize", usersPage.getSize());
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Erreur interne, veuillez réessayer"));
+        }
+    }
+
 
 
 }
