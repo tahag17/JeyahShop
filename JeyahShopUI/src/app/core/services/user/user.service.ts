@@ -115,4 +115,15 @@ export default class UserService {
       withCredentials: true,
     });
   }
+
+  //Admin only method:
+  toggleManagerRole(userId: number, makeManager: boolean): Observable<User> {
+    return this.http
+      .patch<BackendUser>(
+        `${this.managerApiUrl}/${userId}/role/manager`,
+        { manager: makeManager },
+        { withCredentials: true }
+      )
+      .pipe(map(mapBackendUserToUser));
+  }
 }

@@ -38,6 +38,6 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
     ],
     canActivate: [authGuard],
-    data: { roles: ['ROLE_MANAGER'] }, // <-- this is route.data['roles']
+    data: { roles: ['ROLE_MANAGER', 'ROLE_ADMIN'] }, // <-- this is route.data['roles']
   },
 ];

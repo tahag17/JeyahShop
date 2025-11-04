@@ -65,13 +65,13 @@
         >
           <button
             (click)="openEditUserModal(user)"
-            class="px-2 py-1 bg-accentTail text-white rounded hover:bg-accentTail/80 text-sm"
+            class="px-2 py-1 w-20 bg-accentTail text-white rounded hover:bg-accentTail/80 text-sm"
           >
             Éditer
           </button>
           <button
             (click)="toggleUserStatus(user)"
-            class="px-2 py-1 text-white rounded text-sm"
+            class="px-2 py-1 w-20 text-white rounded text-sm"
             [ngClass]="
               user.enabled
                 ? 'bg-dangerTail hover:bg-dangerTail/80'
@@ -80,12 +80,31 @@
           >
             {{ user.enabled ? "Désactiver" : "Activer" }}
           </button>
+
           <button
             *ngIf="authService.hasRole('ROLE_ADMIN')"
             (click)="deleteUser(user.id)"
-            class="px-2 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm"
+            class="px-2 py-1 w-20 bg-dangerTail text-white rounded hover:bg-dangerTail/80 text-sm"
           >
             Supprimer
+          </button>
+
+          <!-- ✅ TOGGLE MANAGER ROLE BUTTON -->
+          <button
+            *ngIf="authService.hasRole('ROLE_ADMIN')"
+            (click)="toggleManager(user)"
+            class="px-2 py-1 w-20 text-white rounded text-sm"
+            [ngClass]="
+              user.roles.includes('ROLE_MANAGER')
+                ? 'bg-dangerTail hover:bg-dangerTail/80'
+                : 'bg-successTail hover:bg-successTail/80'
+            "
+          >
+            {{
+              user.roles.includes("ROLE_MANAGER")
+                ? "Retirer Manager"
+                : "Ajouter Manager"
+            }}
           </button>
         </td>
       </tr>
@@ -123,7 +142,6 @@
   </div>
 </div>
 
-<!-- --- Edit Modal --- -->
 <!-- --- Edit Modal --- -->
 <div
   *ngIf="isEditUserModalOpen"

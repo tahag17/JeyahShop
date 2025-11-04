@@ -129,4 +129,21 @@ export class UserListComponent implements OnInit {
       },
     });
   }
+
+  toggleManager(user: User) {
+    const makeManager = !user.roles.includes('ROLE_MANAGER');
+
+    this.userService.toggleManagerRole(user.id, makeManager).subscribe({
+      next: (updatedUser) => {
+        console.log('Manager role updated:', updatedUser);
+        // Update the user in the list
+        const index = this.users.findIndex((u) => u.id === updatedUser.id);
+        if (index > -1) this.users[index] = updatedUser;
+      },
+      error: (err) => {
+        console.error('Erreur lors de la mise à jour du rôle manager', err);
+        alert('Erreur lors de la mise à jour du rôle manager.');
+      },
+    });
+  }
 }
