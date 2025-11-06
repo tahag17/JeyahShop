@@ -14,7 +14,6 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideAirplay } from '@ng-icons/lucide';
 
 // import { HlmInput } from '@spartan-ng/helm/input';
-import { HlmInputModule } from '@spartan-ng/ui-input-helm';
 import { DarkModeToggleComponent } from '../dark-mode-toggle/dark-mode-toggle.component';
 import { BackendUser } from '../../shared/models/backend-user.model';
 import { mapBackendUserToUser } from '../../utils/map-user.utils';
@@ -22,13 +21,7 @@ import { mapBackendUserToUser } from '../../utils/map-user.utils';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    NgIcon,
-    HlmInputModule,
-    DarkModeToggleComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, NgIcon, DarkModeToggleComponent],
   providers: [provideIcons({ lucideAirplay })],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
