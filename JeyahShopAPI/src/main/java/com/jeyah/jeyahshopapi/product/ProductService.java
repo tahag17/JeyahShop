@@ -15,11 +15,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -35,54 +37,125 @@ public class ProductService {
     private final UserRepository userRepository;
     private final ImageUploadService imageUploadService;
 
-    public Integer addProductWithImages(ProductRequest request, MultipartFile[] files) throws Exception {
+//    public Integer addProductWithImages(ProductRequest request, MultipartFile[] files) throws Exception {
+//        Product product = productMapper.toProductWithoutImages(request);
+//
+//        // Get logged-in user
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username = (principal instanceof UserDetails) ? ((UserDetails) principal).getUsername() : principal.toString();
+//        User user = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("User not found"));
+//        product.setUser(user);
+//
+//        // Save product first to generate ID
+//        product = productRepository.save(product);
+//
+//        //Initialize the list first
+//        if (product.getProductImages() == null) {
+//            product.setProductImages(new ArrayList<>());
+//        }
+//
+//
+//        // Upload images to R2 and save URLs in ProductImage
+//        for (MultipartFile file : files) {
+//            // Create unique filename
+//            String keyName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+//
+////            File tempFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
+////
+////            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+////                fos.write(file.getBytes());
+////            }
+//            // Save to temp file
+//            File tempFile = File.createTempFile("upload-", file.getOriginalFilename());
+//            file.transferTo(tempFile);
+//
+//            String url = imageUploadService.uploadImage(tempFile, keyName);
+//
+//            ProductImage productImage = new ProductImage();
+//            productImage.setUrl(url);
+//            productImage.setProduct(product);
+//
+//            product.getProductImages().add(productImage);
+//            //deleting the temp files
+//            tempFile.delete();
+//        }
+//
+//        // Save product again with images
+//        productRepository.save(product);
+//
+//        return product.getId();
+//    }
+
+    @Transactional
+    public Integer addProductWithImages(ProductRequest request, MultipartFile[] files, User user) throws Exception {
+        System.out.println("🔹 Starting addProductWithImages...");
+
+        // Map request to Product entity
         Product product = productMapper.toProductWithoutImages(request);
-
-        // Get logged-in user
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = (principal instanceof UserDetails) ? ((UserDetails) principal).getUsername() : principal.toString();
-        User user = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("User not found"));
         product.setUser(user);
+        System.out.println("✅ Product prepared: " + product.getName() + ", will be associated with user ID: " + user.getId());
 
-        // Save product first to generate ID
-        product = productRepository.save(product);
+        // --- MANUAL AUDITING SETUP ---
+        product.setCreatedBy(user.getId());
+        product.setCreatedDate(LocalDateTime.now());
+        System.out.println("📋 Auditing fields set: createdBy=" + product.getCreatedBy() + ", createdDate=" + product.getCreatedDate());
 
-        //Initialize the list first
+        // Initialize product images list
         if (product.getProductImages() == null) {
             product.setProductImages(new ArrayList<>());
         }
 
+        if (files != null && files.length > 0) {
+            System.out.println("🔹 Found " + files.length + " file(s) to upload");
 
-        // Upload images to R2 and save URLs in ProductImage
-        for (MultipartFile file : files) {
-            // Create unique filename
-            String keyName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+            for (MultipartFile file : files) {
+                if (file == null || file.isEmpty()) continue;
 
-//            File tempFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
-//
-//            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-//                fos.write(file.getBytes());
-//            }
-            // Save to temp file
-            File tempFile = File.createTempFile("upload-", file.getOriginalFilename());
-            file.transferTo(tempFile);
+                System.out.println("🔹 Processing file: " + file.getOriginalFilename());
 
-            String url = imageUploadService.uploadImage(tempFile, keyName);
+                // Create a temp file
+                File tempFile = File.createTempFile("upload-", ".tmp");
+                try {
+                    file.transferTo(tempFile);
+                    System.out.println("✅ Temp file created at: " + tempFile.getAbsolutePath());
 
-            ProductImage productImage = new ProductImage();
-            productImage.setUrl(url);
-            productImage.setProduct(product);
+                    // Upload image
+                    String keyName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+                    String url = imageUploadService.uploadImage(tempFile, keyName);
+                    System.out.println("✅ Image uploaded successfully: " + url);
 
-            product.getProductImages().add(productImage);
-            //deleting the temp files
-            tempFile.delete();
+                    // Create ProductImage entity
+                    ProductImage pi = new ProductImage();
+                    pi.setUrl(url);
+                    pi.setProduct(product);                 // ManyToOne side
+                    product.getProductImages().add(pi);     // OneToMany side (sync both)
+                } finally {
+                    tempFile.delete();
+                    System.out.println("🗑 Temp file deleted: " + tempFile.getAbsolutePath());
+                }
+            }
+        } else {
+            System.out.println("⚠ No images provided for this product");
         }
 
-        // Save product again with images
-        productRepository.save(product);
+        System.out.println("🔹 Total images associated with product: " + product.getProductImages().size());
+
+        // --- SAVE PRODUCT AND IMAGES ---
+        product = productRepository.save(product);
+        System.out.println("✅ Product saved with ID: " + product.getId());
 
         return product.getId();
     }
+
+
+    // ProductService.java
+    public Integer addProduct(ProductRequest request, User user) {
+        Product product = productMapper.toProductWithoutImages(request);
+        product.setUser(user); // set the logged-in user
+        product = productRepository.save(product);
+        return product.getId();
+    }
+
 
 
     public Integer addProduct(ProductRequest request) {
@@ -180,5 +253,43 @@ public class ProductService {
                 productPage.isLast()
         );
     }
+
+    public ProductResponse updateProduct(Integer id, ProductRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Produit non trouvé"));
+
+        product.setName(request.name());
+        product.setPrice(request.price());
+        product.setDescription(request.description());
+        product.setCategory(request.category());
+        product.setStockQuantity(request.stockQuantity());
+        productRepository.save(product);
+
+        return productMapper.toProductResponse(product);
+    }
+
+    public void addImagesToProduct(Integer productId, MultipartFile[] images) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+
+        if (product.getProductImages() == null) {
+            product.setProductImages(new ArrayList<>());
+        }
+
+        for (MultipartFile image : images) {
+            String imageUrl = imageUploadService.upload(image);
+
+            ProductImage productImage = new ProductImage();
+            productImage.setUrl(imageUrl); // ✅ Correct field name
+            productImage.setProduct(product);
+
+            product.getProductImages().add(productImage); // ✅ Correct field name
+        }
+
+        productRepository.save(product);
+    }
+
+
+
 
 }

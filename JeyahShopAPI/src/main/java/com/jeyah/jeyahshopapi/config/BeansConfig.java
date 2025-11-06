@@ -1,9 +1,20 @@
 package com.jeyah.jeyahshopapi.config;
 
+import com.jeyah.jeyahshopapi.AuditorAwareImpl;
+import com.jeyah.jeyahshopapi.user.UserRepository;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.AuditorAware;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class BeansConfig {
+    private final UserRepository userRepository;
+
+    public BeansConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Bean
-    public AuditorAware<String> auditorAware(){return new ApplicationAuditAware();}
+    public AuditorAwareImpl auditorAware() {
+        return new AuditorAwareImpl(userRepository);
+    }
 }

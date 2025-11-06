@@ -19,13 +19,16 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "base_seq")
+    @SequenceGenerator(name = "base_seq", sequenceName = "base_seq", allocationSize = 1)
     private Integer id;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
+
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
@@ -33,6 +36,7 @@ public class BaseEntity {
     @CreatedBy
     @Column(nullable = false, updatable = false)
     private Integer createdBy;
+
     @LastModifiedBy
     @Column(insertable = false)
     private Integer lastModifiedBy;
