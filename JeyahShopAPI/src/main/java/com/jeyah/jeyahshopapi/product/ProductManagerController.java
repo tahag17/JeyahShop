@@ -89,27 +89,34 @@ public class ProductManagerController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateProduct(
             @PathVariable Integer id,
-            @RequestBody ProductRequest request,
-            Authentication authentication) {
+            @RequestBody ProductRequest request) {
 
         try {
-            User currentUser = ((CustomUserPrincipal) authentication.getPrincipal()).getUser();
+            // ✅ Get authenticated user (works for both form-based and OAuth2 logins)
+            User currentUser = AuthUtils.getCurrentUser(userRepository);
+
+            // Fetch the product to update
             Product existing = productRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
 
+            // Check permissions
             boolean isAdmin = currentUser.hasRole("ROLE_ADMIN");
             boolean isManager = currentUser.hasRole("ROLE_MANAGER");
             boolean isOwner = existing.getUser() != null && existing.getUser().getId().equals(currentUser.getId());
 
-            if (isManager && !isOwner) {
+            // Restrict managers from editing others' products
+            if (isManager && !isOwner && !isAdmin) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(new ErrorResponse("Vous n'avez pas la permission de modifier ce produit."));
             }
 
+            // Update product
             ProductResponse updated = productService.updateProduct(id, request);
+
             return ResponseEntity.ok(updated);
 
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("Erreur lors de la mise à jour du produit."));
         }

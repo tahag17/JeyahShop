@@ -1,27 +1,27 @@
-version: '25.0.3'
-
-services:
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: jeyah
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: user
-    ports:
-      - 5432:5432
-#  keycloak:
-#    container_name: keycloak-jeyahshop
-#    image: quay.io/keycloak/keycloak:24.0.2
-#    ports:
-#      - 9090:8080
-#    environment:
-#      KEYCLOAK_ADMIN: admin
-#      KEYCLOAK_ADMIN_PASSWORD: password
-#    networks:
-#      - spring-demo
-#    command:
-#      - "start-dev"
+#version: '25.0.3'
 #
-#networks:
-#  spring-demo:
-
+#services:
+#  postgres:
+#    image: postgres:latest
+#    environment:
+#      POSTGRES_DB: jeyah
+#      POSTGRES_PASSWORD: password
+#      POSTGRES_USER: user
+#    ports:
+#      - 5432:5432
+##  keycloak:
+##    container_name: keycloak-jeyahshop
+##    image: quay.io/keycloak/keycloak:24.0.2
+##    ports:
+##      - 9090:8080
+##    environment:
+##      KEYCLOAK_ADMIN: admin
+##      KEYCLOAK_ADMIN_PASSWORD: password
+##    networks:
+##      - spring-demo
+##    command:
+##      - "start-dev"
+##
+##networks:
+##  spring-demo:
+#
