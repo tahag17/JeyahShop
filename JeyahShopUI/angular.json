@@ -97,6 +97,15 @@
             "styles": ["src/styles.scss"],
             "scripts": []
           }
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "browserTarget": "JeyahShopUI:build:production",
+            "serverTarget": "JeyahShopUI:server:production",
+            "routes": ["/", "/products"],
+            "timeout": 120000
+          }
         }
       }
     }

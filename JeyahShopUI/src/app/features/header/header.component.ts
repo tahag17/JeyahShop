@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { DarkModeToggleComponent } from '../dark-mode-toggle/dark-mode-toggle.component';
-import { HlmMenuBarModule } from '@spartan-ng/ui-menu-helm';
 import { NgIconComponent } from '@ng-icons/core';
 import { NgIf } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -12,7 +11,6 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [
     DarkModeToggleComponent,
-    HlmMenuBarModule,
     NgIconComponent,
     NgIf,
     RouterModule,
