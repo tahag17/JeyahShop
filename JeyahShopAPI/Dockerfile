@@ -16,26 +16,30 @@
 
 
 
-# ---------- Stage 1: Build the JAR ----------
-FROM maven:3.9.9-eclipse-temurin-22 AS build
+# Use official Maven + OpenJDK image for building
+FROM maven:3.9.6-eclipse-temurin-22 AS build
+
+# Set working directory inside container
 WORKDIR /app
 
 # Copy Maven config and source
-COPY JeyahShopAPI/pom.xml .
-COPY JeyahShopAPI/src ./src
+COPY pom.xml .
+COPY src ./src
 
 # Build the JAR inside Docker
 RUN mvn clean package -DskipTests
 
-# ---------- Stage 2: Run the JAR ----------
-FROM eclipse-temurin:22-jdk-jammy
-WORKDIR /app
+# Use a lightweight Java 22 image for running the app
+FROM openjdk:22-jdk-slim
 
-# Copy the built JAR from the previous stage
+# Add a volume to persist logs (optional)
+VOLUME /tmp
+
+# Copy built JAR from the build stage
 COPY --from=build /app/target/JeyahShopAPI-0.0.1-SNAPSHOT.jar app.jar
 
-# Expose Spring Boot port
+# Expose port 8080
 EXPOSE 8080
 
-# Start the Spring Boot app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the JAR
+ENTRYPOINT ["java", "-jar", "/app.jar"]
