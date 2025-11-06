@@ -1,5 +1,6 @@
 package com.jeyah.jeyahshopapi.product;
 
+import com.jeyah.jeyahshopapi.auth.AuthUtils;
 import com.jeyah.jeyahshopapi.common.PageResponse;
 import com.jeyah.jeyahshopapi.exception.ErrorResponse;
 import com.jeyah.jeyahshopapi.user.CustomUserPrincipal;
@@ -67,32 +68,13 @@ public class ProductManagerController {
             @RequestPart(value = "images", required = false) MultipartFile[] images) {
 
         try {
-            // Get current principal
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            User currentUser = null;
-
-            // Handle form-based login
-            if (principal instanceof CustomUserPrincipal customUserPrincipal) {
-                currentUser = customUserPrincipal.getUser();
-                System.out.println("🔍 Authenticated via form login");
-            }
-            // Handle OAuth2 login (Google, etc.)
-            else if (principal instanceof OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                System.out.println("🔍 Authenticated via OAuth2. Email: " + email);
-                currentUser = userRepository.findByEmail(email)
-                        .orElseThrow(() -> new RuntimeException("User not found for email: " + email));
-            }
-            else {
-                throw new RuntimeException("❌ Unknown principal type: " + principal.getClass());
-            }
+            // ✅ Get the authenticated user (works for both form & OAuth2 logins)
+            User currentUser = AuthUtils.getCurrentUser(userRepository);
 
             System.out.println("✅ Current user ID: " + currentUser.getId() + ", Email: " + currentUser.getEmail());
 
-            // Call service to add product
             Integer productId = productService.addProductWithImages(request, images, currentUser);
 
-            // Return the saved product
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(productService.findProductById(productId));
 
@@ -102,7 +84,6 @@ public class ProductManagerController {
                     .body("Erreur lors de l’ajout du produit: " + e.getMessage());
         }
     }
-
 
     // 4️⃣ Update product
     @PatchMapping("/{id}")
@@ -136,12 +117,16 @@ public class ProductManagerController {
 
     // 5️⃣ Delete product
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Integer id, Authentication authentication) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
         try {
-            User currentUser = ((CustomUserPrincipal) authentication.getPrincipal()).getUser();
+            // ✅ Get authenticated user (works for both form-based and OAuth2 logins)
+            User currentUser = AuthUtils.getCurrentUser(userRepository);
+
+            // Find the product
             Product product = productRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
 
+            // Check roles and ownership
             boolean isAdmin = currentUser.hasRole("ROLE_ADMIN");
             boolean isManager = currentUser.hasRole("ROLE_MANAGER");
             boolean isOwner = product.getUser() != null && product.getUser().getId().equals(currentUser.getId());
@@ -151,6 +136,7 @@ public class ProductManagerController {
                         .body(new ErrorResponse("Vous n'avez pas la permission de supprimer ce produit."));
             }
 
+            // Delete the product
             productRepository.delete(product);
 
             return ResponseEntity.ok(Map.of("message", "Produit supprimé avec succès."));

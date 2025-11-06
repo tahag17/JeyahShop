@@ -117,12 +117,10 @@ public class ProductService {
                 File tempFile = File.createTempFile("upload-", ".tmp");
                 try {
                     file.transferTo(tempFile);
-                    System.out.println("✅ Temp file created at: " + tempFile.getAbsolutePath());
 
                     // Upload image
                     String keyName = UUID.randomUUID() + "-" + file.getOriginalFilename();
                     String url = imageUploadService.uploadImage(tempFile, keyName);
-                    System.out.println("✅ Image uploaded successfully: " + url);
 
                     // Create ProductImage entity
                     ProductImage pi = new ProductImage();
@@ -189,7 +187,7 @@ public class ProductService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         Page<Product> products = productRepository.findAll(pageable);
         List<SimpleProductResponse> simpleProductResponse = products.stream()
-                .map(ProductMapper::toSimpleProductResponse)
+                .map(product -> productMapper.toSimpleProductResponse(product)) // instance
                 .collect(Collectors.toList());
         return new PageResponse<>(
                 simpleProductResponse,
@@ -206,7 +204,7 @@ public class ProductService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         Page<Product> products = productRepository.findProductsByKeyword(keyword, pageable);
         List<SimpleProductResponse> simpleProductResponse = products.stream()
-                .map(ProductMapper::toSimpleProductResponse)
+                .map(productMapper::toSimpleProductResponse) // instance method reference
                 .collect(Collectors.toList());
         return new PageResponse<>(
                 simpleProductResponse,
@@ -240,7 +238,7 @@ public class ProductService {
                 .collect(Collectors.toList());
 
         List<SimpleProductResponse> simpleProductResponses = sortedProducts.stream()
-                .map(ProductMapper::toSimpleProductResponse)
+                .map(productMapper::toSimpleProductResponse) // use instance, not class
                 .collect(Collectors.toList());
 
         return new PageResponse<>(

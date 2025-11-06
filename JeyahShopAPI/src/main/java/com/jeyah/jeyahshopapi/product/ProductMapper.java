@@ -1,12 +1,18 @@
 package com.jeyah.jeyahshopapi.product;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductMapper {
+
+    @Value("${r2.public-base-url}")
+    private String r2BaseUrl;
+
     public Product toProduct(ProductRequest request) {
 
         List<ProductImage> productImages = request.imageUrls().stream()
@@ -30,7 +36,7 @@ public class ProductMapper {
 
     public Product toProductWithoutImages(ProductRequest request) {
 
-        Product product = Product.builder()
+        return Product.builder()
                 .id(request.id())
                 .name(request.name())
                 .price(request.price())
@@ -38,15 +44,13 @@ public class ProductMapper {
                 .category(request.category())
                 .stockQuantity(request.stockQuantity())
                 .build();
-
-        return product;
     }
 
     public ProductResponse toProductResponse(Product product) {
-
         List<String> imageUrls = product.getProductImages().stream()
-                .map(ProductImage::getUrl)
+                .map(img -> r2BaseUrl + img.getUrl()) // prepend public R2 URL
                 .collect(Collectors.toList());
+
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -59,15 +63,18 @@ public class ProductMapper {
                 .available(product.getStockQuantity() != 0)
                 .build();
     }
+    public SimpleProductResponse toSimpleProductResponse(Product product) {
+        Optional<String> firstImage = product.getFirstImageUrl();
+        String imageUrl = firstImage.orElse(null);
 
-    public static SimpleProductResponse toSimpleProductResponse(Product product) {
         return SimpleProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
                 .rate(product.getRate())
                 .available(product.getStockQuantity() != 0)
-                .imageUrl(product.getFirstImageUrl())
+                .imageUrl(Optional.ofNullable(imageUrl))
                 .build();
     }
+
 }
