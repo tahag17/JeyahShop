@@ -1,0 +1,89 @@
+<div
+  class="max-w-6xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md"
+>
+  <h2
+    class="text-3xl font-heading font-bold text-primaryTail dark:text-primaryDarkTail mb-4"
+  >
+    Liste des produits
+  </h2>
+
+  <!-- Loading & Error -->
+  <div *ngIf="loading" class="text-center text-textLight dark:text-textDark">
+    Chargement...
+  </div>
+  <div *ngIf="error" class="text-center text-dangerTail mb-4">{{ error }}</div>
+
+  <!-- Products Table -->
+  <table
+    *ngIf="!loading && products.length"
+    class="w-full text-sm md:text-base border-collapse"
+  >
+    <thead>
+      <tr class="bg-accentTail/10 dark:bg-accentDarkTail/10 text-left">
+        <th class="p-2">Nom</th>
+        <th class="p-2">Prix</th>
+        <th class="p-2">Disponibilité</th>
+        <th class="p-2">Note</th>
+        <th class="p-2">Image</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let product of products"
+        class="hover:bg-accentTail/10 dark:hover:bg-accentDarkTail/10 transition"
+      >
+        <td class="p-2">{{ product.name }}</td>
+        <td class="p-2">{{ product.price }} €</td>
+        <td class="p-2">
+          <span
+            [ngClass]="{
+              'text-successTail': product.available,
+              'text-dangerTail': !product.available
+            }"
+          >
+            {{ product.available ? "Oui" : "Non" }}
+          </span>
+        </td>
+        <td class="p-2">{{ product.rate | number : "1.1-2" }}</td>
+        <td class="p-2">
+          <img
+            *ngIf="product.imageUrl"
+            [src]="product.imageUrl"
+            alt="{{ product.name }}"
+            class="w-16 h-16 object-cover rounded"
+          />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- No Products -->
+  <div
+    *ngIf="!loading && !products.length"
+    class="text-center text-textLight dark:text-textDark"
+  >
+    Aucun produit trouvé.
+  </div>
+
+  <!-- Pagination -->
+  <div
+    *ngIf="!loading && totalPages > 1"
+    class="flex justify-center gap-4 mt-4 items-center"
+  >
+    <button
+      class="px-3 py-1 bg-accentTail/20 rounded hover:bg-accentTail/40"
+      [disabled]="currentPage === 0"
+      (click)="goToPage(currentPage - 1)"
+    >
+      Précédent
+    </button>
+    <span> Page {{ currentPage + 1 }} / {{ totalPages }} </span>
+    <button
+      class="px-3 py-1 bg-accentTail/20 rounded hover:bg-accentTail/40"
+      [disabled]="currentPage + 1 === totalPages"
+      (click)="goToPage(currentPage + 1)"
+    >
+      Suivant
+    </button>
+  </div>
+</div>

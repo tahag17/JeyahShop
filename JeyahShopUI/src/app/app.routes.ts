@@ -7,6 +7,9 @@ import { authGuard } from './core/guards/auth.guard';
 import { ProfileComponent } from './features/profile/profile.component';
 import { CartComponent } from './features/cart/cart.component';
 import { UserListComponent } from './features/user-list/user-list.component';
+import { ProductListComponent } from './features/product-list/product-list.component';
+import { AddEditProductComponent } from './features/add-edit-product/add-edit-product.component';
+import { ManageProductsComponent } from './features/manage-products/manage-products.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +26,7 @@ export const routes: Routes = [
     children: [
       { path: 'profile', component: ProfileComponent },
       { path: 'cart', component: CartComponent }, // 🛒 cart route
+      { path: 'products', component: ProductListComponent },
     ],
   },
 
@@ -36,6 +40,9 @@ export const routes: Routes = [
       //   { path: 'orders', component: ManageOrdersComponent },
       { path: 'users', component: UserListComponent }, // admin only
       { path: 'profile', component: ProfileComponent },
+      { path: 'products', component: ManageProductsComponent },
+      { path: 'products/add', component: AddEditProductComponent },
+      { path: 'products/edit/:id', component: AddEditProductComponent },
     ],
     canActivate: [authGuard],
     data: { roles: ['ROLE_MANAGER', 'ROLE_ADMIN'] }, // <-- this is route.data['roles']
