@@ -10,7 +10,6 @@ import {
 import { AuthService } from '../../core/services/auth/auth.service';
 import { User } from '../../shared/models/user.model';
 import { Router } from '@angular/router';
-import { HlmIconModule, provideHlmIconConfig } from '@spartan-ng/helm/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideAirplay } from '@ng-icons/lucide';
 
@@ -27,11 +26,10 @@ import { mapBackendUserToUser } from '../../utils/map-user.utils';
     CommonModule,
     ReactiveFormsModule,
     NgIcon,
-    HlmIconModule,
     HlmInputModule,
     DarkModeToggleComponent,
   ],
-  providers: [provideHlmIconConfig({}), provideIcons({ lucideAirplay })],
+  providers: [provideIcons({ lucideAirplay })],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
