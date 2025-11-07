@@ -18,12 +18,12 @@ import java.util.List;
 @Table(name = "order_")
 public class Order extends BaseEntity {
 
-private OrderStatus status;
+    private OrderStatus status;
 
-//@ManyToOne
-//@JoinColumn(name = "user_id", nullable = false)
-//private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-@OneToMany(mappedBy = "order")
-private List<OrderDetails> orderDetails;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetails> orderDetails;
 }
