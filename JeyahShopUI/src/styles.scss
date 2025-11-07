@@ -1,4 +1,3 @@
-@import "bootstrap/dist/css/bootstrap.min.css";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
 @tailwind base;
@@ -32,15 +31,46 @@
   --ring: #2541b2;
 }
 
-/* Light mode */
-input[hlmInput]:focus {
+/* ✅ Replace with this new version */
+input[type="email"],
+input[type="password"] {
+  transition: all 0.25s ease-in-out;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  color: var(--foreground);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+}
+
+input[type="email"]:hover,
+input[type="password"]:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 4px rgba(23, 104, 172, 0.2);
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(23, 104, 172, 0.35);
   outline: none;
-  border-color: theme("colors.accentTail") !important;
-  box-shadow: 0 0 0 1px theme("colors.accentTail") !important;
 }
 
 /* Dark mode */
-.dark input[hlmInput]:focus {
-  border-color: theme("colors.accentDarkTail") !important;
-  box-shadow: 0 0 0 1px theme("colors.accentDarkTail") !important;
+:root.dark input[type="email"],
+:root.dark input[type="password"] {
+  border-color: var(--input);
+  background-color: var(--card);
+  color: var(--foreground);
+}
+
+:root.dark input[type="email"]:hover,
+:root.dark input[type="password"]:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 4px rgba(23, 104, 172, 0.3);
+}
+
+:root.dark input[type="email"]:focus,
+:root.dark input[type="password"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(23, 104, 172, 0.5);
 }
