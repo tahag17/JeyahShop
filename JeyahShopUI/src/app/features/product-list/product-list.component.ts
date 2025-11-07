@@ -5,6 +5,7 @@ import { PageResponse } from '../../shared/models/page-response';
 import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { SearchService } from '../../core/services/search/search.service';
 import { Subscription } from 'rxjs';
+import { CartService } from '../../core/services/cart/cart.service';
 
 @Component({
   selector: 'app-product-list',
@@ -16,10 +17,12 @@ import { Subscription } from 'rxjs';
 export class ProductListComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private searchService = inject(SearchService);
+  private cartService = inject(CartService); // ✅ inject CartService
 
   products: SimpleProductResponse[] = [];
   loading = true;
   error: string | null = null;
+  message: string | null = null; // ✅ feedback message
 
   totalPages = 0;
   currentPage = 0;
@@ -88,5 +91,18 @@ export class ProductListComponent implements OnInit, OnDestroy {
     } else {
       this.fetchProducts(page);
     }
+  }
+
+  addToCart(productId: number) {
+    this.cartService.addToCart(productId, 1).subscribe({
+      next: (cart) => {
+        this.message = 'Produit ajouté au panier ! 🛒';
+        setTimeout(() => (this.message = null), 3000); // auto-hide after 3s
+      },
+      error: () => {
+        this.error = 'Impossible d’ajouter le produit au panier.';
+        setTimeout(() => (this.error = null), 3000);
+      },
+    });
   }
 }

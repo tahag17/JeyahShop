@@ -25,6 +25,8 @@
         <th class="p-2">Disponibilité</th>
         <th class="p-2">Note</th>
         <th class="p-2">Image</th>
+        <th class="p-2 text-center">Actions</th>
+        <!-- 👈 added -->
       </tr>
     </thead>
     <tbody>
@@ -52,6 +54,16 @@
             alt="{{ product.name }}"
             class="w-16 h-16 object-cover rounded"
           />
+        </td>
+        <!-- 🛒 Add to Cart button -->
+        <td class="p-2 text-center">
+          <button
+            class="bg-primaryTail text-white px-3 py-1 rounded hover:bg-primaryTail/80 transition"
+            [disabled]="!product.available"
+            (click)="addToCart(product.id)"
+          >
+            🛒 Ajouter
+          </button>
         </td>
       </tr>
     </tbody>

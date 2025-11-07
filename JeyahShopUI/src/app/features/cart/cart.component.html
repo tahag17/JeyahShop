@@ -1,1 +1,62 @@
-<p>cart works!</p>
+<div class="cart-container" *ngIf="!loading && cart; else loadingOrError">
+  <h2 class="text-2xl font-semibold mb-4">🛒 Votre Panier</h2>
+
+  <div *ngIf="cart.items.length > 0; else emptyCart">
+    <div
+      *ngFor="let item of cart.items"
+      class="flex items-center justify-between bg-white p-4 mb-3 rounded-2xl shadow-md"
+    >
+      <div class="flex items-center gap-3">
+        <img
+          *ngIf="item.imageUrl"
+          [src]="item.imageUrl"
+          alt="{{ item.productName }}"
+          class="w-16 h-16 object-cover rounded-xl"
+        />
+        <div>
+          <h3 class="font-medium">{{ item.productName }}</h3>
+          <p class="text-gray-600">{{ item.price }} MAD</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <input
+          type="number"
+          min="1"
+          [value]="item.quantity"
+          (change)="onQuantityChange($event, item.id)"
+          class="border border-gray-300 rounded-md w-16 text-center"
+        />
+        <button
+          class="text-red-500 hover:text-red-700"
+          (click)="removeItem(item.id)"
+        >
+          Supprimer
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="flex justify-between items-center border-t border-gray-200 pt-4 mt-4"
+    >
+      <p class="text-xl font-semibold">
+        Total : <span class="text-green-600">{{ cart.totalPrice }} MAD</span>
+      </p>
+      <button
+        class="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
+        (click)="clearCart()"
+      >
+        Vider le panier
+      </button>
+    </div>
+  </div>
+
+  <ng-template #emptyCart>
+    <p class="text-gray-500 text-center mt-6">Votre panier est vide 😔</p>
+  </ng-template>
+</div>
+
+<ng-template #loadingOrError>
+  <div class="text-center mt-6" *ngIf="loading">Chargement du panier...</div>
+  <div class="text-red-500 text-center mt-6" *ngIf="error">{{ error }}</div>
+</ng-template>
