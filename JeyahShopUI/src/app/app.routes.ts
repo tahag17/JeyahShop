@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { AppComponent } from './app.component';
 import { LoginComponent } from './features/login/login.component';
 import { StoreLayoutComponent } from './features/store-layout/store-layout.component';
 import { DashboardLayoutComponent } from './features/dashboard-layout/dashboard-layout.component';
@@ -24,7 +23,7 @@ export const routes: Routes = [
     path: '',
     component: StoreLayoutComponent,
     children: [
-      { path: '', redirectTo: 'products', pathMatch: 'full' }, // 👈 default rout
+      { path: '', redirectTo: 'products', pathMatch: 'full' },
       { path: 'profile', component: ProfileComponent },
       { path: 'cart', component: CartComponent },
       { path: 'products', component: ProductListComponent },
