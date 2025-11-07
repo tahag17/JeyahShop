@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs/internal/Observable';
 import { User } from '../../../shared/models/user.model';
@@ -13,17 +15,14 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class AuthService {
-  constructor() {
-    // const storedUser = localStorage.getItem('currentUser');
-    // if (storedUser) {
-    //   const backendUser = JSON.parse(storedUser); // stored in backend format
-    //   this.currentUserSubject.next(mapBackendUserToUser(backendUser));
-    // }
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      const backendUser = JSON.parse(storedUser); // stored in backend format
-      const user = mapBackendUserToUser(backendUser);
-      this.currentUserSubject.next(user);
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    if (isPlatformBrowser(this.platformId)) {
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        const backendUser = JSON.parse(storedUser);
+        const user = mapBackendUserToUser(backendUser);
+        this.currentUserSubject.next(user);
+      }
     }
   }
 

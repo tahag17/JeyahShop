@@ -8,7 +8,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 // import {KeycloakService} from "./services/keycloak/keycloak.service";
-import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
 
 // export function kcFactory(kcService: KeycloakService) {
 //   return () => kcService.init();
@@ -31,6 +31,6 @@ export const appConfig: ApplicationConfig = {
     //   useFactory: kcFactory,
     //   multi: true
     // }
-    provideHttpClient(),
+    provideHttpClient(withFetch()),
   ],
 };
