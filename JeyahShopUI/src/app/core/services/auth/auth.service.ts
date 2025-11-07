@@ -109,4 +109,8 @@ export class AuthService {
     if (!user || !user.roles) return false;
     return user.roles.includes(role);
   }
+
+  isLoggedIn(): boolean {
+    return !!this.currentUserSubject.value;
+  }
 }

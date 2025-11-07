@@ -74,3 +74,29 @@ input[type="password"]:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(23, 104, 172, 0.5);
 }
+
+@keyframes slide-in {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s forwards;
+}
+
+.animate-slide-out {
+  animation: slide-out 0.3s forwards;
+}
