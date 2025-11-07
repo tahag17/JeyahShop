@@ -66,7 +66,6 @@ public class SecurityConfig {
         ;
 
 
-
         return http.build();
     }
 
@@ -74,7 +73,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200")); // Angular dev server
+        config.setAllowedOrigins(List.of("http://localhost:4200", // local
+                "https://jeyah-shop.vercel.app" //production
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
