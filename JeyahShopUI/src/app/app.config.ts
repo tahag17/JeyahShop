@@ -7,30 +7,13 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
-// import {KeycloakService} from "./services/keycloak/keycloak.service";
-import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
-
-// export function kcFactory(kcService: KeycloakService) {
-//   return () => kcService.init();
-//   // return () => true;
-
-// }
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-
     provideRouter(routes),
-
     provideClientHydration(),
-
-    //,
-    // {
-    //   provide: APP_INITIALIZER,
-    //   deps: [KeycloakService],
-    //   useFactory: kcFactory,
-    //   multi: true
-    // }
     provideHttpClient(withFetch()),
   ],
 };

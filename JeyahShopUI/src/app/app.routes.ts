@@ -25,7 +25,7 @@ export const routes: Routes = [
     component: StoreLayoutComponent,
     children: [
       { path: 'profile', component: ProfileComponent },
-      { path: 'cart', component: CartComponent }, // 🛒 cart route
+      { path: 'cart', component: CartComponent },
       { path: 'products', component: ProductListComponent },
     ],
   },
@@ -35,16 +35,13 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardLayoutComponent,
     children: [
-      //   { path: '', component: DashboardHomeComponent },
-      //   { path: 'products', component: ManageProductsComponent },
-      //   { path: 'orders', component: ManageOrdersComponent },
-      { path: 'users', component: UserListComponent }, // admin only
+      { path: 'users', component: UserListComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'products', component: ManageProductsComponent },
       { path: 'products/add', component: AddEditProductComponent },
       { path: 'products/edit/:id', component: AddEditProductComponent },
     ],
     canActivate: [authGuard],
-    data: { roles: ['ROLE_MANAGER', 'ROLE_ADMIN'] }, // <-- this is route.data['roles']
+    data: { roles: ['ROLE_MANAGER', 'ROLE_ADMIN'] },
   },
 ];
