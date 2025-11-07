@@ -1,8 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { CartService } from '../../core/services/cart/cart.service';
-import { Cart } from '../../shared/models/cart.model';
 import { FormsModule } from '@angular/forms';
+
+import { CartService } from '../../core/services/cart/cart.service';
+import { OrderService } from '../../core/services/order/order.service';
+import { Cart } from '../../shared/models/cart.model';
+import { OrderResponse } from '../../shared/models/order-response.model';
 
 @Component({
   selector: 'app-cart',
@@ -13,10 +16,12 @@ import { FormsModule } from '@angular/forms';
 })
 export class CartComponent implements OnInit {
   private cartService = inject(CartService);
+  private orderService = inject(OrderService);
 
   cart: Cart | null = null;
   loading = false;
   error: string | null = null;
+  orderSuccess: OrderResponse | null = null;
 
   ngOnInit(): void {
     this.loadCart();
@@ -88,5 +93,24 @@ export class CartComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const value = Number(input.value) || 1;
     this.updateQuantity(itemId, value);
+  }
+
+  // ✅ Place order
+  makeOrder() {
+    if (!this.cart || this.cart.items.length === 0) return;
+
+    this.loading = true;
+    this.orderService.makeOrder().subscribe({
+      next: (order) => {
+        this.orderSuccess = order;
+        this.clearCart(); // optionally clear cart after order
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to place order:', err);
+        this.error = 'Erreur lors de la création de la commande.';
+        this.loading = false;
+      },
+    });
   }
 }

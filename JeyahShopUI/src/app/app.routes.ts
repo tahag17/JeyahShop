@@ -9,6 +9,7 @@ import { UserListComponent } from './features/user-list/user-list.component';
 import { ProductListComponent } from './features/product-list/product-list.component';
 import { AddEditProductComponent } from './features/add-edit-product/add-edit-product.component';
 import { ManageProductsComponent } from './features/manage-products/manage-products.component';
+import { OrderComponent } from './features/order/order.component';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,7 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
       { path: 'cart', component: CartComponent },
       { path: 'products', component: ProductListComponent },
+      { path: 'orders', component: OrderComponent },
     ],
   },
 

@@ -1,0 +1,67 @@
+<div class="orders-container" *ngIf="!loading; else loadingOrError">
+  <h2 class="text-2xl font-semibold mb-4">📦 Vos Commandes</h2>
+
+  <button
+    class="bg-green-500 text-white px-4 py-2 rounded-xl mb-4 hover:bg-green-600"
+    (click)="makeOrder()"
+  >
+    Passer une commande
+  </button>
+
+  <div *ngIf="orders.length > 0; else emptyOrders">
+    <div
+      *ngFor="let order of orders"
+      class="bg-white p-4 mb-3 rounded-2xl shadow-md"
+    >
+      <div class="flex justify-between items-center mb-2">
+        <p class="font-medium">Commande #{{ order.orderId }}</p>
+        <p
+          [ngClass]="{
+            'text-yellow-500': order.status === 'PENDING',
+            'text-blue-500': order.status === 'SHIPPED',
+            'text-green-500': order.status === 'DELIVERED',
+            'text-red-500': order.status === 'CANCELLED'
+          }"
+        >
+          {{ order.status }}
+        </p>
+      </div>
+
+      <p class="text-gray-500 text-sm mb-2">
+        Passée le : {{ order.createdAt | date : "medium" }}
+      </p>
+
+      <div
+        *ngFor="let item of order.products"
+        class="flex justify-between mb-1"
+      >
+        <span>{{ item.productName }} (x{{ item.quantity }})</span>
+        <span>{{ item.totalPrice }} MAD</span>
+      </div>
+
+      <div class="flex justify-between mt-2 pt-2 border-t border-gray-200">
+        <span class="font-semibold">Total: {{ order.totalPrice }} MAD</span>
+        <button
+          *ngIf="order.status === 'PENDING'"
+          class="bg-red-500 text-white px-3 py-1 rounded-xl hover:bg-red-600"
+          (click)="cancelOrder(order.orderId)"
+        >
+          Annuler
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #emptyOrders>
+  <p class="text-gray-500 text-center mt-6">
+    Aucune commande pour le moment 😔
+  </p>
+</ng-template>
+
+<ng-template #loadingOrError>
+  <div class="text-center mt-6" *ngIf="loading">
+    Chargement des commandes...
+  </div>
+  <div class="text-red-500 text-center mt-6" *ngIf="error">{{ error }}</div>
+</ng-template>

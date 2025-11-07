@@ -42,18 +42,35 @@
       <p class="text-xl font-semibold">
         Total : <span class="text-green-600">{{ cart.totalPrice }} MAD</span>
       </p>
-      <button
-        class="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
-        (click)="clearCart()"
-      >
-        Vider le panier
-      </button>
+      <div class="flex gap-2">
+        <button
+          class="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
+          (click)="clearCart()"
+        >
+          Vider le panier
+        </button>
+
+        <button
+          class="bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600"
+          (click)="makeOrder()"
+        >
+          Passer la commande
+        </button>
+      </div>
     </div>
   </div>
 
   <ng-template #emptyCart>
     <p class="text-gray-500 text-center mt-6">Votre panier est vide 😔</p>
   </ng-template>
+
+  <!-- Show success order message -->
+  <div
+    *ngIf="orderSuccess"
+    class="mt-6 p-4 bg-green-100 border border-green-300 rounded-xl"
+  >
+    ✅ Commande passée avec succès! ID: {{ orderSuccess.orderId }}
+  </div>
 </div>
 
 <ng-template #loadingOrError>
