@@ -10,6 +10,7 @@ import { ProductListComponent } from './features/product-list/product-list.compo
 import { AddEditProductComponent } from './features/add-edit-product/add-edit-product.component';
 import { ManageProductsComponent } from './features/manage-products/manage-products.component';
 import { OrderComponent } from './features/order/order.component';
+import { ManageOrdersComponent } from './features/manage-orders/manage-orders.component';
 
 export const routes: Routes = [
   {
@@ -42,6 +43,7 @@ export const routes: Routes = [
       { path: 'products', component: ManageProductsComponent },
       { path: 'products/add', component: AddEditProductComponent },
       { path: 'products/edit/:id', component: AddEditProductComponent },
+      { path: 'orders', component: ManageOrdersComponent },
     ],
     canActivate: [authGuard],
     data: { roles: ['ROLE_MANAGER', 'ROLE_ADMIN'] },

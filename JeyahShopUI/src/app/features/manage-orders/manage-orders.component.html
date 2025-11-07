@@ -1,0 +1,86 @@
+<div
+  class="max-w-7xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md"
+>
+  <h2
+    class="text-3xl font-bold text-primaryTail dark:text-primaryDarkTail mb-4"
+  >
+    Gestion des commandes
+  </h2>
+
+  <div *ngIf="loading" class="text-center text-textLight dark:text-textDark">
+    Chargement...
+  </div>
+  <div *ngIf="error" class="text-center text-dangerTail mb-4">{{ error }}</div>
+
+  <table
+    *ngIf="!loading && orders.length"
+    class="w-full text-sm md:text-base border-collapse"
+  >
+    <thead>
+      <tr class="bg-accentTail/10 dark:bg-accentDarkTail/10 text-left">
+        <th class="p-2">ID</th>
+        <th class="p-2">Utilisateur</th>
+        <th class="p-2">Total</th>
+        <th class="p-2">Statut</th>
+        <th class="p-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let order of orders"
+        class="hover:bg-accentTail/10 dark:hover:bg-accentDarkTail/10 transition"
+      >
+        <td class="p-2">{{ order.id }}</td>
+        <td class="p-2">{{ order.userEmail }}</td>
+        <td class="p-2">{{ order.totalPrice }} €</td>
+        <td class="p-2">
+          <span
+            [ngClass]="{
+              'text-successTail': order.status === 'PENDING',
+              'text-warningTail': order.status === 'CANCELLED',
+              'text-infoTail': order.status === 'COMPLETED'
+            }"
+            >{{ order.status }}</span
+          >
+        </td>
+        <td class="p-2 flex gap-2">
+          <button
+            (click)="cancelOrder(order.id)"
+            class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Annuler
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div
+    *ngIf="!loading && !orders.length"
+    class="text-center text-textLight dark:text-textDark"
+  >
+    Aucune commande trouvée.
+  </div>
+
+  <!-- Pagination -->
+  <div
+    *ngIf="!loading && totalPages > 1"
+    class="flex justify-center gap-4 mt-4 items-center"
+  >
+    <button
+      class="px-3 py-1 bg-accentTail/20 rounded hover:bg-accentTail/40"
+      [disabled]="currentPage === 0"
+      (click)="goToPage(currentPage - 1)"
+    >
+      Précédent
+    </button>
+    <span> Page {{ currentPage + 1 }} / {{ totalPages }} </span>
+    <button
+      class="px-3 py-1 bg-accentTail/20 rounded hover:bg-accentTail/40"
+      [disabled]="currentPage + 1 === totalPages"
+      (click)="goToPage(currentPage + 1)"
+    >
+      Suivant
+    </button>
+  </div>
+</div>
