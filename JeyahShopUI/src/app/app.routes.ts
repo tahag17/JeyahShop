@@ -24,6 +24,7 @@ export const routes: Routes = [
     path: '',
     component: StoreLayoutComponent,
     children: [
+      { path: '', redirectTo: 'products', pathMatch: 'full' }, // 👈 default rout
       { path: 'profile', component: ProfileComponent },
       { path: 'cart', component: CartComponent },
       { path: 'products', component: ProductListComponent },
