@@ -98,29 +98,56 @@ public class OrderService {
     }
 
     //----------------MANAGER METHODS-----------------
-    public PageResponse<OrderResponse> findAllOrders(int page, int size) {
-        Page<Order> orders = orderRepository.findAll(PageRequest.of(page, size));
-        return PageResponse.from(orders, OrderResponse::from);
+
+    private ManagerOrderResponse mapToManagerResponse(Order order) {
+        List<OrderDetailsResponse> details = order.getOrderDetails().stream()
+                .map(od -> new OrderDetailsResponse(
+                        od.getProduct().getId(),
+                        od.getProduct().getName(),
+                        od.getQuantity(),
+                        od.getPrice(),
+                        od.getPrice() * od.getQuantity()
+                ))
+                .toList();
+
+        double total = details.stream().mapToDouble(OrderDetailsResponse::getTotalPrice).sum();
+
+        ManagerOrderResponse response = new ManagerOrderResponse();
+        response.setId(order.getId().longValue()); // BaseEntity id is Integer
+        response.setUserEmail(order.getUser().getEmail());
+        response.setCreatedAt(order.getCreatedDate()); // <-- use createdDate
+        response.setStatus(order.getStatus());
+        response.setProducts(details);
+        response.setTotalPrice(total);
+
+        return response;
     }
 
-    public OrderResponse findOrderById(Integer id) {
-        return OrderResponse.from(orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found")));
+    public PageResponse<ManagerOrderResponse> findAllOrders(int page, int size) {
+        Page<Order> orders = orderRepository.findAll(PageRequest.of(page, size));
+        return PageResponse.from(orders, this::mapToManagerResponse);
+    }
+
+    public ManagerOrderResponse findOrderByIdManager(Integer id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        return mapToManagerResponse(order);
     }
 
     @Transactional
-    public OrderResponse updateOrderStatus(Integer orderId, OrderStatus status) {
+    public ManagerOrderResponse updateOrderStatusManager(Integer orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         order.setStatus(status);
-        return OrderResponse.from(orderRepository.save(order));
+        return mapToManagerResponse(orderRepository.save(order));
     }
 
     @Transactional
-    public OrderResponse cancelOrderAsManager(Integer orderId) {
+    public ManagerOrderResponse cancelOrderAsManager(Integer orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         order.setStatus(OrderStatus.CANCELLED);
-        return OrderResponse.from(orderRepository.save(order));
+        return mapToManagerResponse(orderRepository.save(order));
     }
+
 }

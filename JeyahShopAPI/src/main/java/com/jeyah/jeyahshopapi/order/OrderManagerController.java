@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class OrderManagerController {
 
     private final OrderService orderService;
-    private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
     // 1️⃣ Get all orders (paginated)
@@ -28,7 +27,7 @@ public class OrderManagerController {
             @RequestParam(defaultValue = "10") int size
     ) {
         try {
-            PageResponse<OrderResponse> orders = orderService.findAllOrders(page, size);
+            PageResponse<ManagerOrderResponse> orders = orderService.findAllOrders(page, size);
             return ResponseEntity.ok(orders);
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,7 +40,7 @@ public class OrderManagerController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable Integer id) {
         try {
-            OrderResponse order = orderService.findOrderById(id);
+            ManagerOrderResponse order = orderService.findOrderByIdManager(id);
             return ResponseEntity.ok(order);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -59,7 +58,7 @@ public class OrderManagerController {
             User currentUser = AuthUtils.getCurrentUser(userRepository);
             System.out.println("User " + currentUser.getEmail() + " is updating order " + id + " to " + status);
 
-            OrderResponse updated = orderService.updateOrderStatus(id, status);
+            ManagerOrderResponse updated = orderService.updateOrderStatusManager(id, status);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -75,7 +74,7 @@ public class OrderManagerController {
             User currentUser = AuthUtils.getCurrentUser(userRepository);
             System.out.println("User " + currentUser.getEmail() + " is cancelling order " + id);
 
-            OrderResponse cancelled = orderService.cancelOrderAsManager(id);
+            ManagerOrderResponse cancelled = orderService.cancelOrderAsManager(id);
             return ResponseEntity.ok(cancelled);
         } catch (RuntimeException e) {
             e.printStackTrace();
