@@ -127,8 +127,6 @@ public class AuthController {
     }
 
 
-
-
     @PostMapping("/register")
     public Object register(@RequestBody LoginRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -150,12 +148,17 @@ public class AuthController {
 
     @GetMapping("/oauth2/popup-success")
     public String oauth2PopupSuccess(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
         SecurityContext context = (SecurityContext) request.getSession()
                 .getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
 
         if (context != null && context.getAuthentication() != null) {
             CustomUserPrincipal principal = (CustomUserPrincipal) context.getAuthentication().getPrincipal();
             User user = principal.getUser();
+            System.out.println("=== /popup-success HIT ===");
+            System.out.println("User: " + user.getEmail());
+            System.out.println("Frontend URL: " + frontendUrl);
+
             String userJson = new ObjectMapper().writeValueAsString(UserMapper.toResponse(user));
             // 🔹 DEBUG LOGS
             System.out.println("Sending user JSON to frontend: " + userJson);
@@ -165,20 +168,22 @@ public class AuthController {
             // Return HTML with a script that sends data to the opener
             response.setContentType("text/html");
             response.getWriter().write("""
-            <html>
-            <body>
-            <script>
-              window.opener.postMessage(%s, '%s');
-              window.close();
-            </script>
-            </body>
-            </html>
-        """.formatted(userJson, frontendUrl));
+                    <html>
+                    <body>
+                    <script>
+                      alert('Popup reached /oauth2/popup-success');
+                      console.log('Sending message to frontend:', %s);
+                      window.opener.postMessage(%s, '%s');
+                      alert('Message sent, closing popup');
+                      window.close();
+                    </script>
+                    </body>
+                    </html>
+                    """.formatted(userJson, userJson, frontendUrl));
             response.getWriter().flush();
         }
         return null;
     }
-
 
 
 }
