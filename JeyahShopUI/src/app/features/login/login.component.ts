@@ -92,15 +92,26 @@ export class LoginComponent {
 
       // Convert backend user to frontend user
       const user: User = this.authService.processBackendUser(backendUser);
+
       console.log('Google login user:', user);
-      console.log(
-        'creationDate prototype:',
-        Object.getPrototypeOf(user.creationDate)
-      );
-      console.log(
-        'lastModifiedDate prototype:',
-        Object.getPrototypeOf(user.lastModifiedDate)
-      );
+
+      if (user.creationDate) {
+        console.log(
+          'creationDate prototype:',
+          Object.getPrototypeOf(user.creationDate)
+        );
+      } else {
+        console.log('creationDate is null or undefined');
+      }
+
+      if (user.lastModifiedDate) {
+        console.log(
+          'lastModifiedDate prototype:',
+          Object.getPrototypeOf(user.lastModifiedDate)
+        );
+      } else {
+        console.log('lastModifiedDate is null or undefined');
+      }
 
       // Navigate after login
       this.authService.navigateAfterLogin(user);
