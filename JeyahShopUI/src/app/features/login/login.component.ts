@@ -16,6 +16,7 @@ import { lucideAirplay } from '@ng-icons/lucide';
 import { DarkModeToggleComponent } from '../dark-mode-toggle/dark-mode-toggle.component';
 import { BackendUser } from '../../shared/models/backend-user.model';
 import { mapBackendUserToUser } from '../../utils/map-user.utils';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -32,6 +33,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private zone = inject(NgZone);
+  private backendUrl = environment.apiBaseUrl;
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -67,9 +69,12 @@ export class LoginComponent {
     const left = window.innerWidth / 2 - width / 2;
     const top = window.innerHeight / 2 - height / 2;
 
+    // Use backend URL dynamically
+    const backendOrigin = this.backendUrl.replace(/\/$/, ''); // remove trailing slash if any
+
     // Add listener BEFORE opening popup
     const listener = (event: MessageEvent) => {
-      if (event.origin !== 'http://localhost:8080') return;
+      if (event.origin !== backendOrigin) return;
 
       const backendUser: BackendUser = event.data;
 
@@ -92,7 +97,7 @@ export class LoginComponent {
     window.addEventListener('message', listener);
 
     const popup = window.open(
-      'http://localhost:8080/oauth2/authorization/google',
+      `${backendOrigin}/oauth2/authorization/google`,
       'google-login',
       `width=${width},height=${height},top=${top},left=${left}`
     );
