@@ -69,15 +69,28 @@ export class LoginComponent {
     const left = window.innerWidth / 2 - width / 2;
     const top = window.innerHeight / 2 - height / 2;
 
-    // Use backend URL dynamically
-    const backendOrigin = this.backendUrl.replace(/\/$/, ''); // remove trailing slash if any
+    // Extract backend origin dynamically from backendUrl
+    const backendUrlObj = new URL(this.backendUrl); // e.g., http://localhost:8080 or https://jeyahshop.onrender.com
+    const backendOrigin = `${backendUrlObj.protocol}//${backendUrlObj.host}`;
 
     // Add listener BEFORE opening popup
     const listener = (event: MessageEvent) => {
-      if (event.origin !== backendOrigin) return;
+      console.log(
+        'Message received from:',
+        event.origin,
+        'expected backend:',
+        backendOrigin
+      );
+
+      // Robust origin check: make sure the message comes from the backend
+      if (event.origin !== backendOrigin) {
+        console.warn('Rejected message from', event.origin);
+        return;
+      }
 
       const backendUser: BackendUser = event.data;
 
+      // Convert backend user to frontend user
       const user: User = this.authService.processBackendUser(backendUser);
       console.log('Google login user:', user);
       console.log(
@@ -89,13 +102,16 @@ export class LoginComponent {
         Object.getPrototypeOf(user.lastModifiedDate)
       );
 
+      // Navigate after login
       this.authService.navigateAfterLogin(user);
 
+      // Remove listener after handling
       window.removeEventListener('message', listener);
     };
 
     window.addEventListener('message', listener);
 
+    // Open OAuth2 popup
     const popup = window.open(
       `${backendOrigin}/oauth2/authorization/google`,
       'google-login',
