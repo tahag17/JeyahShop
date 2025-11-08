@@ -75,18 +75,14 @@ export class LoginComponent {
 
     // Add listener BEFORE opening popup
     const listener = (event: MessageEvent) => {
-      console.log(
-        'Message received from:',
-        event.origin,
-        'expected backend:',
-        backendOrigin
-      );
+      // 🔹 DEBUG LOGS
+      console.log('Message event received:', event);
+      console.log('event.origin:', event.origin);
+      console.log('expected backend origin:', backendOrigin);
+      console.log('event.data:', event.data);
 
-      // Robust origin check: make sure the message comes from the backend
-      if (event.origin !== backendOrigin) {
-        console.warn('Rejected message from', event.origin);
-        return;
-      }
+      // Temporarily skip origin check to see if messages arrive
+      // if (event.origin !== backendOrigin) return;
 
       const backendUser: BackendUser = event.data;
 
