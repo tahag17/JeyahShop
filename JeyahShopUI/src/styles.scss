@@ -31,6 +31,22 @@
   --ring: #2541b2;
 }
 
+:root.legacy {
+  /* ✨ Warm retro palette */
+  --background: #42000b;
+  --foreground: #eec387;
+  --card: #5a0f18; /* slightly lighter than bg for form panels */
+  --muted: #f0c98c; /* softer text */
+  --border: #7a1a1f;
+  --input: #6d181c;
+  --ring: #ba0808;
+
+  --primary: #b83232;
+  --secondary: #781c21;
+  --accent: #ba0808;
+  --info: #d97c5f;
+}
+
 /* ✅ Replace with this new version */
 input[type="email"],
 input[type="password"] {
@@ -73,6 +89,22 @@ input[type="password"]:focus {
 :root.dark input[type="password"]:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(23, 104, 172, 0.5);
+}
+
+:root.legacy {
+  /* ✨ Warm retro palette */
+  --background: #42000b;
+  --foreground: #eec387;
+  --card: #5a0f18; /* slightly lighter than bg for form panels */
+  --muted: #f0c98c; /* softer text */
+  --border: #7a1a1f;
+  --input: #6d181c;
+  --ring: #ba0808;
+
+  --primary: #b83232;
+  --secondary: #781c21;
+  --accent: #ba0808;
+  --info: #d97c5f;
 }
 
 @keyframes slide-in {

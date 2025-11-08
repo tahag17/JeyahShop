@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const plugin = require("tailwindcss/plugin");
 module.exports = {
   content: ["./src/**/*.{html,ts,scss}"],
   darkMode: "class",
@@ -24,6 +25,14 @@ module.exports = {
         secondaryDarkTail: "#5A7FCF",
         accentDarkTail: "#4CA3E0",
         infoDarkTail: "#33C1F0",
+
+        bgLegacy: "#42000b", // dark, moody background
+        surfaceLegacy: "#f5e6d3", // warm beige for panels
+        textLegacy: "#3b1f1c", // dark reddish-brown text for readability on beige
+        primaryLegacy: "#b83232", // strong red for highlights
+        secondaryLegacy: "#8a2e2e", // muted red for secondary elements
+        accentLegacy: "#c04848", // bright accent red
+        infoLegacy: "#d4b16f", // muted gold/copper highlight
 
         // Status colors
         successTail: "#16A34A",
@@ -61,5 +70,10 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addVariant }) {
+      // 👇 This adds a new variant that works like dark mode
+      addVariant("legacy", ".legacy &");
+    }),
+  ],
 };

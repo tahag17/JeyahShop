@@ -17,6 +17,7 @@ import { DarkModeToggleComponent } from '../dark-mode-toggle/dark-mode-toggle.co
 import { BackendUser } from '../../shared/models/backend-user.model';
 import { mapBackendUserToUser } from '../../utils/map-user.utils';
 import { environment } from '../../environments/environment';
+import { ThemeService } from '../../core/services/theme/theme.service';
 
 @Component({
   selector: 'app-login',
@@ -34,6 +35,16 @@ export class LoginComponent {
   private router = inject(Router);
   private zone = inject(NgZone);
   private backendUrl = environment.apiBaseUrl;
+  private themeService = inject(ThemeService);
+  // isLegacyMode = false;
+
+  get isLegacyMode() {
+    return this.themeService.theme === 'legacy';
+  }
+
+  toggleLegacyMode() {
+    this.themeService.toggleLegacy();
+  }
 
   constructor() {
     this.loginForm = this.fb.group({
