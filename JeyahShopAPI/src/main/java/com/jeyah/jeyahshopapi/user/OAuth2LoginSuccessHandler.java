@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,16 +22,25 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final ObjectMapper objectMapper;
 
+
+    @Value("${frontend.url}")
+    private String frontendUrl; // inject frontend URL
+
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
+        System.out.println("=== OAuth2LoginSuccessHandler HIT ===");
+
         CustomUserPrincipal principal;
         if (authentication.getPrincipal() instanceof CustomUserPrincipal) {
             principal = (CustomUserPrincipal) authentication.getPrincipal();
+            System.out.println("Principal type: CustomUserPrincipal");
         } else if (authentication.getPrincipal() instanceof org.springframework.security.oauth2.core.oidc.user.OidcUser) {
             principal = (CustomUserPrincipal) ((org.springframework.security.oauth2.core.oidc.user.OidcUser) authentication.getPrincipal())
                     .getAttribute("principal");
+            System.out.println("Principal type: OidcUser (from attribute)");
         } else {
             throw new IllegalStateException("Unknown principal type: " + authentication.getPrincipal().getClass());
         }
@@ -38,12 +48,13 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // Put authentication into SecurityContext & session
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
-        request.getSession(true)
-                .setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+        HttpSession session = request.getSession(true);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 
-        // Convert user to response JSON
         User user = principal.getUser();
         String userJson = objectMapper.writeValueAsString(UserMapper.toResponse(user));
+        System.out.println("User JSON to send: " + userJson);
+        System.out.println("Frontend URL: " + frontendUrl);
 
         // Return HTML that posts message to opener and closes popup
         response.setContentType("text/html");
@@ -52,14 +63,15 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             <html>
             <body>
               <script>
-                window.opener.postMessage(%s, 'http://localhost:4200');
+                window.opener.postMessage(%s, '%s');
                 window.close();
               </script>
             </body>
             </html>
-        """.formatted(userJson));
+        """.formatted(userJson, frontendUrl));
         response.getWriter().flush();
 
-        // DO NOT call sendRedirect here — remove any redirect
+        System.out.println("PostMessage script sent to popup");
     }
+
 }
