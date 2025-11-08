@@ -157,6 +157,10 @@ public class AuthController {
             CustomUserPrincipal principal = (CustomUserPrincipal) context.getAuthentication().getPrincipal();
             User user = principal.getUser();
             String userJson = new ObjectMapper().writeValueAsString(UserMapper.toResponse(user));
+            // 🔹 DEBUG LOGS
+            System.out.println("Sending user JSON to frontend: " + userJson);
+            System.out.println("Frontend URL: " + frontendUrl);
+
 
             // Return HTML with a script that sends data to the opener
             response.setContentType("text/html");
