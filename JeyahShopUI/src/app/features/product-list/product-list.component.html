@@ -26,7 +26,6 @@
         <th class="p-2">Note</th>
         <th class="p-2">Image</th>
         <th class="p-2 text-center">Actions</th>
-        <!-- 👈 added -->
       </tr>
     </thead>
     <tbody>
@@ -34,8 +33,13 @@
         *ngFor="let product of products"
         class="hover:bg-accentTail/10 dark:hover:bg-accentDarkTail/10 transition"
       >
+        <!-- Name -->
         <td class="p-2">{{ product.name }}</td>
+
+        <!-- Price -->
         <td class="p-2">{{ product.price }} €</td>
+
+        <!-- Availability -->
         <td class="p-2">
           <span
             [ngClass]="{
@@ -46,7 +50,40 @@
             {{ product.available ? "Oui" : "Non" }}
           </span>
         </td>
-        <td class="p-2">{{ product.rate | number : "1.1-2" }}</td>
+
+        <!-- Ratings -->
+        <td class="p-2 flex flex-col gap-1">
+          <!-- Average rating stars -->
+          <div class="flex items-center text-yellow-400">
+            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
+              <span class="mr-0.5">
+                <ng-container *ngIf="product.rate >= star; else halfOrEmpty">
+                  ★
+                </ng-container>
+                <ng-template #halfOrEmpty>
+                  <ng-container *ngIf="product.rate >= star - 0.5"
+                    >★</ng-container
+                  >
+                  <ng-container *ngIf="product.rate < star - 0.5"
+                    >☆</ng-container
+                  >
+                </ng-template>
+              </span>
+            </ng-container>
+            <span class="ml-2 text-textLight dark:text-textDark"
+              >({{ product.rate | number : "1.1-2" }})</span
+            >
+          </div>
+
+          <!-- User interactive rating -->
+          <app-product-rating
+            [productId]="product.id"
+            [initialRate]="product.rate"
+            (ratingUpdated)="fetchProducts(currentPage)"
+          ></app-product-rating>
+        </td>
+
+        <!-- Image -->
         <td class="p-2">
           <img
             *ngIf="product.imageUrl"
@@ -55,7 +92,8 @@
             class="w-16 h-16 object-cover rounded"
           />
         </td>
-        <!-- 🛒 Add to Cart button -->
+
+        <!-- Actions -->
         <td class="p-2 text-center">
           <button
             class="bg-primaryTail text-white px-3 py-1 rounded hover:bg-primaryTail/80 transition"

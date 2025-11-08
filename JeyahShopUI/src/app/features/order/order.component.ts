@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Order } from '../../shared/models/order.model';
 import { OrderService } from '../../core/services/order/order.service';
 import { CommonModule } from '@angular/common';
+import { ProductRatingComponent } from '../rating/product-rating/product-rating.component';
 
 @Component({
   selector: 'app-order',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ProductRatingComponent],
   templateUrl: './order.component.html',
   styleUrl: './order.component.scss',
 })
@@ -15,7 +16,7 @@ export class OrderComponent implements OnInit {
   loading = true;
   error: string | null = null;
 
-  constructor(private orderService: OrderService) {}
+  private orderService = inject(OrderService);
 
   ngOnInit(): void {
     this.loadOrders();
@@ -58,5 +59,10 @@ export class OrderComponent implements OnInit {
           err.message || "Erreur lors de l'annulation de la commande";
       },
     });
+  }
+
+  onRatingUpdated() {
+    // Optional: refresh the order list or product ratings if needed
+    this.loadOrders();
   }
 }

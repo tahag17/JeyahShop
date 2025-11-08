@@ -33,10 +33,20 @@
 
       <div
         *ngFor="let item of order.products"
-        class="flex justify-between mb-1"
+        class="flex justify-between mb-2 items-center"
       >
-        <span>{{ item.productName }} (x{{ item.quantity }})</span>
-        <span>{{ item.totalPrice }} MAD</span>
+        <div>
+          <span>{{ item.productName }} (x{{ item.quantity }})</span>
+          <span class="ml-2 text-gray-600">({{ item.totalPrice }} MAD)</span>
+        </div>
+
+        <!-- Show rating component only if delivered -->
+        <app-product-rating
+          *ngIf="order.status === 'DELIVERED'"
+          [productId]="item.productId"
+          [initialRate]="item.rate"
+          (ratingUpdated)="onRatingUpdated()"
+        ></app-product-rating>
       </div>
 
       <div class="flex justify-between mt-2 pt-2 border-t border-gray-200">

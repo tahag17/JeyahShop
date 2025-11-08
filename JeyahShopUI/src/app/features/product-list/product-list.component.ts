@@ -6,11 +6,12 @@ import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { SearchService } from '../../core/services/search/search.service';
 import { Subscription } from 'rxjs';
 import { CartService } from '../../core/services/cart/cart.service';
+import { ProductRatingComponent } from '../rating/product-rating/product-rating.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [NgIf, NgFor, CommonModule],
+  imports: [NgIf, NgFor, CommonModule, ProductRatingComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
 })
