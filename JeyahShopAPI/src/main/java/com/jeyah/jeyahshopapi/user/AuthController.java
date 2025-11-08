@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,6 +31,9 @@ public class AuthController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
 
 //    @PostMapping("/login")
 //    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
@@ -161,12 +164,12 @@ public class AuthController {
             <html>
             <body>
             <script>
-              window.opener.postMessage(%s, 'http://localhost:4200');
+              window.opener.postMessage(%s, '%s');
               window.close();
             </script>
             </body>
             </html>
-        """.formatted(userJson));
+        """.formatted(userJson, frontendUrl));
             response.getWriter().flush();
         }
         return null;
