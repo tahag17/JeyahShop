@@ -1,11 +1,12 @@
 // features/manage-products/manage-products.component.ts
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { ProductService } from '../../core/services/product/product.service';
-import { ProductResponse } from '../../shared/models/product-response';
-import { PageResponse } from '../../shared/models/page-response';
+
 import { Subscription } from 'rxjs';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ProductService } from '../../../core/services/product/product.service';
+import { ProductResponse } from '../../../shared/models/product-response';
+import { PageResponse } from '../../../shared/models/page-response';
 
 @Component({
   selector: 'app-manage-products',

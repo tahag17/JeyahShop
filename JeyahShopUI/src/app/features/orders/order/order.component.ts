@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Order } from '../../shared/models/order.model';
-import { OrderService } from '../../core/services/order/order.service';
+import { Order } from '../../../shared/models/order.model';
+import { OrderService } from '../../../core/services/order/order.service';
 import { CommonModule } from '@angular/common';
-import { ProductRatingComponent } from '../rating/product-rating/product-rating.component';
-import { convertToDate } from '../../utils/date.utils';
+import { ProductRatingComponent } from '../../rating/product-rating/product-rating.component';
+import { convertToDate } from '../../../utils/date.utils';
 
 @Component({
   selector: 'app-order',

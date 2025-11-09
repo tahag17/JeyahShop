@@ -6,11 +6,12 @@ import { authGuard } from './core/guards/auth.guard';
 import { ProfileComponent } from './features/profile/profile.component';
 import { CartComponent } from './features/cart/cart.component';
 import { UserListComponent } from './features/user-list/user-list.component';
-import { ProductListComponent } from './features/product-list/product-list.component';
-import { AddEditProductComponent } from './features/add-edit-product/add-edit-product.component';
-import { ManageProductsComponent } from './features/manage-products/manage-products.component';
-import { OrderComponent } from './features/order/order.component';
-import { ManageOrdersComponent } from './features/manage-orders/manage-orders.component';
+import { ProductListComponent } from './features/product/product-list/product-list.component';
+import { OrderComponent } from './features/orders/order/order.component';
+import { ProductDetailComponent } from './features/product/product-detail/product-detail.component';
+import { ManageProductsComponent } from './features/product/manage-products/manage-products.component';
+import { AddEditProductComponent } from './features/product/add-edit-product/add-edit-product.component';
+import { ManageOrdersComponent } from './features/orders/manage-orders/manage-orders.component';
 
 export const routes: Routes = [
   {
@@ -29,6 +30,7 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
       { path: 'cart', component: CartComponent },
       { path: 'products', component: ProductListComponent },
+      { path: 'products/:id', component: ProductDetailComponent },
       { path: 'orders', component: OrderComponent },
     ],
   },

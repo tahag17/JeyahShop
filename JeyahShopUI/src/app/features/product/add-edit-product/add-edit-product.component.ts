@@ -1,11 +1,11 @@
 // features/manage-products/add-edit-product.component.ts
 import { Component, inject, OnInit } from '@angular/core';
-import { ProductService } from '../../core/services/product/product.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ProductResponse } from '../../shared/models/product-response';
 import { CommonModule, NgIf } from '@angular/common';
-import { ProductRequest } from '../../shared/models/product-request';
+import { ProductService } from '../../../core/services/product/product.service';
+import { ProductRequest } from '../../../shared/models/product-request';
+import { ProductResponse } from '../../../shared/models/product-response';
 
 @Component({
   selector: 'app-add-edit-product',

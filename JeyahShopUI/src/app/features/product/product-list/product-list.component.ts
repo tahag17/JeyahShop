@@ -1,12 +1,13 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { ProductService } from '../../core/services/product/product.service';
-import { SimpleProductResponse } from '../../shared/models/simple-product-response';
-import { PageResponse } from '../../shared/models/page-response';
+import { ProductService } from '../../../core/services/product/product.service';
+import { SimpleProductResponse } from '../../../shared/models/simple-product-response';
+import { PageResponse } from '../../../shared/models/page-response';
 import { CommonModule, NgIf, NgFor } from '@angular/common';
-import { SearchService } from '../../core/services/search/search.service';
+import { SearchService } from '../../../core/services/search/search.service';
 import { Subscription } from 'rxjs';
-import { CartService } from '../../core/services/cart/cart.service';
-import { ProductRatingComponent } from '../rating/product-rating/product-rating.component';
+import { CartService } from '../../../core/services/cart/cart.service';
+import { ProductRatingComponent } from '../../rating/product-rating/product-rating.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
@@ -19,6 +20,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private searchService = inject(SearchService);
   private cartService = inject(CartService); // ✅ inject CartService
+  private router = inject(Router);
 
   products: SimpleProductResponse[] = [];
   loading = true;
@@ -45,6 +47,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.searchSub?.unsubscribe();
+  }
+
+  goToDetails(productId: number) {
+    this.router.navigate(['/products', productId]);
   }
 
   fetchProducts(page = 0) {

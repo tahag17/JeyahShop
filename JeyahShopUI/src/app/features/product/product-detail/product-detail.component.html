@@ -1,0 +1,79 @@
+<div
+  class="max-w-4xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md"
+>
+  <button
+    (click)="goBack()"
+    class="mb-4 px-3 py-1 bg-accentTail/20 hover:bg-accentTail/40 rounded"
+  >
+    ← Retour à la liste
+  </button>
+
+  <div *ngIf="loading" class="text-center text-textLight dark:text-textDark">
+    Chargement...
+  </div>
+
+  <div *ngIf="error" class="text-center text-dangerTail mb-4">{{ error }}</div>
+
+  <div *ngIf="product && !loading">
+    <h2
+      class="text-3xl font-bold text-primaryTail dark:text-primaryDarkTail mb-4"
+    >
+      {{ product.name }}
+    </h2>
+
+    <!-- Rating -->
+    <div class="flex items-center mb-4 text-yellow-400">
+      <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+        <i class="mr-0.5" [ngClass]="getStarClass(product.rate, star)"></i>
+      </ng-container>
+      <span class="ml-2 text-textLight dark:text-textDark">
+        ({{ product.rate | number : "1.1-2" }})
+      </span>
+    </div>
+
+    <!-- Price and availability -->
+    <p class="text-xl font-semibold mb-2">{{ product.price }} €</p>
+    <p class="mb-4">
+      Disponibilité:
+      <span
+        [ngClass]="{
+          'text-successTail': product.available,
+          'text-dangerTail': !product.available
+        }"
+      >
+        {{ product.available ? "En stock" : "Rupture" }}
+      </span>
+    </p>
+
+    <!-- Images -->
+    <div class="flex gap-2 mb-4">
+      <img
+        *ngFor="let img of product.imageUrls"
+        [src]="img"
+        [alt]="product.name"
+        class="w-32 h-32 object-cover rounded"
+      />
+    </div>
+
+    <!-- Description -->
+    <div class="mb-4">
+      <h3 class="font-semibold">Description</h3>
+      <p>{{ product.description }}</p>
+    </div>
+
+    <!-- Category & stock -->
+    <p class="mb-1"><strong>Catégorie:</strong> {{ product.category }}</p>
+    <p class="mb-1">
+      <strong>Quantité en stock:</strong> {{ product.stockQuantity }}
+    </p>
+
+    <!-- Add to cart -->
+    <button
+      class="mt-4 bg-primaryTail text-white px-4 py-2 rounded hover:bg-primaryTail/80 transition"
+      [disabled]="!product.available"
+      (click)="addToCart(product.id)"
+    >
+      🛒 Ajouter au panier
+    </button>
+  </div>
+</div>

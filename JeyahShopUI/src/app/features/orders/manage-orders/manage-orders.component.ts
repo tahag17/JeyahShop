@@ -1,10 +1,9 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { OrderService } from '../../core/services/order/order.service';
-import { PageResponse } from '../../shared/models/page-response';
 import { Subscription } from 'rxjs';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { OrderResponse } from '../../shared/models/order-response.model';
-import { ManagerOrderResponse } from '../../shared/models/manager-order-response.model';
+import { ManagerOrderResponse } from '../../../shared/models/manager-order-response.model';
+import { OrderService } from '../../../core/services/order/order.service';
+import { PageResponse } from '../../../shared/models/page-response';
 
 @Component({
   selector: 'app-manage-orders',

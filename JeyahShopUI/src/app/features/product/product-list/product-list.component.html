@@ -34,7 +34,14 @@
         class="hover:bg-accentTail/10 dark:hover:bg-accentDarkTail/10 transition"
       >
         <!-- Name -->
-        <td class="p-2">{{ product.name }}</td>
+        <td class="p-2">
+          <span
+            class="text-primaryTail dark:text-primaryDarkTail hover:underline cursor-pointer"
+            (click)="goToDetails(product.id)"
+          >
+            {{ product.name }}
+          </span>
+        </td>
 
         <!-- Price -->
         <td class="p-2">{{ product.price }} €</td>
