@@ -1,7 +1,15 @@
+// rating.service.ts
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
+
+export interface UserRating {
+  userId: number;
+  rating: number;
+  productId: number;
+  productAverageRating?: number;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -26,15 +34,14 @@ export class RatingService {
       );
   }
 
-  // Optional: fetch rating of current user for a product
+  // Fetch ratings of current user for a product
   getUserRating(productId: number) {
-    return this.http.get<{ rate: number }>(
-      `${this.apiUrl}/product/${productId}`,
-      { withCredentials: true }
-    );
+    return this.http.get<UserRating[]>(`${this.apiUrl}/product/${productId}`, {
+      withCredentials: true,
+    });
   }
 
-  // Optional: fetch all ratings for a product
+  // Fetch all ratings for a product
   getProductRatings(productId: number) {
     return this.http.get<{ user: string; rate: number; comment?: string }[]>(
       `${this.apiUrl}/product/${productId}/all`

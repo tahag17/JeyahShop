@@ -40,7 +40,7 @@
           <span class="ml-2 text-gray-600">({{ item.totalPrice }} MAD)</span>
         </div>
 
-        <!-- Show rating component only if delivered -->
+        <!-- Show rating component for each product -->
         <app-product-rating
           *ngIf="order.status === 'DELIVERED'"
           [productId]="item.productId"

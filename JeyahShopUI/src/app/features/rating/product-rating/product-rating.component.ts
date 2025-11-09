@@ -8,7 +8,10 @@ import {
   Output,
 } from '@angular/core';
 import { AuthService } from '../../../core/services/auth/auth.service';
-import { RatingService } from '../../../core/services/rating/rating.service';
+import {
+  RatingService,
+  UserRating,
+} from '../../../core/services/rating/rating.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -16,47 +19,33 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="relative">
-      <div class="flex items-center gap-1">
-        <ng-container *ngFor="let star of stars; index as i">
-          <i
-            class="cursor-pointer text-yellow-400 text-xl"
-            [ngClass]="getStarClass(i)"
-            (click)="selectRating(i + 1)"
-          ></i>
-        </ng-container>
-        <span *ngIf="!userHasRated" class="text-gray-500 ml-2 text-sm">
-          Laissez votre note !
-        </span>
-      </div>
+    <div class="flex items-center gap-2">
+      <ng-container *ngFor="let star of stars; index as i">
+        <i
+          class="text-yellow-400 text-xl cursor-pointer"
+          [ngClass]="getStarClass(i)"
+          (click)="selectRating(i + 1)"
+          [title]="
+            userHasRated
+              ? 'Cliquez pour modifier votre note'
+              : 'Cliquez pour noter'
+          "
+        ></i>
+      </ng-container>
 
-      <!-- Confirmation modal -->
-      <div
-        *ngIf="showModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      >
-        <div class="bg-white p-6 rounded-2xl text-center">
-          <p class="mb-4">Vous avez choisi {{ selectedRating }} étoile(s)</p>
-          <button
-            class="bg-green-500 text-white px-4 py-2 rounded-xl mr-2 hover:bg-green-600"
-            (click)="confirmRating()"
-          >
-            Confirmer
-          </button>
-          <button
-            class="bg-gray-300 px-4 py-2 rounded-xl hover:bg-gray-400"
-            (click)="cancelRating()"
-          >
-            Annuler
-          </button>
-        </div>
-      </div>
+      <span *ngIf="userHasRated" class="text-gray-500 ml-2 text-sm">
+        Vous avez noté ce produit: {{ currentRate | number : '1.1-2' }} ⭐ (vous
+        pouvez changer)
+      </span>
+      <span *ngIf="!userHasRated" class="text-gray-500 ml-2 text-sm">
+        Laissez votre note ! Moyenne: {{ currentRate | number : '1.1-2' }} ⭐
+      </span>
     </div>
   `,
 })
 export class ProductRatingComponent implements OnInit {
   @Input() productId!: number;
-  @Input() initialRate = 0; // average rating of product
+  @Input() initialRate = 0; // fallback average rate
   @Output() ratingUpdated = new EventEmitter<void>();
 
   stars = Array(5);
@@ -69,11 +58,36 @@ export class ProductRatingComponent implements OnInit {
   private authService = inject(AuthService);
 
   ngOnInit() {
+    console.log(
+      `[ProductRating] Init for productId=${this.productId}, initialRate=${this.initialRate}`
+    );
+
+    // Start with average rate
     this.currentRate = this.initialRate;
-    this.userHasRated = this.currentRate > 0;
+
+    // Fetch ratings from backend
+    this.ratingService.getUserRating(this.productId).subscribe({
+      next: (res: UserRating[]) => {
+        console.log(`[ProductRating] response:`, res);
+
+        const userRating = res.find(
+          (r) => r.userId === this.authService.currentUser?.id
+        );
+
+        if (userRating) {
+          this.currentRate = userRating.rating;
+          this.userHasRated = true;
+        } else if (res[0]?.productAverageRating != null) {
+          this.currentRate = res[0].productAverageRating;
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.userHasRated = false;
+      },
+    });
   }
 
-  // Determine which icon to show
   getStarClass(index: number) {
     const diff = this.currentRate - index;
     if (diff >= 0.7) return 'fa-solid fa-star';
@@ -81,14 +95,13 @@ export class ProductRatingComponent implements OnInit {
     return 'fa-regular fa-star';
   }
 
-  // When user clicks on a star
   selectRating(value: number) {
     if (!this.authService.isLoggedIn()) {
       alert('Vous devez être connecté pour noter ce produit.');
       return;
     }
     this.selectedRating = value;
-    this.showModal = true;
+    this.confirmRating(); // directly confirm rating
   }
 
   confirmRating() {
@@ -99,16 +112,10 @@ export class ProductRatingComponent implements OnInit {
           this.currentRate = this.selectedRating;
           this.userHasRated = true;
           this.ratingUpdated.emit();
-          this.showModal = false;
         },
         error: (err) => {
           alert(err.error?.message || 'Impossible de noter le produit.');
-          this.showModal = false;
         },
       });
-  }
-
-  cancelRating() {
-    this.showModal = false;
   }
 }

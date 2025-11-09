@@ -23,7 +23,7 @@
         <th class="p-2">Nom</th>
         <th class="p-2">Prix</th>
         <th class="p-2">Disponibilité</th>
-        <th class="p-2">Note</th>
+        <th class="p-2">Avis</th>
         <th class="p-2">Image</th>
         <th class="p-2 text-center">Actions</th>
       </tr>
@@ -52,35 +52,14 @@
         </td>
 
         <!-- Ratings -->
-        <td class="p-2 flex flex-col gap-1">
-          <!-- Average rating stars -->
-          <div class="flex items-center text-yellow-400">
-            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
-              <span class="mr-0.5">
-                <ng-container *ngIf="product.rate >= star; else halfOrEmpty">
-                  ★
-                </ng-container>
-                <ng-template #halfOrEmpty>
-                  <ng-container *ngIf="product.rate >= star - 0.5"
-                    >★</ng-container
-                  >
-                  <ng-container *ngIf="product.rate < star - 0.5"
-                    >☆</ng-container
-                  >
-                </ng-template>
-              </span>
-            </ng-container>
-            <span class="ml-2 text-textLight dark:text-textDark"
-              >({{ product.rate | number : "1.1-2" }})</span
-            >
-          </div>
+        <td class="p-2 flex items-center text-yellow-400">
+          <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+            <i class="mr-0.5" [ngClass]="getStarClass(product.rate, star)"></i>
+          </ng-container>
 
-          <!-- User interactive rating -->
-          <app-product-rating
-            [productId]="product.id"
-            [initialRate]="product.rate"
-            (ratingUpdated)="fetchProducts(currentPage)"
-          ></app-product-rating>
+          <span class="ml-2 text-textLight dark:text-textDark">
+            ({{ product.rate | number : "1.1-2" }})
+          </span>
         </td>
 
         <!-- Image -->

@@ -3,13 +3,14 @@ import { Order } from '../../shared/models/order.model';
 import { OrderService } from '../../core/services/order/order.service';
 import { CommonModule } from '@angular/common';
 import { ProductRatingComponent } from '../rating/product-rating/product-rating.component';
+import { convertToDate } from '../../utils/date.utils';
 
 @Component({
   selector: 'app-order',
   standalone: true,
   imports: [CommonModule, ProductRatingComponent],
   templateUrl: './order.component.html',
-  styleUrl: './order.component.scss',
+  styleUrls: ['./order.component.scss'], // fixed typo
 })
 export class OrderComponent implements OnInit {
   orders: Order[] = [];
@@ -27,7 +28,11 @@ export class OrderComponent implements OnInit {
     this.error = null;
     this.orderService.getUserOrders().subscribe({
       next: (orders) => {
-        this.orders = orders;
+        // Ensure createdAt is always a string for the interface
+        this.orders = orders.map((o) => ({
+          ...o,
+          createdAt: convertToDate(o.createdAt)?.toISOString() || '',
+        }));
         this.loading = false;
       },
       error: (err) => {
@@ -40,7 +45,13 @@ export class OrderComponent implements OnInit {
   makeOrder() {
     this.orderService.makeOrder().subscribe({
       next: (order) => {
-        this.orders.push(order);
+        const newOrder: Order = {
+          ...order,
+          createdAt:
+            convertToDate(order.createdAt)?.toISOString() ||
+            new Date().toISOString(),
+        };
+        this.orders.push(newOrder);
       },
       error: (err) => {
         this.error = err.message || 'Erreur lors de la création de la commande';
@@ -52,7 +63,14 @@ export class OrderComponent implements OnInit {
     this.orderService.cancelOrder(orderId).subscribe({
       next: (updatedOrder) => {
         const index = this.orders.findIndex((o) => o.orderId === orderId);
-        if (index !== -1) this.orders[index] = updatedOrder;
+        if (index !== -1) {
+          this.orders[index] = {
+            ...updatedOrder,
+            createdAt:
+              convertToDate(updatedOrder.createdAt)?.toISOString() ||
+              new Date().toISOString(),
+          };
+        }
       },
       error: (err) => {
         this.error =

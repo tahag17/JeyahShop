@@ -85,6 +85,14 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** returns a string with the right FontAwesome classes for a given star index */
+  getStarClass(rate: number | string | undefined, starIndex: number): string {
+    const r = Number(rate ?? 0); // force numeric
+    if (r >= starIndex) return 'fa-solid fa-star';
+    if (r >= starIndex - 0.5) return 'fa-solid fa-star-half-stroke';
+    return 'fa-regular fa-star';
+  }
+
   goToPage(page: number) {
     const keyword = this.searchService.getCurrentKeyword();
     if (keyword?.trim()) {
