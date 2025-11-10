@@ -7,6 +7,10 @@ import { PageResponse } from '../../../shared/models/page-response';
 import { FormsModule } from '@angular/forms';
 import { OrderStatus } from '../../../shared/models/order-status.enum';
 
+interface ManagerOrderResponseWithDropdown extends ManagerOrderResponse {
+  isDropdownOpen: boolean;
+}
+
 @Component({
   selector: 'app-manage-orders',
   standalone: true,
@@ -17,7 +21,7 @@ import { OrderStatus } from '../../../shared/models/order-status.enum';
 export class ManageOrdersComponent implements OnInit, OnDestroy {
   private orderService = inject(OrderService);
 
-  orders: ManagerOrderResponse[] = [];
+  orders: ManagerOrderResponseWithDropdown[] = [];
   loading = true;
   error: string | null = null;
 
@@ -46,7 +50,11 @@ export class ManageOrdersComponent implements OnInit, OnDestroy {
 
     this.sub = this.orderService.getAllOrders(page, this.pageSize).subscribe({
       next: (data: PageResponse<ManagerOrderResponse>) => {
-        this.orders = data.content;
+        // Add isDropdownOpen property for each order
+        this.orders = data.content.map((order) => ({
+          ...order,
+          isDropdownOpen: false,
+        }));
         this.totalPages = data.totalPages;
         this.currentPage = data.page;
         this.loading = false;
@@ -82,12 +90,6 @@ export class ManageOrdersComponent implements OnInit, OnDestroy {
   closeConfirmModal() {
     this.isConfirmModalOpen = false;
     this.confirmChange = null;
-  }
-  cancelOrder(id: number) {
-    this.orderService.cancelOrderManager(id).subscribe({
-      next: () => this.fetchOrders(this.currentPage),
-      error: () => alert('Erreur lors de l’annulation de la commande'),
-    });
   }
 
   goToPage(page: number) {
