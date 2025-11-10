@@ -1,0 +1,50 @@
+<div
+  class="max-w-4xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md"
+>
+  <h2
+    class="text-3xl font-bold text-primaryTail dark:text-primaryDarkTail mb-4"
+  >
+    Gestion des catégories
+  </h2>
+
+  <div *ngIf="loading" class="text-center text-textLight dark:text-textDark">
+    Chargement...
+  </div>
+
+  <div *ngIf="error" class="text-center text-dangerTail mb-4">{{ error }}</div>
+  <div *ngIf="message" class="text-center text-successTail mb-4">
+    {{ message }}
+  </div>
+
+  <!-- Add new category -->
+  <div class="flex gap-2 mb-6">
+    <input
+      type="text"
+      placeholder="Nom de la nouvelle catégorie"
+      [(ngModel)]="newCategoryName"
+      class="flex-1 border rounded px-2 py-1"
+    />
+    <button
+      (click)="addCategory()"
+      class="px-4 py-1 bg-accentTail text-white rounded hover:bg-accentTail/80"
+    >
+      Ajouter
+    </button>
+  </div>
+
+  <!-- Categories list -->
+  <ul>
+    <li
+      *ngFor="let cat of categories"
+      class="flex justify-between items-center mb-2 border-b border-border pb-2"
+    >
+      <span>{{ cat.name }}</span>
+      <button
+        (click)="deleteCategory(cat.id)"
+        class="px-3 py-1 bg-dangerTail text-white rounded hover:bg-dangerTail/80"
+      >
+        Supprimer
+      </button>
+    </li>
+  </ul>
+</div>

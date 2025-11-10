@@ -1,6 +1,7 @@
 package com.jeyah.jeyahshopapi.product;
 
 import com.jeyah.jeyahshopapi.cart.CartItem;
+import com.jeyah.jeyahshopapi.category.Category;
 import com.jeyah.jeyahshopapi.common.BaseEntity;
 import com.jeyah.jeyahshopapi.rating.Rating;
 import com.jeyah.jeyahshopapi.tag.Tag;
@@ -32,7 +33,9 @@ public class Product extends BaseEntity {
     private String name;
     private Integer price;
     private String description;
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
     private Integer stockQuantity;
 
 

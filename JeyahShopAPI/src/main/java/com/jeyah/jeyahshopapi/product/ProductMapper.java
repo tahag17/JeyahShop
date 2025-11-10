@@ -1,5 +1,9 @@
 package com.jeyah.jeyahshopapi.product;
 
+import com.jeyah.jeyahshopapi.category.Category;
+import com.jeyah.jeyahshopapi.category.CategoryRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -8,10 +12,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProductMapper {
 
     @Value("${r2.public-base-url}")
     private String r2BaseUrl;
+    private final CategoryRepository categoryRepository;
 
     public Product toProduct(ProductRequest request) {
 
@@ -19,12 +25,17 @@ public class ProductMapper {
                 .map(url -> new ProductImage(null, url, null))
                 .collect(Collectors.toList());
 
+        // Fetch the Category entity
+        Category category = categoryRepository.findById(request.categoryId()) // assuming ProductRequest has categoryId
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID " + request.categoryId()));
+
+
         Product product = Product.builder()
                 .id(request.id())
                 .name(request.name())
                 .price(request.price())
                 .description(request.description())
-                .category(request.category())
+                .category(category)
                 .stockQuantity(request.stockQuantity())
                 .productImages(productImages)
                 .build();
@@ -35,16 +46,20 @@ public class ProductMapper {
     }
 
     public Product toProductWithoutImages(ProductRequest request) {
+        // Fetch the Category entity
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID " + request.categoryId()));
 
         return Product.builder()
                 .id(request.id())
                 .name(request.name())
                 .price(request.price())
                 .description(request.description())
-                .category(request.category())
+                .category(category)  // set the entity instead of string
                 .stockQuantity(request.stockQuantity())
                 .build();
     }
+
 
     public ProductResponse toProductResponse(Product product) {
         List<String> imageUrls = product.getProductImages().stream()
@@ -56,7 +71,7 @@ public class ProductMapper {
                 .name(product.getName())
                 .price(product.getPrice())
                 .description(product.getDescription())
-                .category(product.getCategory())
+                .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
                 .stockQuantity(product.getStockQuantity())
                 .rate(product.getRate())
                 .imageUrls(imageUrls)

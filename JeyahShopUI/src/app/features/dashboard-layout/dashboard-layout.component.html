@@ -21,30 +21,47 @@
       <a
         routerLink="/dashboard"
         routerLinkActive="bg-accentTail/50 dark:bg-accentDarkTail/50 font-semibold"
+        [routerLinkActiveOptions]="{ exact: true }"
         class="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-accentTail/30 dark:hover:bg-accentDarkTail/30 transition-all duration-200 cursor-pointer"
       >
         <i class="fa-solid fa-chart-line w-5"></i> Dashboard
       </a>
       <a
-        routerLink="/products"
+        routerLink="/dashboard/products"
         routerLinkActive="bg-accentTail/50 dark:bg-accentDarkTail/50 font-semibold"
         class="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-accentTail/30 dark:hover:bg-accentDarkTail/30 transition-all duration-200 cursor-pointer"
       >
         <i class="fa-solid fa-box w-5"></i> Products
       </a>
       <a
-        routerLink="/orders"
+        routerLink="/dashboard/orders"
         routerLinkActive="bg-accentTail/50 dark:bg-accentDarkTail/50 font-semibold"
         class="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-accentTail/30 dark:hover:bg-accentDarkTail/30 transition-all duration-200 cursor-pointer"
       >
         <i class="fa-solid fa-receipt w-5"></i> Orders
       </a>
+
+      <a
+        routerLink="/dashboard/categories"
+        routerLinkActive="bg-accentTail/50 dark:bg-accentDarkTail/50 font-semibold"
+        class="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-accentTail/30 dark:hover:bg-accentDarkTail/30 transition-all duration-200 cursor-pointer"
+      >
+        <i class="fa-solid fa-tags w-5"></i> Categories
+      </a>
+
       <a
         routerLink="/settings"
         routerLinkActive="bg-accentTail/50 dark:bg-accentDarkTail/50 font-semibold"
         class="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-accentTail/30 dark:hover:bg-accentDarkTail/30 transition-all duration-200 cursor-pointer"
       >
         <i class="fa-solid fa-gear w-5"></i> Settings
+      </a>
+      <a
+        routerLink="/products"
+        routerLinkActive="bg-accentTail/50 dark:bg-accentDarkTail/50 font-semibold"
+        class="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-accentTail/30 dark:hover:bg-accentDarkTail/30 transition-all duration-200 cursor-pointer"
+      >
+        <i class="fa-solid fa-shop w-5"></i> Shop
       </a>
     </nav>
 

@@ -1,5 +1,7 @@
 package com.jeyah.jeyahshopapi.product;
 
+import com.jeyah.jeyahshopapi.category.Category;
+import com.jeyah.jeyahshopapi.category.CategoryRepository;
 import com.jeyah.jeyahshopapi.common.PageResponse;
 import com.jeyah.jeyahshopapi.files.ImageUploadService;
 import com.jeyah.jeyahshopapi.user.User;
@@ -36,6 +38,7 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final UserRepository userRepository;
     private final ImageUploadService imageUploadService;
+    private final CategoryRepository categoryRepository;
 
 //    public Integer addProductWithImages(ProductRequest request, MultipartFile[] files) throws Exception {
 //        Product product = productMapper.toProductWithoutImages(request);
@@ -155,7 +158,6 @@ public class ProductService {
     }
 
 
-
     public Integer addProduct(ProductRequest request) {
         Product product = productMapper.toProduct(request);
 
@@ -259,7 +261,9 @@ public class ProductService {
         product.setName(request.name());
         product.setPrice(request.price());
         product.setDescription(request.description());
-        product.setCategory(request.category());
+        Category category = categoryRepository.findById(request.categoryId()) // assuming ProductRequest has categoryId
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID " + request.categoryId()));
+        product.setCategory(category);
         product.setStockQuantity(request.stockQuantity());
         productRepository.save(product);
 
@@ -286,8 +290,6 @@ public class ProductService {
 
         productRepository.save(product);
     }
-
-
 
 
 }

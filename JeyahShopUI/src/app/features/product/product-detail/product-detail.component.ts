@@ -4,6 +4,7 @@ import { ProductService } from '../../../core/services/product/product.service';
 import { ProductResponse } from '../../../shared/models/product-response';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../../core/services/cart/cart.service';
+import { CategoryService } from '../../../core/services/category/category.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -17,7 +18,9 @@ export class ProductDetailComponent implements OnInit {
   private router = inject(Router);
   private productService = inject(ProductService);
   private cartService = inject(CartService);
+  private categoryService = inject(CategoryService);
 
+  categoryName: string | null = null;
   product?: ProductResponse;
   loading = true;
   error: string | null = null;
@@ -41,10 +44,18 @@ export class ProductDetailComponent implements OnInit {
     this.productService.getProductById(productId).subscribe({
       next: (data) => {
         this.product = data;
+
+        // 🟢 Fetch category name using categoryId
+        if (data.categoryId) {
+          this.categoryService.getCategoryById(data.categoryId).subscribe({
+            next: (cat) => (this.categoryName = cat.name),
+            error: () => (this.categoryName = 'Inconnu'),
+          });
+        }
+
         this.loading = false;
       },
       error: (err) => {
-        console.error('Failed to load product:', err);
         this.error = 'Erreur lors du chargement du produit';
         this.loading = false;
       },

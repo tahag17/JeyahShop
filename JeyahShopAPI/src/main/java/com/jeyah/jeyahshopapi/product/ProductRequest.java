@@ -26,8 +26,7 @@ public record ProductRequest(
         String description,
 
         @NotNull(message = "103")
-        @NotEmpty(message = "103")
-        String category,
+        Integer categoryId,  // <-- changed from String category to Integer categoryId
 
         @NotNull(message = "104")
         @Min(value = 0, message = "104")

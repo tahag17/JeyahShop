@@ -62,7 +62,9 @@
     </div>
 
     <!-- Category & stock -->
-    <p class="mb-1"><strong>Catégorie:</strong> {{ product.category }}</p>
+    <p class="mb-1">
+      <strong>Catégorie:</strong> {{ categoryName || "Chargement..." }}
+    </p>
     <p class="mb-1">
       <strong>Quantité en stock:</strong> {{ product.stockQuantity }}
     </p>

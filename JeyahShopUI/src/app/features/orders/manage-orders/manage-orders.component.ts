@@ -4,11 +4,13 @@ import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { ManagerOrderResponse } from '../../../shared/models/manager-order-response.model';
 import { OrderService } from '../../../core/services/order/order.service';
 import { PageResponse } from '../../../shared/models/page-response';
+import { FormsModule } from '@angular/forms';
+import { OrderStatus } from '../../../shared/models/order-status.enum';
 
 @Component({
   selector: 'app-manage-orders',
   standalone: true,
-  imports: [CommonModule, NgFor, NgIf],
+  imports: [CommonModule, NgFor, NgIf, FormsModule],
   templateUrl: './manage-orders.component.html',
   styleUrls: ['./manage-orders.component.scss'],
 })
@@ -22,8 +24,13 @@ export class ManageOrdersComponent implements OnInit, OnDestroy {
   currentPage = 0;
   totalPages = 0;
   pageSize = 10;
+  orderStatuses = Object.values(OrderStatus);
+  isConfirmModalOpen = false;
 
   private sub?: Subscription;
+
+  // To track which order is currently awaiting confirmation
+  confirmChange: { id: number; newStatus: string } | null = null;
 
   ngOnInit(): void {
     this.fetchOrders();
@@ -39,22 +46,44 @@ export class ManageOrdersComponent implements OnInit, OnDestroy {
 
     this.sub = this.orderService.getAllOrders(page, this.pageSize).subscribe({
       next: (data: PageResponse<ManagerOrderResponse>) => {
-        // ✅ use ManagerOrderResponse
         this.orders = data.content;
         this.totalPages = data.totalPages;
         this.currentPage = data.page;
         this.loading = false;
       },
-      error: (err) => {
+      error: () => {
         this.error = 'Erreur lors du chargement des commandes.';
         this.loading = false;
       },
     });
   }
 
-  cancelOrder(id: number) {
-    if (!confirm('Êtes-vous sûr de vouloir annuler cette commande ?')) return;
+  requestStatusChange(orderId: number, newStatus: string) {
+    this.confirmChange = { id: orderId, newStatus };
+    this.isConfirmModalOpen = true;
+  }
 
+  confirmStatusChange() {
+    if (!this.confirmChange) return;
+    const { id, newStatus } = this.confirmChange;
+
+    this.orderService
+      .updateOrderStatus(id, newStatus as OrderStatus)
+      .subscribe({
+        next: () => {
+          this.closeConfirmModal();
+          this.fetchOrders(this.currentPage);
+        },
+        error: () =>
+          alert('Erreur lors du changement du statut de la commande'),
+      });
+  }
+
+  closeConfirmModal() {
+    this.isConfirmModalOpen = false;
+    this.confirmChange = null;
+  }
+  cancelOrder(id: number) {
     this.orderService.cancelOrderManager(id).subscribe({
       next: () => this.fetchOrders(this.currentPage),
       error: () => alert('Erreur lors de l’annulation de la commande'),

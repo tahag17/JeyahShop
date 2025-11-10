@@ -12,6 +12,7 @@ import { ProductDetailComponent } from './features/product/product-detail/produc
 import { ManageProductsComponent } from './features/product/manage-products/manage-products.component';
 import { AddEditProductComponent } from './features/product/add-edit-product/add-edit-product.component';
 import { ManageOrdersComponent } from './features/orders/manage-orders/manage-orders.component';
+import { CategoriesListComponent } from './features/category/categories-list/categories-list.component';
 
 export const routes: Routes = [
   {
@@ -46,6 +47,7 @@ export const routes: Routes = [
       { path: 'products/add', component: AddEditProductComponent },
       { path: 'products/edit/:id', component: AddEditProductComponent },
       { path: 'orders', component: ManageOrdersComponent },
+      { path: 'categories', component: CategoriesListComponent },
     ],
     canActivate: [authGuard],
     data: { roles: ['ROLE_MANAGER', 'ROLE_ADMIN'] },

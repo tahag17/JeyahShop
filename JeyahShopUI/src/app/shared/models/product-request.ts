@@ -5,7 +5,7 @@ export interface ProductRequest {
   name: string;
   price: number;
   description: string;
-  category: string;
+  categoryId: number;
   stockQuantity: number;
   imageUrls?: string[]; // optional, can be empty
 }

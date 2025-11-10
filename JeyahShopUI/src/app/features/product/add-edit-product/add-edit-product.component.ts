@@ -6,6 +6,8 @@ import { CommonModule, NgIf } from '@angular/common';
 import { ProductService } from '../../../core/services/product/product.service';
 import { ProductRequest } from '../../../shared/models/product-request';
 import { ProductResponse } from '../../../shared/models/product-response';
+import { CategoryService } from '../../../core/services/category/category.service';
+import { Category } from '../../../shared/models/category.model';
 
 @Component({
   selector: 'app-add-edit-product',
@@ -16,6 +18,8 @@ import { ProductResponse } from '../../../shared/models/product-response';
 })
 export class AddEditProductComponent implements OnInit {
   private productService = inject(ProductService);
+  private categoryService = inject(CategoryService);
+
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -24,15 +28,28 @@ export class AddEditProductComponent implements OnInit {
     name: '',
     price: 0,
     description: '',
-    category: '',
+    categoryId: 0, // 🟢 changed to categoryId
     stockQuantity: 0,
     imageUrls: [],
   };
 
+  categories: Category[] = [];
   images: File[] = [];
   isEdit = false;
 
   ngOnInit() {
+    // Fetch categories
+    this.categoryService.getAllCategories().subscribe({
+      next: (res) => {
+        console.log('Categories loaded:', res); // ✅ add this line for debugging
+        this.categories = res;
+      },
+      error: (err) => {
+        console.error('Error loading categories:', err);
+        alert('Erreur lors du chargement des catégories');
+      },
+    });
+
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.isEdit = true;
@@ -44,7 +61,7 @@ export class AddEditProductComponent implements OnInit {
             name: data.name,
             price: data.price,
             description: data.description,
-            category: data.category,
+            categoryId: data.categoryId,
             stockQuantity: data.stockQuantity,
             imageUrls: data.imageUrls || [],
           };

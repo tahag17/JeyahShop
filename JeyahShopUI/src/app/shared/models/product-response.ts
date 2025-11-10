@@ -5,7 +5,7 @@ export interface ProductResponse {
   name: string;
   price: number;
   description: string;
-  category: string;
+  categoryId: number;
   stockQuantity: number;
   imageUrls: string[];
   rate: number;

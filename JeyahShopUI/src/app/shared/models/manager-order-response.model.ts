@@ -5,7 +5,7 @@ export interface ManagerOrderResponse {
   id: number; // use for table row
   userEmail: string; // show which user
   createdAt: string;
-  status: 'PENDING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'COMPLETED';
+  status: 'PENDING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
   products: OrderDetailsResponse[];
   totalPrice: number;
 }

@@ -1,5 +1,10 @@
 import { Component, HostListener } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import {
+  Router,
+  RouterOutlet,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
 import { DarkModeToggleComponent } from '../dark-mode-toggle/dark-mode-toggle.component';
 import { CommonModule, NgIf } from '@angular/common';
 import { AuthService } from '../../core/services/auth/auth.service';
@@ -10,6 +15,8 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [
     RouterOutlet,
+    RouterLink,
+    RouterLinkActive, // ✅ ADD THESE
     DarkModeToggleComponent,
     NgIf,
     FormsModule,
