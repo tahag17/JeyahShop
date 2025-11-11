@@ -1,5 +1,6 @@
 package com.jeyah.jeyahshopapi.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jeyah.jeyahshopapi.cart.Cart;
 import com.jeyah.jeyahshopapi.product.Product;
@@ -49,12 +50,15 @@ public class User {
     private List<Role> roles;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Product> products;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Rating> ratings;
 
     @OneToOne(mappedBy = "user")
+    @JsonIgnore
     private Cart cart;
 
 

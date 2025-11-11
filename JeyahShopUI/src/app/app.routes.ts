@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/login/login.component';
 import { StoreLayoutComponent } from './features/store-layout/store-layout.component';
-import { DashboardLayoutComponent } from './features/dashboard-layout/dashboard-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { ProfileComponent } from './features/profile/profile.component';
 import { CartComponent } from './features/cart/cart.component';
@@ -14,6 +13,8 @@ import { AddEditProductComponent } from './features/product/add-edit-product/add
 import { ManageOrdersComponent } from './features/orders/manage-orders/manage-orders.component';
 import { CategoriesListComponent } from './features/category/categories-list/categories-list.component';
 import { HomeComponent } from './features/home/home.component';
+import { DashboardComponent } from './features/dashboard/dashboard/dashboard.component';
+import { DashboardLayoutComponent } from './features/dashboard/dashboard-layout/dashboard-layout.component';
 
 export const routes: Routes = [
   {
@@ -43,6 +44,7 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardLayoutComponent,
     children: [
+      { path: '', component: DashboardComponent },
       { path: 'users', component: UserListComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'products', component: ManageProductsComponent },

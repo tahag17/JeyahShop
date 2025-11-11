@@ -1,5 +1,6 @@
 package com.jeyah.jeyahshopapi.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jeyah.jeyahshopapi.cart.CartItem;
 import com.jeyah.jeyahshopapi.category.Category;
 import com.jeyah.jeyahshopapi.common.BaseEntity;
@@ -35,6 +36,7 @@ public class Product extends BaseEntity {
     private String description;
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonIgnore // prevent Category -> Product -> Category recursion
     private Category category;
     private Integer stockQuantity;
 
@@ -54,6 +56,7 @@ public class Product extends BaseEntity {
     }
 
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private List<Rating> ratings;
 
     @ManyToOne
@@ -73,5 +76,6 @@ public class Product extends BaseEntity {
     }
 
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private List<CartItem> cartItems;
 }

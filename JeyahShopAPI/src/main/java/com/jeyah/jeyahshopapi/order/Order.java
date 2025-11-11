@@ -1,5 +1,7 @@
 package com.jeyah.jeyahshopapi.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jeyah.jeyahshopapi.common.BaseEntity;
 import com.jeyah.jeyahshopapi.user.User;
 import jakarta.persistence.*;
@@ -22,8 +24,10 @@ public class Order extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetails> orderDetails;
 }

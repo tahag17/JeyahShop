@@ -1,5 +1,6 @@
 package com.jeyah.jeyahshopapi.rating;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jeyah.jeyahshopapi.common.BaseEntity;
 import com.jeyah.jeyahshopapi.product.Product;
 import com.jeyah.jeyahshopapi.user.User;
@@ -28,6 +29,7 @@ public class Rating extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
 }

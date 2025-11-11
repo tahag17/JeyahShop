@@ -1,0 +1,204 @@
+<div
+  class="max-w-6xl mx-auto p-6 space-y-6 font-sans text-base text-textLight dark:text-textDark bg-bgLight dark:bg-bgDark transition-colors duration-300"
+>
+  <!-- Period Selector -->
+  <div
+    class="bg-surfaceLight dark:bg-surfaceDark rounded-2xl shadow-md p-6 text-center transition-all duration-300"
+  >
+    <p class="mb-3 text-textLight dark:text-textDark font-medium">
+      Sélectionnez la période pour afficher les statistiques correspondantes.
+    </p>
+
+    <div class="flex justify-center gap-3 flex-wrap">
+      <button
+        (click)="loadData('day')"
+        [disabled]="loading"
+        [ngClass]="
+          period === 'day'
+            ? 'bg-accentTail text-white shadow-md'
+            : 'bg-gray-200 dark:bg-gray-700 text-textLight dark:text-textDark border border-gray-300 dark:border-gray-600'
+        "
+        class="px-4 py-2 rounded-md font-medium transition-colors hover:bg-accentTail/80 disabled:opacity-60"
+      >
+        Jour
+      </button>
+
+      <button
+        (click)="loadData('month')"
+        [disabled]="loading"
+        [ngClass]="
+          period === 'month'
+            ? 'bg-accentTail text-white shadow-md'
+            : 'bg-gray-200 dark:bg-gray-700 text-textLight dark:text-textDark border border-gray-300 dark:border-gray-600'
+        "
+        class="px-4 py-2 rounded-md font-medium transition-colors hover:bg-accentTail/80 disabled:opacity-60"
+      >
+        Mois
+      </button>
+
+      <button
+        (click)="loadData('year')"
+        [disabled]="loading"
+        [ngClass]="
+          period === 'year'
+            ? 'bg-accentTail text-white shadow-md'
+            : 'bg-gray-200 dark:bg-gray-700 text-textLight dark:text-textDark border border-gray-300 dark:border-gray-600'
+        "
+        class="px-4 py-2 rounded-md font-medium transition-colors hover:bg-accentTail/80 disabled:opacity-60"
+      >
+        Année
+      </button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div
+      *ngIf="loading"
+      class="fixed inset-0 bg-black/40 dark:bg-black/60 flex items-center justify-center z-50"
+    >
+      <i class="fa-solid fa-spinner fa-spin text-white text-5xl"></i>
+    </div>
+  </div>
+
+  <!-- Dashboard Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Most Sold Product -->
+    <div
+      class="bg-surfaceLight dark:bg-surfaceDark rounded-2xl shadow-md p-6 flex flex-col items-center text-center transition-colors duration-300"
+    >
+      <h3
+        class="text-xl font-semibold text-primaryTail dark:text-primaryDarkTail mb-3"
+      >
+        Produit le plus vendu
+      </h3>
+
+      <div
+        class="w-48 h-48 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-800 mb-3"
+      >
+        <ng-container *ngIf="data.mostSoldProduct?.imageUrl; else noImageIcon">
+          <img
+            [src]="data.mostSoldProduct.imageUrl"
+            (error)="onImageError($event)"
+            alt="{{ data.mostSoldProduct?.name }}"
+            class="w-full h-full object-cover rounded-md"
+          />
+        </ng-container>
+      </div>
+
+      <ng-template #noImageIcon>
+        <i
+          class="fa-solid fa-ban text-gray-400 dark:text-gray-500 text-6xl"
+        ></i>
+      </ng-template>
+
+      <p class="font-bold text-primaryTail dark:text-primaryDarkTail text-lg">
+        {{ data.mostSoldProduct?.name || "Aucune donnée" }}
+      </p>
+      <p class="text-primaryTail dark:text-primaryDarkTail text-sm mt-1">
+        Quantité vendue : {{ data.mostSoldProduct?.totalSold ?? 0 }}
+      </p>
+
+      <!-- Rating -->
+      <div class="flex items-center mt-2">
+        <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+          <i
+            class="text-yellow-400 mr-0.5"
+            [ngClass]="getStarClass(data.mostSoldProduct?.rate, star)"
+          ></i>
+        </ng-container>
+        <span class="ml-2 text-sm text-primaryTail dark:text-primaryDarkTail">
+          {{ data.mostSoldProduct?.rate ?? "0" }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Most Sold Categories -->
+    <div
+      class="bg-surfaceLight dark:bg-surfaceDark rounded-2xl shadow-md p-6 flex flex-col items-center transition-colors duration-300"
+    >
+      <h3
+        class="text-xl font-semibold text-primaryTail dark:text-primaryDarkTail mb-3 text-center"
+      >
+        Top 10 Catégories les plus vendues
+      </h3>
+      <div
+        class="relative w-full max-w-[400px] sm:max-w-[500px] md:max-w-[600px] h-[180px] sm:h-[200px] md:h-[240px] lg:h-[260px]"
+      >
+        <canvas
+          id="categoryChart"
+          class="absolute top-0 left-0 w-full h-full"
+        ></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Best Rated Products -->
+  <div>
+    <h3
+      class="text-xl font-semibold text-primaryTail dark:text-primaryDarkTail mb-4 text-center sm:text-left"
+    >
+      Meilleurs produits notés
+    </h3>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+    >
+      <div
+        *ngFor="let p of data.bestRatedProducts"
+        class="bg-surfaceLight dark:bg-surfaceDark rounded-2xl shadow-md p-4 flex flex-col items-center text-center hover:shadow-lg transition-all duration-300"
+      >
+        <div
+          class="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-800 mb-3"
+        >
+          <ng-container *ngIf="p.imageUrl; else noImageIconSmall">
+            <img
+              [src]="p.imageUrl"
+              (error)="onImageError($event)"
+              alt="{{ p.name }}"
+              class="w-full h-full object-cover rounded-md"
+            />
+          </ng-container>
+        </div>
+
+        <ng-template #noImageIconSmall>
+          <i
+            class="fa-solid fa-ban text-gray-400 dark:text-gray-500 text-3xl"
+          ></i>
+        </ng-template>
+
+        <span class="font-bold text-primaryTail dark:text-primaryDarkTail">
+          {{ p.name || "Inconnu" }}
+        </span>
+        <div class="flex items-center mt-1">
+          <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+            <i
+              class="text-yellow-400 mr-0.5"
+              [ngClass]="getStarClass(p.rate, star)"
+            ></i>
+          </ng-container>
+          <span class="ml-2 text-sm text-primaryTail dark:text-primaryDarkTail">
+            {{ p.rate ?? "0" }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div
+    class="bg-surfaceLight dark:bg-surfaceDark rounded-2xl shadow-md p-6 text-center text-primaryTail dark:text-primaryDarkTail space-y-2 transition-colors duration-300"
+  >
+    <p class="font-bold text-lg">
+      Total des commandes :
+      <span class="font-extrabold">{{ data.summary?.totalOrders ?? 0 }}</span>
+    </p>
+    <p class="font-bold text-lg">
+      Total des produits :
+      <span class="font-extrabold">{{ data.summary?.totalProducts ?? 0 }}</span>
+    </p>
+    <p class="font-bold text-lg">
+      Total des catégories :
+      <span class="font-extrabold">{{
+        data.summary?.totalCategories ?? 0
+      }}</span>
+    </p>
+  </div>
+</div>

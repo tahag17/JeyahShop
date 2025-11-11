@@ -5,10 +5,10 @@ import {
   RouterLink,
   RouterLinkActive,
 } from '@angular/router';
-import { DarkModeToggleComponent } from '../dark-mode-toggle/dark-mode-toggle.component';
 import { CommonModule, NgIf } from '@angular/common';
-import { AuthService } from '../../core/services/auth/auth.service';
 import { FormsModule } from '@angular/forms';
+import { DarkModeToggleComponent } from '../../dark-mode-toggle/dark-mode-toggle.component';
+import { AuthService } from '../../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-dashboard-layout',

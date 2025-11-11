@@ -1,5 +1,6 @@
 package com.jeyah.jeyahshopapi.role;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jeyah.jeyahshopapi.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class Role {
     private String name; //ROLE_USER, ROLE_MANAGER, or ROLE_ADMIN for now
 
     @ManyToMany(mappedBy = "roles")
-//    @JsonIgnore
+    @JsonIgnore
     private List<User> users;
 
 

@@ -1,6 +1,7 @@
 package com.jeyah.jeyahshopapi.cart;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jeyah.jeyahshopapi.common.BaseEntity;
 import com.jeyah.jeyahshopapi.user.User;
 import jakarta.persistence.*;
@@ -21,6 +22,7 @@ public class Cart extends BaseEntity {
 
     private Integer totalPrice;
     @OneToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
