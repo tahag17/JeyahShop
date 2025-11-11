@@ -13,6 +13,7 @@ import { ManageProductsComponent } from './features/product/manage-products/mana
 import { AddEditProductComponent } from './features/product/add-edit-product/add-edit-product.component';
 import { ManageOrdersComponent } from './features/orders/manage-orders/manage-orders.component';
 import { CategoriesListComponent } from './features/category/categories-list/categories-list.component';
+import { HomeComponent } from './features/home/home.component';
 
 export const routes: Routes = [
   {
@@ -27,12 +28,13 @@ export const routes: Routes = [
     path: '',
     component: StoreLayoutComponent,
     children: [
-      { path: '', redirectTo: 'products', pathMatch: 'full' },
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'profile', component: ProfileComponent },
       { path: 'cart', component: CartComponent },
       { path: 'products', component: ProductListComponent },
       { path: 'products/:id', component: ProductDetailComponent },
       { path: 'orders', component: OrderComponent },
+      { path: 'home', component: HomeComponent },
     ],
   },
 

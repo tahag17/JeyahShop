@@ -19,7 +19,7 @@ public class CartService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public CartResponse getCurrentUserCart() {
         User currentUser = AuthUtils.getCurrentUser(userRepository);
         Cart cart = cartRepository.findByUser(currentUser)

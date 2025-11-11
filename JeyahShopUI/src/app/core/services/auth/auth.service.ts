@@ -96,7 +96,7 @@ export class AuthService {
 
   navigateAfterLogin(user: User) {
     if (user.roles.includes('ROLE_MANAGER')) {
-      this.router.navigate(['/dashboard/profile']);
+      this.router.navigate(['/dashboard/']);
     } else if (user.roles.includes('ROLE_USER')) {
       this.router.navigate(['/profile']);
     } else {

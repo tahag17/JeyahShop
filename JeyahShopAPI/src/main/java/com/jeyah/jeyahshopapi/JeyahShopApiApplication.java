@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
-@EnableJpaAuditing(auditorAwareRef = "auditorAware")
+@EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl")
 @EnableWebSecurity
 public class JeyahShopApiApplication {
 
