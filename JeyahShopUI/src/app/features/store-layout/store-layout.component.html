@@ -1,9 +1,14 @@
-<div class="flex flex-col min-h-screen">
+<div class="flex flex-col min-h-screen bg-bgLight dark:bg-bgDark">
+  <!-- Header -->
   <app-header class="w-full"></app-header>
 
-  <main class="flex-1 p-6">
+  <!-- Main content -->
+  <main
+    class="flex-1 w-full flex flex-col p-2 sm:p-4 md:p-6 lg:p-8 xl:p-10 /* extra large screens and up */ 2xl:p-12"
+  >
     <router-outlet></router-outlet>
   </main>
 
+  <!-- Footer -->
   <app-footer class="w-full"></app-footer>
 </div>
