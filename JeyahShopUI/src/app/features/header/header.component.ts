@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { DarkModeToggleComponent } from '../dark-mode-toggle/dark-mode-toggle.component';
 import { NgIconComponent } from '@ng-icons/core';
 import { CommonModule, NgIf } from '@angular/common';
@@ -7,8 +7,8 @@ import { SearchService } from '../../core/services/search/search.service';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { CartService } from '../../core/services/cart/cart.service';
-import { CartItem } from '../../shared/models/cart-item.model';
 import { Cart } from '../../shared/models/cart.model';
+import { Subscription, fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -24,7 +24,7 @@ import { Cart } from '../../shared/models/cart.model';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   menuOpen = false;
   cartCount = 0;
   searchInput = '';
@@ -36,18 +36,39 @@ export class HeaderComponent implements OnInit {
   filteredSuggestions: string[] = [];
 
   cart: Cart | null = null;
+  private cartModalSub?: Subscription;
+  private clickOutsideSub?: Subscription;
 
   constructor(
     private searchService: SearchService,
     private authService: AuthService,
     private cartService: CartService,
-    public router: Router
+    public router: Router,
+    private elRef: ElementRef
   ) {}
 
   ngOnInit(): void {
     if (this.isLoggedIn) {
       this.loadCart();
     }
+
+    // Listen for cart modal trigger
+    this.cartModalSub = this.cartService.cartModal$.subscribe(() => {
+      this.cartDropdownOpen = true;
+      this.loadCart();
+    });
+
+    // Click outside listener
+    this.clickOutsideSub = fromEvent(document, 'click').subscribe(
+      (event: any) => {
+        this.closeDropdownsOnOutsideClick(event);
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.cartModalSub?.unsubscribe();
+    this.clickOutsideSub?.unsubscribe();
   }
 
   get isLoggedIn(): boolean {
@@ -72,11 +93,7 @@ export class HeaderComponent implements OnInit {
 
   onSearch() {
     if (!this.searchInput.trim()) return;
-
-    // set the keyword in the search service
     this.searchService.setKeyword(this.searchInput);
-
-    // navigate to the products list page
     this.router.navigate(['/products']);
   }
 
@@ -93,7 +110,7 @@ export class HeaderComponent implements OnInit {
     if (this.isLoggedIn) {
       this.cartDropdownOpen = !this.cartDropdownOpen;
       this.profileDropdownOpen = false;
-      this.loadCart(); // refresh cart on open
+      this.loadCart();
     } else {
       this.notConnectedModalOpen = true;
     }
@@ -124,5 +141,14 @@ export class HeaderComponent implements OnInit {
 
   hideSuggestions() {
     setTimeout(() => (this.showSearchSuggestions = false), 150);
+  }
+
+  private closeDropdownsOnOutsideClick(event: Event) {
+    const clickedInside = this.elRef.nativeElement.contains(event.target);
+    if (!clickedInside) {
+      this.cartDropdownOpen = false;
+      this.profileDropdownOpen = false;
+      this.menuOpen = false;
+    }
   }
 }

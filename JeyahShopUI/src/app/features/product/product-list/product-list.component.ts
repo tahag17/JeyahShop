@@ -170,14 +170,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.cartService.addToCart(productId, 1).subscribe({
       next: () => {
         this.message = 'Produit ajouté au panier !';
-        // Trigger header cart modal open
-        const header = document.querySelector('app-header') as any;
-        if (header) header.cartDropdownOpen = true;
+
+        // 🔥 Open the cart modal via CartService
+        this.cartService.triggerCartModal();
 
         setTimeout(() => {
           this.message = null;
-          if (header) header.cartDropdownOpen = false;
-        }, 2000); // show for 2 seconds
+        }, 2000); // optional toast duration
       },
       error: () => {
         this.error = 'Impossible d’ajouter le produit au panier.';

@@ -41,7 +41,7 @@ export class ProductDetailComponent implements OnInit {
       return;
     }
 
-    this.productService.getProductById(productId).subscribe({
+    this.productService.getPublicProductById(productId).subscribe({
       next: (data) => {
         this.product = data;
 
@@ -62,11 +62,23 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
+  onImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none'; // hide broken image
+    // optionally you could replace it with a placeholder element dynamically
+  }
+
   addToCart(productId: number) {
     this.cartService.addToCart(productId, 1).subscribe({
       next: () => {
-        this.message = 'Produit ajouté au panier ! 🛒';
-        setTimeout(() => (this.message = null), 3000);
+        this.message = 'Produit ajouté au panier !';
+
+        // 🔥 Trigger the cart modal in header (just like product list)
+        this.cartService.triggerCartModal();
+
+        setTimeout(() => {
+          this.message = null;
+        }, 2000); // toast duration
       },
       error: () => {
         this.error = 'Impossible d’ajouter le produit au panier.';

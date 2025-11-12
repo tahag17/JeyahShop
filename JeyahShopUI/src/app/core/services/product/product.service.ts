@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { PageResponse } from '../../../shared/models/page-response';
 import { SimpleProductResponse } from '../../../shared/models/simple-product-response';
 import { ProductResponse } from '../../../shared/models/product-response';
@@ -26,6 +26,14 @@ export class ProductService {
     return this.http.get<PageResponse<SimpleProductResponse>>(this.apiUrl, {
       params,
     });
+  }
+
+  getPublicProductById(id: number): Observable<ProductResponse> {
+    return this.http
+      .get<ProductResponse>(`${this.apiUrl}/${id}`)
+      .pipe(
+        tap((res) => console.log('[DEBUG] getPublicProductById response:', res))
+      );
   }
 
   // Search products by keyword

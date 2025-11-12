@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Cart } from '../../../shared/models/cart.model';
 
@@ -10,6 +10,15 @@ import { Cart } from '../../../shared/models/cart.model';
 export class CartService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiBaseUrl}user/api/cart`;
+
+  // Subject to trigger opening the cart modal
+  private cartModalSubject = new Subject<void>();
+  cartModal$ = this.cartModalSubject.asObservable();
+
+  // Call this to open the cart modal
+  triggerCartModal() {
+    this.cartModalSubject.next();
+  }
 
   getCart(): Observable<Cart> {
     return this.http.get<Cart>(this.apiUrl, { withCredentials: true });
