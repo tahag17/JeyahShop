@@ -28,8 +28,13 @@ public class ProductController {
     public ResponseEntity<ProductResponse> findProductById(
             @PathVariable("product-id") Integer productId
     ) {
-        return ResponseEntity.ok(productService.findProductById(productId));
+        System.out.println("[DEBUG] Public GET /products/" + productId + " called");
+        ProductResponse product = productService.findProductById(productId);
+        System.out.println("[DEBUG] Product found: " + product); // make sure ProductResponse has a proper toString
+        System.out.println("[DEBUG] Image URLs: " + product.getImageUrls());
+        return ResponseEntity.ok(product);
     }
+
 
     @GetMapping
     public ResponseEntity<PageResponse<SimpleProductResponse>> findAllProducts(

@@ -7,6 +7,7 @@ import com.jeyah.jeyahshopapi.cart.CartRepository;
 import com.jeyah.jeyahshopapi.common.PageResponse;
 import com.jeyah.jeyahshopapi.user.User;
 import com.jeyah.jeyahshopapi.user.UserRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,17 +27,18 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
     private final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     @Transactional(readOnly = true)
     public List<Order> getCurrentUserOrders() {
-        User user = AuthUtils.getCurrentUser(userRepository);
+        User user = AuthUtils.getCurrentUser(userRepository, entityManager);
         return orderRepository.findByUser(user);
     }
 
     @Transactional
     public Order makeOrder() {
-        User user = AuthUtils.getCurrentUser(userRepository);
+        User user = AuthUtils.getCurrentUser(userRepository, entityManager);
         log.info("Making order for user: {}", user.getId());
 
         Cart cart = cartRepository.findByUser(user)
@@ -80,7 +82,7 @@ public class OrderService {
 
     @Transactional
     public Order cancelOrder(Integer orderId) {
-        User user = AuthUtils.getCurrentUser(userRepository);
+        User user = AuthUtils.getCurrentUser(userRepository, entityManager);
         Order order = orderRepository.findByIdAndUser(orderId, user)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         if (order.getStatus() != OrderStatus.PENDING) {
@@ -92,7 +94,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Order getOrder(Integer orderId) {
-        User user = AuthUtils.getCurrentUser(userRepository);
+        User user = AuthUtils.getCurrentUser(userRepository, entityManager);
         return orderRepository.findByIdAndUser(orderId, user)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
     }

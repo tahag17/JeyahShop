@@ -6,7 +6,7 @@ import com.jeyah.jeyahshopapi.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.persistence.EntityManager;
 import java.util.List;
 
 @RestController
@@ -16,11 +16,12 @@ public class RatingController {
 
     private final RatingService ratingService;
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
     @PostMapping
     public ResponseEntity<?> rateProduct(@RequestBody RatingRequest request) {
         // Get currently logged-in user
-        User user = AuthUtils.getCurrentUser(userRepository);
+        User user = AuthUtils.getCurrentUser(userRepository, entityManager);
 
         RatingResponse response = ratingService.addOrUpdateRating(user.getId(), request);
         return ResponseEntity.ok(response);

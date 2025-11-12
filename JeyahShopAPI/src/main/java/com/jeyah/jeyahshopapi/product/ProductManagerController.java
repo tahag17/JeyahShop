@@ -6,6 +6,7 @@ import com.jeyah.jeyahshopapi.exception.ErrorResponse;
 import com.jeyah.jeyahshopapi.user.CustomUserPrincipal;
 import com.jeyah.jeyahshopapi.user.User;
 import com.jeyah.jeyahshopapi.user.UserRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class ProductManagerController {
     private final ProductService productService;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private EntityManager entityManager;
 
     // 1️⃣ Get all products (paginated)
     @GetMapping
@@ -69,7 +71,7 @@ public class ProductManagerController {
 
         try {
             // ✅ Get the authenticated user (works for both form & OAuth2 logins)
-            User currentUser = AuthUtils.getCurrentUser(userRepository);
+            User currentUser = AuthUtils.getCurrentUser(userRepository, entityManager);
 
             System.out.println("✅ Current user ID: " + currentUser.getId() + ", Email: " + currentUser.getEmail());
 
@@ -93,7 +95,7 @@ public class ProductManagerController {
 
         try {
             // ✅ Get authenticated user (works for both form-based and OAuth2 logins)
-            User currentUser = AuthUtils.getCurrentUser(userRepository);
+            User currentUser = AuthUtils.getCurrentUser(userRepository, entityManager);
 
             // Fetch the product to update
             Product existing = productRepository.findById(id)
@@ -127,7 +129,7 @@ public class ProductManagerController {
     public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
         try {
             // ✅ Get authenticated user (works for both form-based and OAuth2 logins)
-            User currentUser = AuthUtils.getCurrentUser(userRepository);
+            User currentUser = AuthUtils.getCurrentUser(userRepository, entityManager);
 
             // Find the product
             Product product = productRepository.findById(id)

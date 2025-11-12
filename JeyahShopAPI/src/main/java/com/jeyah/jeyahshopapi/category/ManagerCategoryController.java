@@ -4,6 +4,7 @@ import com.jeyah.jeyahshopapi.auth.AuthUtils;
 import com.jeyah.jeyahshopapi.exception.ErrorResponse;
 import com.jeyah.jeyahshopapi.user.User;
 import com.jeyah.jeyahshopapi.user.UserRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +21,13 @@ public class ManagerCategoryController {
 
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private EntityManager entityManager;
 
     // Create a new category
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody Category category) {
         try {
-            User currentUser = AuthUtils.getCurrentUser(userRepository);
+            User currentUser = AuthUtils.getCurrentUser(userRepository, entityManager);
             // Optionally, you can track who created the category
             // category.setCreatedBy(currentUser);
             Category saved = categoryRepository.save(category);
@@ -41,7 +43,7 @@ public class ManagerCategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable Integer id) {
         try {
-            User currentUser = AuthUtils.getCurrentUser(userRepository);
+            User currentUser = AuthUtils.getCurrentUser(userRepository, entityManager);
             // Optionally, add ownership or admin check here
 
             if (!categoryRepository.existsById(id)) {

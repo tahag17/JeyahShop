@@ -8,7 +8,7 @@ import com.jeyah.jeyahshopapi.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 
 @Service
@@ -18,10 +18,11 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
     @Transactional(readOnly = false)
     public CartResponse getCurrentUserCart() {
-        User currentUser = AuthUtils.getCurrentUser(userRepository);
+        User currentUser = AuthUtils.getCurrentUser(userRepository, entityManager);
         Cart cart = cartRepository.findByUser(currentUser)
                 .orElseGet(() -> createCartForUser(currentUser));
         return CartResponse.from(cart);
@@ -29,29 +30,43 @@ public class CartService {
 
     @Transactional
     public CartResponse addProductToCart(Integer productId, Integer quantity) {
-        User user = AuthUtils.getCurrentUser(userRepository);
-        Cart cart = cartRepository.findByUser(user)
+        // 1️⃣ Get managed User entity
+        User user = AuthUtils.getCurrentUser(userRepository, entityManager);
+
+        // 2️⃣ Get managed Cart entity (or create one if none exists)
+        Cart managedCart = cartRepository.findByUser(user)
                 .orElseGet(() -> createCartForUser(user));
 
+        // Re-fetch cart to ensure it's managed (final for lambda)
+        managedCart = cartRepository.findById(managedCart.getId())
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        Cart finalCart = managedCart; // ✅ effectively final for lambda
+
+        // 3️⃣ Get product
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product)
+        // 4️⃣ Find existing CartItem or create a new one
+        CartItem cartItem = cartItemRepository.findByCartAndProduct(finalCart, product)
                 .orElseGet(() -> {
                     CartItem newItem = new CartItem();
-                    newItem.setCart(cart);
+                    newItem.setCart(finalCart);   // ✅ use finalCart
                     newItem.setProduct(product);
                     newItem.setProductQuantity(0);
                     return newItem;
                 });
 
+        // 5️⃣ Update quantity
         cartItem.setProductQuantity(cartItem.getProductQuantity() + quantity);
         cartItemRepository.save(cartItem);
 
-        recalculateCartTotal(cart);
+        // 6️⃣ Recalculate total
+        recalculateCartTotal(finalCart);
 
-        return CartResponse.from(cartRepository.save(cart));
+        // 7️⃣ Save managed cart
+        return CartResponse.from(cartRepository.save(finalCart));
     }
+
 
     @Transactional
     public CartResponse updateCartItemQuantity(Integer cartItemId, Integer quantity) {
@@ -77,7 +92,7 @@ public class CartService {
 
     @Transactional
     public CartResponse clearCart() {
-        User user = AuthUtils.getCurrentUser(userRepository);
+        User user = AuthUtils.getCurrentUser(userRepository, entityManager);
         Cart cart = cartRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
         cartItemRepository.deleteAll(cart.getCartItems());

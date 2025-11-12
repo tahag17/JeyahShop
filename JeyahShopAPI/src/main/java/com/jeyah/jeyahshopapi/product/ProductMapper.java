@@ -63,7 +63,15 @@ public class ProductMapper {
 
     public ProductResponse toProductResponse(Product product) {
         List<String> imageUrls = product.getProductImages().stream()
-                .map(img -> r2BaseUrl + img.getUrl()) // prepend public R2 URL
+                .map(img -> {
+                    String url = img.getUrl();
+                    // If URL already starts with http/https, leave it
+                    if (url.startsWith("http://") || url.startsWith("https://")) {
+                        return url;
+                    }
+                    // Otherwise, prepend r2BaseUrl
+                    return r2BaseUrl + url;
+                })
                 .collect(Collectors.toList());
 
         return ProductResponse.builder()
@@ -78,6 +86,8 @@ public class ProductMapper {
                 .available(product.getStockQuantity() != 0)
                 .build();
     }
+
+
     public SimpleProductResponse toSimpleProductResponse(Product product) {
         Optional<String> firstImage = product.getFirstImageUrl();
         String imageUrl = firstImage.orElse(null);

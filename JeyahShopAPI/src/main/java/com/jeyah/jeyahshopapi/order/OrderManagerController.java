@@ -5,6 +5,7 @@ import com.jeyah.jeyahshopapi.common.PageResponse;
 import com.jeyah.jeyahshopapi.exception.ErrorResponse;
 import com.jeyah.jeyahshopapi.user.User;
 import com.jeyah.jeyahshopapi.user.UserRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class OrderManagerController {
 
     private final OrderService orderService;
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
     // 1️⃣ Get all orders (paginated)
     @GetMapping
@@ -55,7 +57,7 @@ public class OrderManagerController {
             @RequestParam OrderStatus status
     ) {
         try {
-            User currentUser = AuthUtils.getCurrentUser(userRepository);
+            User currentUser = AuthUtils.getCurrentUser(userRepository, entityManager);
             System.out.println("User " + currentUser.getEmail() + " is updating order " + id + " to " + status);
 
             ManagerOrderResponse updated = orderService.updateOrderStatusManager(id, status);
@@ -71,7 +73,7 @@ public class OrderManagerController {
     @PostMapping("/{id}/cancel")
     public ResponseEntity<?> cancelOrder(@PathVariable Integer id) {
         try {
-            User currentUser = AuthUtils.getCurrentUser(userRepository);
+            User currentUser = AuthUtils.getCurrentUser(userRepository, entityManager);
             System.out.println("User " + currentUser.getEmail() + " is cancelling order " + id);
 
             ManagerOrderResponse cancelled = orderService.cancelOrderAsManager(id);
