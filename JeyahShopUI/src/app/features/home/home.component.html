@@ -1,43 +1,156 @@
-<div class="max-w-7xl mx-auto p-4">
-  <!-- 1️⃣ Best Rated Products -->
-  <h2 class="text-2xl font-bold mb-3">⭐ Top Rated Products</h2>
-  <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-    <div
-      *ngFor="let product of topRated"
-      class="bg-surfaceLight dark:bg-surfaceDark rounded-lg p-2 shadow"
-    >
-      <img [src]="product.imageUrl" class="w-full h-40 object-cover rounded" />
-      <div class="text-center mt-2 text-primaryTail">{{ product.name }}</div>
-      <div class="text-center text-yellow-400">{{ product.rate }} ★</div>
-    </div>
-  </div>
+<!-- 🔥 Fullscreen Loading Overlay -->
+<div
+  *ngIf="loading"
+  class="fixed inset-0 bg-black/40 dark:bg-black/60 flex items-center justify-center z-50"
+>
+  <i class="fa-solid fa-spinner fa-spin text-white text-5xl"></i>
+</div>
 
-  <!-- 2️⃣ Latest Products -->
-  <h2 class="text-2xl font-bold mb-3">🆕 Latest Products</h2>
-  <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-    <div
-      *ngFor="let product of latest"
-      class="bg-surfaceLight dark:bg-surfaceDark rounded-lg p-2 shadow"
-    >
-      <img [src]="product.imageUrl" class="w-full h-40 object-cover rounded" />
-      <div class="text-center mt-2 text-primaryTail">{{ product.name }}</div>
-      <div class="text-center text-sm text-gray-500">{{ product.price }} €</div>
-    </div>
-  </div>
-
-  <!-- 3️⃣ Category Sections -->
-  <div *ngFor="let category of categorySamples | keyvalue">
-    <h2 class="text-2xl font-bold mb-3">{{ category.key }}</h2>
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-      <div
-        *ngFor="let product of category.value"
-        class="bg-surfaceLight dark:bg-surfaceDark rounded-lg p-2 shadow"
+<!-- Main Container -->
+<div
+  class="min-h-screen bg-bgLight dark:bg-bgDark transition-colors duration-300 p-6 flex flex-col"
+>
+  <!-- Actual Content -->
+  <div *ngIf="!loading" class="max-w-7xl mx-auto w-full">
+    <!-- Top Rated Products -->
+    <div class="mb-12">
+      <h2
+        class="text-xl sm:text-2xl font-semibold text-primaryTail dark:text-primaryDarkTail mb-4 flex items-center gap-2"
       >
-        <img
-          [src]="product.imageUrl"
-          class="w-full h-40 object-cover rounded"
-        />
-        <div class="text-center mt-2 text-primaryTail">{{ product.name }}</div>
+        <i class="fa-solid fa-star text-yellow-400"></i>
+        Top Rated Products
+      </h2>
+      <div
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+      >
+        <div
+          *ngFor="let product of topRated"
+          class="bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-3 flex flex-col"
+        >
+          <div
+            class="w-full h-40 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden"
+          >
+            <ng-container *ngIf="product.imageUrl; else noImageIcon">
+              <img
+                [src]="product.imageUrl"
+                (error)="onImageError($event)"
+                alt="{{ product.name }}"
+                class="w-full h-full object-cover"
+              />
+            </ng-container>
+            <ng-template #noImageIcon>
+              <i
+                class="fa-solid fa-image text-gray-400 dark:text-gray-500 text-4xl"
+              ></i>
+            </ng-template>
+          </div>
+          <div class="flex flex-col items-center mt-3">
+            <div
+              class="text-primaryTail dark:text-primaryDarkTail font-semibold text-center"
+            >
+              {{ product.name }}
+            </div>
+            <div class="text-yellow-400 flex items-center gap-1 mt-1">
+              <i class="fa-solid fa-star"></i>
+              <span class="text-sm text-textLight dark:text-textDark">
+                {{ product.rate | number : "1.1-1" }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Latest Products -->
+    <div class="mb-12">
+      <h2
+        class="text-xl sm:text-2xl font-semibold text-primaryTail dark:text-primaryDarkTail mb-4 flex items-center gap-2"
+      >
+        <i
+          class="fa-solid fa-clock text-accentTail dark:text-accentDarkTail"
+        ></i>
+        Latest Products
+      </h2>
+      <div
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+      >
+        <div
+          *ngFor="let product of latest"
+          class="bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-3 flex flex-col"
+        >
+          <div
+            class="w-full h-40 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden"
+          >
+            <ng-container *ngIf="product.imageUrl; else noImageIcon">
+              <img
+                [src]="product.imageUrl"
+                (error)="onImageError($event)"
+                alt="{{ product.name }}"
+                class="w-full h-full object-cover"
+              />
+            </ng-container>
+            <ng-template #noImageIcon>
+              <i
+                class="fa-solid fa-image text-gray-400 dark:text-gray-500 text-4xl"
+              ></i>
+            </ng-template>
+          </div>
+          <div class="flex flex-col items-center mt-3">
+            <div
+              class="text-primaryTail dark:text-primaryDarkTail font-semibold text-center"
+            >
+              {{ product.name }}
+            </div>
+            <div
+              class="text-sm text-textLight dark:text-textDark text-center mt-1"
+            >
+              {{ product.price }} dh
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Samples -->
+    <div *ngFor="let category of categorySamples | keyvalue" class="mb-12">
+      <h2
+        class="text-xl sm:text-2xl font-semibold text-primaryTail dark:text-primaryDarkTail mb-4 flex items-center gap-2"
+      >
+        <i
+          class="fa-solid fa-tags text-accentTail dark:text-accentDarkTail"
+        ></i>
+        {{ category.key }}
+      </h2>
+      <div
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+      >
+        <div
+          *ngFor="let product of category.value"
+          class="bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-3 flex flex-col"
+        >
+          <div
+            class="w-full h-40 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden"
+          >
+            <ng-container *ngIf="product.imageUrl; else noImageIcon">
+              <img
+                [src]="product.imageUrl"
+                (error)="onImageError($event)"
+                alt="{{ product.name }}"
+                class="w-full h-full object-cover"
+              />
+            </ng-container>
+            <ng-template #noImageIcon>
+              <i
+                class="fa-solid fa-image text-gray-400 dark:text-gray-500 text-4xl"
+              ></i>
+            </ng-template>
+          </div>
+          <div
+            class="text-center text-primaryTail dark:text-primaryDarkTail font-semibold mt-3"
+          >
+            {{ product.name }}
+          </div>
+        </div>
       </div>
     </div>
   </div>

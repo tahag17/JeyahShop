@@ -46,7 +46,6 @@ export class ProductService {
     keyword: string = 'usb',
     minPrice?: number,
     maxPrice?: number,
-    tags?: string[],
     sortBy: string = 'rate',
     sortDirection: string = 'desc',
     page: number = 0,
@@ -56,12 +55,11 @@ export class ProductService {
       .set('keyword', keyword)
       .set('sortBy', sortBy)
       .set('sortDirection', sortDirection)
-      .set('page', page)
-      .set('size', size);
+      .set('page', page.toString())
+      .set('size', size.toString());
 
-    if (minPrice != null) params = params.set('minPrice', minPrice);
-    if (maxPrice != null) params = params.set('maxPrice', maxPrice);
-    if (tags?.length) params = params.set('tags', tags.join(','));
+    if (minPrice != null) params = params.set('minPrice', minPrice.toString());
+    if (maxPrice != null) params = params.set('maxPrice', maxPrice.toString());
 
     return this.http.get<PageResponse<SimpleProductResponse>>(
       `${this.apiUrl}/search`,

@@ -71,7 +71,13 @@ export class HeaderComponent implements OnInit {
   }
 
   onSearch() {
+    if (!this.searchInput.trim()) return;
+
+    // set the keyword in the search service
     this.searchService.setKeyword(this.searchInput);
+
+    // navigate to the products list page
+    this.router.navigate(['/products']);
   }
 
   handleProfileClick() {

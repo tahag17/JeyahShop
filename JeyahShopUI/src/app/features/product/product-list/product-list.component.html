@@ -1,125 +1,191 @@
 <div
-  class="max-w-6xl mx-auto p-6 bg-surfaceLight dark:bg-surfaceDark rounded-xl shadow-md"
+  class="h-screen flex flex-col bg-bgLight dark:bg-bgDark transition-colors duration-300 relative"
 >
-  <h2
-    class="text-3xl font-heading font-bold text-primaryTail dark:text-primaryDarkTail mb-4"
+  <!-- 🔄 Loading Overlay -->
+  <div
+    *ngIf="loading"
+    class="fixed inset-0 bg-black/40 dark:bg-black/60 flex items-center justify-center z-50"
   >
-    Liste des produits
-  </h2>
-
-  <!-- Loading & Error -->
-  <div *ngIf="loading" class="text-center text-textLight dark:text-textDark">
-    Chargement...
+    <i class="fa-solid fa-spinner fa-spin text-white text-5xl"></i>
   </div>
-  <div *ngIf="error" class="text-center text-dangerTail mb-4">{{ error }}</div>
 
-  <!-- Products Table -->
-  <table
-    *ngIf="!loading && products.length"
-    class="w-full text-sm md:text-base border-collapse"
+  <!-- 🔹 Filter Bar -->
+  <div
+    class="w-full flex flex-wrap items-center justify-center gap-4 p-4 bg-surfaceLight dark:bg-surfaceDark shadow-md dark:shadow-lg z-40"
   >
-    <thead>
-      <tr class="bg-accentTail/10 dark:bg-accentDarkTail/10 text-left">
-        <th class="p-2">Nom</th>
-        <th class="p-2">Prix</th>
-        <th class="p-2">Disponibilité</th>
-        <th class="p-2">Avis</th>
-        <th class="p-2">Image</th>
-        <th class="p-2 text-center">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        *ngFor="let product of products"
-        class="hover:bg-accentTail/10 dark:hover:bg-accentDarkTail/10 transition"
+    <!-- Keyword Filter -->
+    <div
+      *ngIf="!filterKeyword"
+      class="flex flex-col sm:flex-row items-center gap-2"
+    >
+      <label class="text-sm text-textLight dark:text-textDark whitespace-nowrap"
+        >Mot-clé</label
       >
-        <!-- Name -->
-        <td class="p-2">
-          <span
-            class="text-primaryTail dark:text-primaryDarkTail hover:underline cursor-pointer"
+      <input
+        type="text"
+        [(ngModel)]="filterKeyword"
+        placeholder="Rechercher..."
+        class="px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail/40 dark:focus:ring-accentDarkTail/40 transition-all duration-300 w-40 sm:w-56"
+      />
+    </div>
+
+    <!-- Price Filter -->
+    <div class="flex flex-col sm:flex-row items-center gap-2">
+      <label class="text-sm text-textLight dark:text-textDark whitespace-nowrap"
+        >Prix (DH)</label
+      >
+      <div class="flex items-center gap-2">
+        <input
+          type="number"
+          [(ngModel)]="minPrice"
+          (input)="checkRange()"
+          placeholder="Min"
+          class="w-20 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail/40 dark:focus:ring-accentDarkTail/40 transition-all duration-300"
+          min="0"
+        />
+        <span class="text-textLight dark:text-textDark">-</span>
+        <input
+          type="number"
+          [(ngModel)]="maxPrice"
+          (input)="checkRange()"
+          placeholder="Max"
+          class="w-20 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail/40 dark:focus:ring-accentDarkTail/40 transition-all duration-300"
+          min="0"
+        />
+        <button
+          (click)="applyPriceFilter()"
+          class="px-3 py-1 bg-accentTail text-white rounded-md hover:bg-accentTail/90 transition-colors"
+        >
+          Go
+        </button>
+      </div>
+    </div>
+
+    <!-- Sorting -->
+    <div class="flex flex-col sm:flex-row items-center gap-2">
+      <label class="text-sm text-textLight dark:text-textDark whitespace-nowrap"
+        >Trier par</label
+      >
+      <select
+        [(ngModel)]="sortBy"
+        (change)="applyFilters()"
+        class="px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:border-accentTail dark:focus:border-accentDarkTail focus:ring-2 focus:ring-accentTail/40 dark:focus:ring-accentDarkTail/40 transition-all duration-300"
+      >
+        <option value="rate">Meilleurs avis</option>
+        <option value="price">Prix</option>
+        <option value="name">Nom</option>
+      </select>
+
+      <!-- Sort Direction -->
+      <div class="flex items-center gap-2">
+        <span
+          class="text-sm text-textLight dark:text-textDark whitespace-nowrap"
+        >
+          Direction:
+        </span>
+        <button
+          class="flex items-center justify-center w-9 h-9 rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-accentTail hover:text-white dark:hover:bg-accentDarkTail transition-all duration-300"
+          [class.bg-accentTail]="sortDirection === 'asc'"
+          [class.text-white]="sortDirection === 'asc'"
+          (click)="setSortDirection('asc')"
+          title="Tri ascendant"
+        >
+          <i class="fa-solid fa-arrow-up"></i>
+        </button>
+
+        <button
+          class="flex items-center justify-center w-9 h-9 rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-accentTail hover:text-white dark:hover:bg-accentDarkTail transition-all duration-300"
+          [class.bg-accentTail]="sortDirection === 'desc'"
+          [class.text-white]="sortDirection === 'desc'"
+          (click)="setSortDirection('desc')"
+          title="Tri descendant"
+        >
+          <i class="fa-solid fa-arrow-down"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 Products Grid -->
+  <main class="flex-1 p-6 overflow-y-auto">
+    <div
+      *ngIf="!loading && products.length"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+    >
+      <div
+        *ngFor="let product of products"
+        class="bg-surfaceLight dark:bg-surfaceDark rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col"
+      >
+        <!-- Image -->
+        <div
+          class="w-full h-40 sm:h-48 flex items-center justify-center border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 rounded-t-2xl overflow-hidden"
+        >
+          <ng-container *ngIf="product.imageUrl; else noImageIcon">
+            <img
+              [src]="product.imageUrl"
+              (error)="onImageError($event)"
+              alt="{{ product.name }}"
+              class="w-full h-full object-cover"
+            />
+          </ng-container>
+          <ng-template #noImageIcon>
+            <i
+              class="fa-solid fa-image text-gray-400 dark:text-gray-500 text-4xl"
+            ></i>
+          </ng-template>
+        </div>
+
+        <!-- Details -->
+        <div class="flex-1 flex flex-col p-4">
+          <h3
+            class="text-lg font-semibold text-primaryTail dark:text-primaryDarkTail cursor-pointer hover:underline mb-1"
             (click)="goToDetails(product.id)"
           >
             {{ product.name }}
-          </span>
-        </td>
+          </h3>
 
-        <!-- Price -->
-        <td class="p-2">{{ product.price }} €</td>
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-bold">{{ product.price }} dh</span>
+            <span
+              [ngClass]="{
+                'text-successTail': product.available,
+                'text-dangerTail': !product.available
+              }"
+              class="font-medium"
+            >
+              {{ product.available ? "En stock" : "Rupture" }}
+            </span>
+          </div>
 
-        <!-- Availability -->
-        <td class="p-2">
-          <span
-            [ngClass]="{
-              'text-successTail': product.available,
-              'text-dangerTail': !product.available
-            }"
-          >
-            {{ product.available ? "Oui" : "Non" }}
-          </span>
-        </td>
+          <div class="flex items-center text-yellow-400 mb-4">
+            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+              <i
+                class="mr-0.5"
+                [ngClass]="getStarClass(product.rate, star)"
+              ></i>
+            </ng-container>
+            <span class="ml-2 text-sm text-textLight dark:text-textDark">
+              ({{ product.rate | number : "1.1-2" }})
+            </span>
+          </div>
 
-        <!-- Ratings -->
-        <td class="p-2 flex items-center text-yellow-400">
-          <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
-            <i class="mr-0.5" [ngClass]="getStarClass(product.rate, star)"></i>
-          </ng-container>
-
-          <span class="ml-2 text-textLight dark:text-textDark">
-            ({{ product.rate | number : "1.1-2" }})
-          </span>
-        </td>
-
-        <!-- Image -->
-        <td class="p-2">
-          <img
-            *ngIf="product.imageUrl"
-            [src]="product.imageUrl"
-            alt="{{ product.name }}"
-            class="w-16 h-16 object-cover rounded"
-          />
-        </td>
-
-        <!-- Actions -->
-        <td class="p-2 text-center">
           <button
-            class="bg-primaryTail text-white px-3 py-1 rounded hover:bg-primaryTail/80 transition"
+            class="mt-auto w-full flex items-center justify-center gap-2 px-3 py-2 bg-primaryTail text-white rounded-lg hover:bg-primaryTail/80 transition disabled:opacity-50"
             [disabled]="!product.available"
             (click)="addToCart(product.id)"
           >
-            🛒 Ajouter
+            <i class="fa-solid fa-cart-shopping"></i> Ajouter au panier
           </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        </div>
+      </div>
+    </div>
 
-  <!-- No Products -->
-  <div
-    *ngIf="!loading && !products.length"
-    class="text-center text-textLight dark:text-textDark"
-  >
-    Aucun produit trouvé.
-  </div>
-
-  <!-- Pagination -->
-  <div
-    *ngIf="!loading && totalPages > 1"
-    class="flex justify-center gap-4 mt-4 items-center"
-  >
-    <button
-      class="px-3 py-1 bg-accentTail/20 rounded hover:bg-accentTail/40"
-      [disabled]="currentPage === 0"
-      (click)="goToPage(currentPage - 1)"
+    <!-- No Products -->
+    <div
+      *ngIf="!loading && !products.length"
+      class="text-center text-textLight dark:text-textDark mt-10"
     >
-      Précédent
-    </button>
-    <span> Page {{ currentPage + 1 }} / {{ totalPages }} </span>
-    <button
-      class="px-3 py-1 bg-accentTail/20 rounded hover:bg-accentTail/40"
-      [disabled]="currentPage + 1 === totalPages"
-      (click)="goToPage(currentPage + 1)"
-    >
-      Suivant
-    </button>
-  </div>
+      Aucun produit trouvé.
+    </div>
+  </main>
 </div>

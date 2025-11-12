@@ -229,19 +229,33 @@ public class ProductService {
             int page,
             int size
     ) {
-        Sort.Direction direction = "asc".equals(sortDirection) ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        Specification<Product> spec = new ProductSpecification(keyword, minPrice, maxPrice, tags);
+        Sort.Direction direction = "asc".equalsIgnoreCase(sortDirection) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable;
+
+        // ⚙️ Only sort in DB if field is real
+        if (!"rate".equalsIgnoreCase(sortBy)) {
+            pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        } else {
+            pageable = PageRequest.of(page, size); // no sorting in DB for "rate"
+        }
+
+        Specification<Product> spec = new ProductSpecification(keyword, minPrice, maxPrice);
         Page<Product> productPage = productRepository.findAll(spec, pageable);
 
-        //sorting products based on rating
-        List<Product> sortedProducts = productPage.getContent().stream()
-                .sorted(Comparator.comparingDouble(Product::getRate).reversed())
-                .collect(Collectors.toList());
+        List<Product> products = productPage.getContent();
 
-        List<SimpleProductResponse> simpleProductResponses = sortedProducts.stream()
-                .map(productMapper::toSimpleProductResponse) // use instance, not class
-                .collect(Collectors.toList());
+        // ⭐ Manual sort by rating if user chose "rate"
+        if ("rate".equalsIgnoreCase(sortBy)) {
+            Comparator<Product> comparator = Comparator.comparingDouble(Product::getRate);
+            if ("desc".equalsIgnoreCase(sortDirection)) {
+                comparator = comparator.reversed();
+            }
+            products = products.stream().sorted(comparator).collect(Collectors.toList());
+        }
+
+        List<SimpleProductResponse> simpleProductResponses = products.stream()
+                .map(productMapper::toSimpleProductResponse)
+                .toList();
 
         return new PageResponse<>(
                 simpleProductResponses,
@@ -253,6 +267,7 @@ public class ProductService {
                 productPage.isLast()
         );
     }
+
 
     public ProductResponse updateProduct(Integer id, ProductRequest request) {
         Product product = productRepository.findById(id)
